@@ -1,154 +1,120 @@
 package com.platform.main;
 
-import org.andengine.engine.handler.IUpdateHandler;
-import org.andengine.entity.shape.RectangularShape;
+import org.andengine.engine.Engine;
+import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.opengl.texture.TextureOptions;
-import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
-import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSource;
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
+import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 
-import android.content.Context;
-import android.util.FloatMath;
-import android.util.Log;
+public class HurtBox
+{
+    private boolean alive;
+    private AnimatedSprite animatedSprite;
+    private float height = 24.0F;
+    private MainActivity mActivity;
+    private TiledTextureRegion mTiledTextureRegion;
+    private float width = 14.0F;
+    private float xPos = 100.0F;
+    private float yPos = 100.0F;
 
-public class HurtBox  {
-	// ===========================================================
-	// Constants
-	// ===========================================================
+    public HurtBox(float paramFloat1, float paramFloat2, MainActivity paramMainActivity)
+    {
+        this.xPos = paramFloat1;
+        this.yPos = (paramFloat2 - this.height);
+        this.mActivity = paramMainActivity;
+        this.alive = true;
+        BuildableBitmapTextureAtlas localBuildableBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.mActivity.getEngine().getTextureManager(), 64, 24, TextureOptions.NEAREST);
+        this.mTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(localBuildableBitmapTextureAtlas, paramMainActivity, "gfx/enemy.png", 4, 1);
+        try
+        {
+            localBuildableBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder(0, 0, 0));
+            localBuildableBitmapTextureAtlas.load();
+            this.animatedSprite = new AnimatedSprite(this.xPos, this.yPos, this.mTiledTextureRegion, this.mActivity.getEngine().getVertexBufferObjectManager());
+            long[] arrayOfLong = { 100L, 200L, 300L, 400L };
+            this.animatedSprite.animate(arrayOfLong);
+            return;
+        }
+        catch (ITextureAtlasBuilder.TextureAtlasBuilderException localTextureAtlasBuilderException)
+        {
+            for (;;)
+            {
+                localTextureAtlasBuilderException.printStackTrace();
+            }
+        }
+    }
 
-	// ===========================================================
-	// Fields
-	// ===========================================================	
-	private float xPos = 100;
-	private float yPos = 100;
-	private MainActivity mActivity;
-	private TiledTextureRegion mTiledTextureRegion;
-	private AnimatedSprite animatedSprite;
-	private float height;
-	private float width;
-	//variables
-	private boolean alive;
-	
-	// ===========================================================
-	// Constructors
-	// ===========================================================
-	public HurtBox (float xPos, float yPos, MainActivity mActivity)
-	{
-		//save variables
-		this.height = 24;
-		this.width = 14;
-		this.xPos = xPos;
-		this.yPos = yPos - this.height;
-		this.mActivity = mActivity;
+    public void displayBox()
+    {
+        this.mActivity.getScene().attachChild(this.animatedSprite);
+    }
 
-		this.alive = true;
-		
-		 
-		/*
-		 * CREATE TEXTURE
-		 */
-		BuildableBitmapTextureAtlas mBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.mActivity.getEngine().getTextureManager(), 64, 24, TextureOptions.NEAREST);
-		mTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mBitmapTextureAtlas, mActivity, "gfx/enemy.png", 4, 1);
-		/* Build and load the mBitmapTextureAtlas object */
-		try 
-		{
-			mBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
-		}
-		catch (TextureAtlasBuilderException e)
-		{
-			e.printStackTrace();
-		}
-		mBitmapTextureAtlas.load();
-		
-		animatedSprite = new AnimatedSprite(this.xPos, this.yPos, mTiledTextureRegion, this.mActivity.getEngine().getVertexBufferObjectManager());
-		long frameDuration[] = {100, 200, 300, 400};
-		animatedSprite.animate(frameDuration);
-	}
-	
-	
-	// ===========================================================
-	// METHODS
-	// ===========================================================
-	public void displayBox()
-	{
-		this.mActivity.getScene().attachChild(animatedSprite);
-	}
+    public boolean getAlive()
+    {
+        return this.alive;
+    }
 
-	public boolean isPlayerAboveHurtbox(float xPos, float yPos, float width)
-	{
-		boolean theReturn = false;
-		if(xPos > this.xPos - width)
-		{
-			if(xPos < this.getEndPos())
-			{
-				if(yPos < this.getYPos())
-				{
-					theReturn = true;
-				}
-			}
-		}
-		return theReturn;
-	}
-	
-	public void killEnemy()
-	{
-		this.setAlive(false);
-	}
-	
-	// ===========================================================
-	// Getter & Setter
-	// ===========================================================
-	
-	public float getXPos()
-	{
-		return this.xPos;
-	}
-	
-	public float getYPos()
-	{
-		return this.yPos;
-	}
-	
-	public void setXPos(float xPos)
-	{
-		this.xPos = xPos;
-	}
-	
-	public void setYPos(float yPos)
-	{
-		this.yPos = yPos;
-	}
+    public float getEndPos()
+    {
+        return this.xPos + this.width;
+    }
 
-	public AnimatedSprite getSprite()
-	{
-		return this.animatedSprite;
-	}
+    public AnimatedSprite getSprite()
+    {
+        return this.animatedSprite;
+    }
 
-	public float getEndPos()
-	{
-		return this.xPos + this.width;
-	}
+    public float getXPos()
+    {
+        return this.xPos;
+    }
 
-	public boolean getAlive() {
-		return alive;
-	}
+    public float getYPos()
+    {
+        return this.yPos;
+    }
 
+    public boolean isPlayerAboveHurtbox(float paramFloat1, float paramFloat2, float paramFloat3)
+    {
+        boolean bool1 = paramFloat1 < this.xPos - paramFloat3;
+        boolean bool2 = false;
+        if (bool1)
+        {
+            boolean bool3 = paramFloat1 < getEndPos();
+            bool2 = false;
+            if (bool3)
+            {
+                boolean bool4 = paramFloat2 < getYPos();
+                bool2 = false;
+                if (bool4) {
+                    bool2 = true;
+                }
+            }
+        }
+        return bool2;
+    }
 
-	public void setAlive(boolean alive) {
-		this.alive = alive;
-	}
+    public void killEnemy()
+    {
+        setAlive(false);
+    }
 
+    public void setAlive(boolean paramBoolean)
+    {
+        this.alive = paramBoolean;
+    }
 
+    public void setXPos(float paramFloat)
+    {
+        this.xPos = paramFloat;
+    }
 
-
-
-
-	
-	
-	
+    public void setYPos(float paramFloat)
+    {
+        this.yPos = paramFloat;
+    }
 }
