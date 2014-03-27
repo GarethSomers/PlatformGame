@@ -19,6 +19,7 @@ public class RectangularPlatform
     protected float width;
     protected float xPos = 100.0F;
     protected float yPos = 100.0F;
+    protected boolean attached = false;
 
     public RectangularPlatform(float paramFloat1, float paramFloat2, float paramFloat3, float paramFloat4, MainActivity paramMainActivity)
     {
@@ -80,5 +81,15 @@ public class RectangularPlatform
     public void setYPos(float paramFloat)
     {
         this.yPos = paramFloat;
+    }
+
+    public boolean getAttached()
+    {
+        return this.attached;
+    }
+
+    public void setAttached(boolean attached)
+    {
+        this.attached = attached;
     }
 }

@@ -28,6 +28,7 @@ public class MyContactListener
         Enemy localEnemy = null;
         Object localObject1 = null;
         Doorway localDoorway = null;
+
         int i = arrayOfFixture.length;
         int j = 0;
         if (j >= i)
@@ -62,20 +63,23 @@ public class MyContactListener
             j++;
 
             if ((localObject2 instanceof Ladder)) {
+                //ladder
+                getThePlayer().allowJumping();
                 localLadder = (Ladder)localObject2;
             } else if ((localObject2 instanceof Player)) {
+                //player
                 localPlayer = (Player)localObject2;
             } else if ((localObject2 instanceof Enemy)) {
+                //enemy
                 localEnemy = (Enemy)localObject2;
             } else if ((localObject2 instanceof Doorway)) {
+                //doorway
                 localDoorway = (Doorway)localObject2;
+                this.mActivity.log("Going Through Doorway");
+                this.mActivity.getLevelManager().scheduleLoadLevel(localDoorway.getDestination(), localDoorway.getDestinationX(), localDoorway.getDestinationY());
             }
-
-            this.mActivity.log("Going Through Doorway");
-            this.mActivity.getLevelManager().scheduleLoadLevel(localDoorway.getDestination(), localDoorway.getDestinationX(), localDoorway.getDestinationY());
         }
-        label280:
-        getThePlayer().allowJumping();
+
     }
 
     public void endContact(Contact paramContact)

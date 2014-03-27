@@ -1,0 +1,14 @@
+setup,outsidetwo.jpg,bedroom.png,454,408,happy
+clipping,0,336,454,52
+clipping,192,312,24,1
+clipping,216,284,72,1
+clipping,101,192,354,1
+clipping,216,120,216,1
+ladder,235,193,219,50
+ignore,platform,ground,400,10080,800,200,true,false
+ignore,platform,grass,100,10080,800,60,true,false
+ignore,platform-polygon,grass,300,10080,60,60,false,false,3,0,0,60,60,0,60
+ignore,enemy,common,50,0
+ignore,enemy,common,100,0
+ignore,enemy,common,300,0
+doorway,320,75,1,41,two,813,657

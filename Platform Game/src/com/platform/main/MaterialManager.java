@@ -20,12 +20,12 @@ public class MaterialManager
         this.mActivity = paramMainActivity;
     }
 
-    public ITextureRegion getMaterial(String paramString, int paramInt1, int paramInt2)
+    public ITextureRegion getMaterial(String paramString, int pWidth, int pHeight)
     {
         TextureRegion localTextureRegion = null;
         try
         {
-            BuildableBitmapTextureAtlas localBuildableBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.mActivity.getEngine().getTextureManager(), paramInt1, paramInt2, TextureOptions.DEFAULT);
+            BuildableBitmapTextureAtlas localBuildableBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.mActivity.getEngine().getTextureManager(), pWidth, pHeight, TextureOptions.DEFAULT);
             localTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(localBuildableBitmapTextureAtlas, this.mActivity, "gfx/" + paramString);
             localBuildableBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder(0, 0, 0));
             localBuildableBitmapTextureAtlas.load();
@@ -33,7 +33,7 @@ public class MaterialManager
         }
         catch (Exception e)
         {
-            this.mActivity.gameToast("Failed to load " + paramString + " texture.");
+            this.mActivity.log("Failed to load " + paramString + " texture.");
             e.printStackTrace();
         }
         return localTextureRegion;

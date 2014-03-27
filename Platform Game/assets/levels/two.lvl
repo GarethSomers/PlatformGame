@@ -1,0 +1,9 @@
+setup,outside.png,two.png,1000,1142,happy
+clipping,432,912,568,1
+clipping,384,912,24,1
+clipping,0,960,385,1
+ladder,408,575,24,567
+ignore,enemy,common,50,0
+ignore,enemy,common,100,0
+ignore,enemy,common,300,0
+doorway,866,646,1,41,one,305,116

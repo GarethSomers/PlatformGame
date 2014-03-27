@@ -151,44 +151,49 @@ public abstract class Person
     {
         if (this.moveLeft)
         {
+            //move left
             this.velocity_x -= this.acceleration;
             this.animatedSprite.setFlippedHorizontal(true);
+
+            //if velocity is now < 0 show him walking
             if (this.velocity_x < 0.0F) {
-                setAnimation("walking");
+                //setAnimation("walking");
             }
-            if (this.velocity_x <= this.maxSpeed) {
-                //break label184;
+            //ensure he doesn't go past max speed
+            if (this.velocity_x < (-this.maxSpeed)) {
+                this.velocity_x = (-this.maxSpeed);
             }
-            this.velocity_x = this.maxSpeed;
         }
-        label184:
-        while (this.velocity_x >= -this.maxSpeed)
+        else if (this.moveRight)
         {
-            if (this.moveRight)
-            {
-                this.velocity_x += this.acceleration;
-                this.animatedSprite.setFlippedHorizontal(false);
-                if (this.velocity_x <= 0.0F) {
-                    break;
-                }
-                setAnimation("walking");
-                break;
+            //move right
+            this.velocity_x += this.acceleration;
+            this.animatedSprite.setFlippedHorizontal(false);
+            //if velocity is greater then 0 then show him walking
+            if (this.velocity_x > 0.0F) {
+                //setAnimation("walking");
             }
-            if (this.velocity_x > this.acceleration)
-            {
-                this.velocity_x -= this.acceleration;
-                break;
+            //max sure he doesn't go past max speed
+            if (this.velocity_x > this.maxSpeed) {
+                this.velocity_x = this.maxSpeed;
             }
-            if (this.velocity_x < -this.acceleration)
-            {
-                this.velocity_x += this.acceleration;
-                break;
-            }
-            this.velocity_x = 0.0F;
-            setAnimation("standing");
-            break;
         }
-        this.velocity_x = (-this.maxSpeed);
+        else  if (this.velocity_x > this.acceleration)
+        {
+            //if hes still moving right but not pressing the button slow him down
+            this.velocity_x -= this.acceleration;
+        }
+        else if (this.velocity_x < -this.acceleration)
+        {
+            //if hes still moving left but not pressing the button slow him down
+            this.velocity_x += this.acceleration;
+        }
+        else
+        {
+            //otherwise stop him
+            this.velocity_x = 0.0F;
+            //setAnimation("standing");
+        }
     }
 
     public void handleYMovement()

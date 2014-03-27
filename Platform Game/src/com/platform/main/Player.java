@@ -51,11 +51,10 @@ public class Player
         try
         {
             this.mActivity.getLevelManager().getScene().attachChild(this.animatedSprite);
-            return;
         }
         catch (Exception localException)
         {
-            this.mActivity.log("Attempting to attach child to scene (Most likely already attached.");
+            this.mActivity.log("Attempting to attach child to scene. (May be already attached or level may have failed to be created)");
         }
     }
 
@@ -83,32 +82,44 @@ public class Player
 
     public void moveDetect(float paramFloat1, float paramFloat2, TouchEvent paramTouchEvent)
     {
-        int i = paramTouchEvent.getAction();
-        if (!getAlive()) {}
-        do
+        if (getAlive())
         {
-            if ((paramFloat1 < this.mActivity.getCameraWidth() / 3) && ((i == 0) || (i == 2)) && (this.currentJumpID != paramTouchEvent.getPointerID()))
+            this.mActivity.log("Trying to move");
+            if((this.currentJumpID != paramTouchEvent.getPointerID()) & (paramTouchEvent.getAction() != TouchEvent.ACTION_UP))
             {
-                moveLeft();
-                return;
+                //if he did not let go of jumping and the action is not up
+                if ((paramFloat1 < this.mActivity.getCameraWidth() / 3) && ((paramTouchEvent.getAction() == TouchEvent.ACTION_DOWN) || (paramTouchEvent.getAction() == TouchEvent.ACTION_MOVE)) && (this.currentJumpID != paramTouchEvent.getPointerID()))
+                {
+                    this.mActivity.log("LEFT");
+                    moveLeft();
+                    return;
+                }
+                if ((paramFloat1 > 2 * this.mActivity.getCameraWidth() / 3) && ((paramTouchEvent.getAction() == TouchEvent.ACTION_DOWN) || (paramTouchEvent.getAction() == TouchEvent.ACTION_MOVE)) && (this.currentJumpID != paramTouchEvent.getPointerID()))
+                {
+                    this.mActivity.log("RIGHT");
+                    moveRight();
+                    return;
+                }
+                if ((paramFloat1 > this.mActivity.getCameraWidth() / 3) && (paramFloat1 < 2 * this.mActivity.getCameraWidth() / 3) && (paramTouchEvent.getAction() == TouchEvent.ACTION_DOWN) && (this.jumpingAllowed))
+                {
+                    this.mActivity.log("JUMP");
+                    jump(paramTouchEvent.getPointerID());
+                    return;
+                }
             }
-            if ((paramFloat1 > 2 * this.mActivity.getCameraWidth() / 3) && ((i == 0) || (i == 2)) && (this.currentJumpID != paramTouchEvent.getPointerID()))
+            else if ((paramTouchEvent.getAction() == TouchEvent.ACTION_UP) && (this.currentJumpID != paramTouchEvent.getPointerID()))
             {
-                moveRight();
-                return;
-            }
-            if ((paramFloat1 > this.mActivity.getCameraWidth() / 3) && (paramFloat1 < 2 * this.mActivity.getCameraWidth() / 3) && (i == 0) && (this.jumpingAllowed))
-            {
-                jump(paramTouchEvent.getPointerID());
-                return;
-            }
-            if ((i == 1) && (this.currentJumpID != paramTouchEvent.getPointerID()))
-            {
+                //if the player let go and he wasn't using that to jump
+                this.mActivity.log("STOP");
                 moveStop();
                 return;
             }
-        } while ((this.currentJumpID != paramTouchEvent.getPointerID()) || (i != 1));
-        this.currentJumpID = -1;
+            else
+            {
+                //otherwise it must have been the jump so reset the jump id
+                this.currentJumpID = -1;
+            }
+        }
     }
 
     public void reload(int paramInt1, int paramInt2)
@@ -125,6 +136,7 @@ public class Player
         }
         handleYMovement();
         handleXMovement();
+        this.mActivity.log(this.velocity_x+" : "+this.body.getLinearVelocity().y);
         this.body.setLinearVelocity(this.velocity_x, this.body.getLinearVelocity().y);
     }
 }

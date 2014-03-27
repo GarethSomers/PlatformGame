@@ -2,6 +2,7 @@ package com.platform.main;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.hardware.SensorManager;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,12 +25,6 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
-import org.andengine.opengl.texture.TextureOptions;
-import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
-import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
-import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
-import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
-import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 public class MainActivity
@@ -45,12 +40,9 @@ public class MainActivity
     private LevelManager levelManager;
     private Font mFont;
     private PhysicsWorld mPhysicsWorld;
-    private TextureRegion mSquareTextureRegion;
     private MaterialManager materialManager;
     private Text speedText;
     private Player thePlayer;
-    private Text xText;
-    private Text yText;
 
     private void createCamera()
     {
@@ -93,9 +85,15 @@ public class MainActivity
 
     private void createPhysics()
     {
-        setPhysicsWorld(new PhysicsWorld(new Vector2(0.0F, 9.80665F), false));
+        setPhysicsWorld(new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false));
+        this.getEngine().registerUpdateHandler(this.getPhysicsWorld());
+    }
+
+    private void createDebugDraw()
+    {
         this.debug = new DebugRenderer(this.mPhysicsWorld, getVertexBufferObjectManager());
-        setDebug(this.debug);
+        this.setDebug(this.debug);
+        this.getScene().attachChild(this.debug);
     }
 
     private void createPlayer()
@@ -121,11 +119,8 @@ public class MainActivity
         this.mFont = null;
         this.mPhysicsWorld = null;
         this.mRenderSurfaceView = null;
-        this.mSquareTextureRegion = null;
         this.speedText = null;
         this.thePlayer = null;
-        this.xText = null;
-        this.yText = null;
         System.gc();
         finish();
     }
@@ -212,18 +207,6 @@ public class MainActivity
     {
         this.mFont = FontFactory.create(getFontManager(), getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, 1), 24.0F);
         this.mFont.load();
-        BuildableBitmapTextureAtlas localBuildableBitmapTextureAtlas = new BuildableBitmapTextureAtlas(getEngine().getTextureManager(), 8, 8, TextureOptions.REPEATING_BILINEAR);
-        this.mSquareTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(localBuildableBitmapTextureAtlas, this, "gfx/ground.png");
-        try
-        {
-            localBuildableBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder(0, 0, 0));
-            localBuildableBitmapTextureAtlas.load();
-            return;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 
     public Scene onCreateScene()
@@ -237,55 +220,32 @@ public class MainActivity
         createPlayer();
         createCamera();
         createContactListener();
+        createDebugDraw();
+        this.getScene().registerUpdateHandler(this);
         return getScene();
     }
 
     public boolean onSceneTouchEvent(Scene paramScene, TouchEvent paramTouchEvent)
     {
         //TODO fix the close and reset buttons
-        /*int i;
-        if (paramTouchEvent.getX() < 50.0F)
+        if ((paramTouchEvent.getX() < 50.0F) & (paramTouchEvent.getY() < 50.0F))
         {
-            i = 1;
-            if (paramTouchEvent.getY() >= 50.0F) {
-                //break label43;
-            }
+            //if left side
+            this.reset();
         }
-        label43:
-        for (int j = 1;; j = 0)
+        else if ((paramTouchEvent.getX() > (this.getCameraWidth() - 50.0F)) & (paramTouchEvent.getY() < 50.0F))
         {
-            if ((i & j) == 0) {
-                break label43;
-            }
-            reset();
-            return true;
-            i = 0;
-            break;
+            this.closeGame();
         }
-        label49:
-        if (paramTouchEvent.getX() > -50 + getCameraWidth()) {}
-        for (int k = 1;; k = 0)
-        {
-            boolean bool = paramTouchEvent.getY() < 50.0F;
-            int m = 0;
-            if (bool) {
-                m = 1;
-            }
-            if ((k & m) == 0) {
-                break;
-            }
-            closeGame();
-            return true;
-        }*/
         this.thePlayer.moveDetect(paramTouchEvent.getX(), paramTouchEvent.getY(), paramTouchEvent);
         return true;
     }
 
     public void onUpdate(float paramFloat)
     {
-        this.speedText.setText(this.thePlayer.getSpeed());
+        //this.speedText.setText(this.thePlayer.getSpeed());
         this.thePlayer.updatePosition();
-        this.levelManager.updateLevel();
+        //this.levelManager.updateLevel();
     }
 
     public void reset()
