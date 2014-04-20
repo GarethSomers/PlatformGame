@@ -1,6 +1,8 @@
-package com.platform.main;
+package com.platform.main.gameobject;
 
-import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.platform.main.MainActivity;
+import com.platform.main.gameobject.RectangularPlatform;
 
 public class Doorway
         extends RectangularPlatform
@@ -16,6 +18,7 @@ public class Doorway
         this.destinationX = paramInt1;
         this.destinationY = paramInt2;
         this.body.setUserData(this);
+        ((Fixture)this.body.getFixtureList().get(0)).setSensor(true);
     }
 
     public String getDestination()

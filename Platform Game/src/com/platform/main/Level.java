@@ -1,15 +1,17 @@
 package com.platform.main;
 
-import java.io.IOException;
+import com.platform.main.gameobject.AnimatedGameObject;
+import com.platform.main.gameobject.ClippingPlatform;
+import com.platform.main.gameobject.Enemy;
+import com.platform.main.gameobject.RectangularPlatform;
+import com.platform.main.gameobject.SolidClippingPlatform;
+
 import java.util.ArrayList;
-import java.util.Iterator;
+
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
-import org.andengine.engine.Engine;
-import org.andengine.engine.camera.ZoomCamera;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.ParallaxBackground;
-import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
 
 public class Level
@@ -21,10 +23,11 @@ public class Level
     //backgrounds
     private ParallaxBackground.ParallaxEntity autoParallaxBackground;
     private Sprite foregroundImage;
-    //objets
+    //objects
     private ArrayList<RectangularPlatform> platforms = new ArrayList();
     private ArrayList<Enemy> enemiesNeedRemoving = new ArrayList();
     private ArrayList<Enemy> hurtBoxes = new ArrayList();
+    private ArrayList<AnimatedGameObject> objects = new ArrayList();
 
     public Level(MainActivity paramMainActivity)
     {
@@ -44,15 +47,22 @@ public class Level
         mActivity.getCamera().setBounds(0.0F, 0.0F, pWidth, pHeight);
 
         //Add Default Movement Constraints
-        this.platforms.add(new ClippingPlatform(0.0F, -1.0F, pWidth, 1.0F, mActivity));
-        this.platforms.add(new ClippingPlatform(-1.0F, 0.0F, 1.0F, pHeight, mActivity));
-        this.platforms.add(new ClippingPlatform(0.0F, pHeight + 1, pWidth, 1.0F, mActivity));
-        this.platforms.add(new ClippingPlatform(pWidth + 1, 0.0F, 1.0F, pHeight, mActivity));
+        this.addPlatform(new SolidClippingPlatform(0.0F, -1.0F, pWidth, 1.0F, mActivity));
+        this.addPlatform(new SolidClippingPlatform(-1.0F, 0.0F, 1.0F, pHeight, mActivity));
+        this.addPlatform(new SolidClippingPlatform(0.0F, pHeight + 1, pWidth, 1.0F, mActivity));
+        this.addPlatform(new SolidClippingPlatform(pWidth + 1, 0.0F, 1.0F, pHeight, mActivity));
     }
 
     public void addRectangularPlatform(RectangularPlatform pRectangularPlatform)
     {
         this.platforms.add(pRectangularPlatform);
+    }
+
+    public void addGameObject(AnimatedGameObject aAnimatedGameObject)
+    {
+        aAnimatedGameObject.setAttached(true);
+        this.objects.add(aAnimatedGameObject);
+        this.scene.attachChild(aAnimatedGameObject.getShape());
     }
 
     public void completeLevelLoading()
@@ -62,12 +72,12 @@ public class Level
         {
             if(p.getAttached() == false)
             {
-                this.scene.attachChild(p.getRectangle());
+                this.scene.attachChild(p.getShape());
             }
         }
         for(Enemy h : this.hurtBoxes)
         {
-            this.scene.attachChild(h.getSprite());
+            this.scene.attachChild(h.getShape());
         }
     }
 
@@ -84,20 +94,20 @@ public class Level
         this.foregroundImage = new Sprite(0.0F, 0.0F, this.mActivity.getMaterialManager().getMaterial(paramString2, paramInt1, paramInt2), this.mActivity.getVertexBufferObjectManager());
         this.scene.attachChild(this.foregroundImage);
         paramMainActivity.getCamera().setBounds(0.0F, 0.0F, paramInt1, paramInt2);
-        paramArrayList.add(new ClippingPlatform(0.0F, -1.0F, paramInt1, 1.0F, paramMainActivity));
-        paramArrayList.add(new ClippingPlatform(-1.0F, 0.0F, 1.0F, paramInt2, paramMainActivity));
-        paramArrayList.add(new ClippingPlatform(0.0F, paramInt2 + 1, paramInt1, 1.0F, paramMainActivity));
-        paramArrayList.add(new ClippingPlatform(paramInt1 + 1, 0.0F, 1.0F, paramInt2, paramMainActivity));
+        this.addPlatform(new ClippingPlatform(0.0F, -1.0F, paramInt1, 1.0F, paramMainActivity));
+        this.addPlatform(new ClippingPlatform(-1.0F, 0.0F, 1.0F, paramInt2, paramMainActivity));
+        this.addPlatform(new ClippingPlatform(0.0F, paramInt2 + 1, paramInt1, 1.0F, paramMainActivity));
+        this.addPlatform(new ClippingPlatform(paramInt1 + 1, 0.0F, 1.0F, paramInt2, paramMainActivity));
 
         this.setMusicByString("music");
 
         for(RectangularPlatform p : this.platforms)
         {
-            this.scene.attachChild(p.getRectangle());
+            this.scene.attachChild(p.getShape());
         }
         for(Enemy h : this.hurtBoxes)
         {
-            this.scene.attachChild(h.getSprite());
+            this.scene.attachChild(h.getShape());
         }
     }
 
@@ -108,7 +118,7 @@ public class Level
 
     public void addEnemy(Enemy e)
     {
-        this.scene.attachChild(e.getSprite());
+        this.scene.attachChild(e.getShape());
         this.hurtBoxes.add(e);
     }
 
@@ -131,7 +141,7 @@ public class Level
     {
         p.setAttached(true);
         this.platforms.add(p);
-        this.scene.attachChild(p.getRectangle());
+        this.scene.attachChild(p.getShape());
     }
 
     public Scene getScene()
@@ -161,5 +171,75 @@ public class Level
         {
             mActivity.log("Could not load music (mfx/"+pMusic+".mp3)");
         }
+    }
+
+    public void destroy()
+    {
+        //Delete Enemies
+        /*mActivity.runOnUpdateThread(new Runnable() {
+            @Override
+            public void run() {*/
+                /*Iterator<Body> allMyBodies = mActivity.getPhysicsWorld().getBodies();
+                while(allMyBodies.hasNext())
+                {
+                    try {
+                        final Body myCurrentBody = allMyBodies.next();
+                        mActivity.runOnUpdateThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mActivity.getPhysicsWorld().destroyBody(myCurrentBody);
+                            }
+                        });
+                    } catch (Exception e) {
+                        mActivity.log("Level : Could not destroy body " + e);
+                    }
+                }*/
+                for (int i = 0; i < objects.size(); i++) {
+                    try {
+                        final int myI = i;
+                        scene.detachChild(objects.get(myI).getShape());
+                        mActivity.getPhysicsWorld().destroyBody(objects.get(myI).getBody());
+                    } catch (Exception e) {
+                        mActivity.log("Level : Could not destroy enemy " + e);
+                    }
+                }
+                hurtBoxes.clear();
+
+                for (int i = 0; i < hurtBoxes.size(); i++) {
+                    try {
+                        final int myI = i;
+                        scene.detachChild(hurtBoxes.get(myI).getShape());
+                        mActivity.getPhysicsWorld().destroyBody(hurtBoxes.get(myI).getBody());
+                    } catch (Exception e) {
+                        mActivity.log("Level : Could not destroy enemy " + e);
+                    }
+                }
+                hurtBoxes.clear();
+
+                for (int i = 0; i < platforms.size(); i++) {
+                    try {
+                        final int myI = i;
+                        scene.detachChild(platforms.get(myI).getShape());
+                        mActivity.getPhysicsWorld().destroyBody(platforms.get(myI).getBody());
+                    } catch (Exception e) {
+                        mActivity.log("Level : Could not destroy platform " + e);
+                    }
+                }
+                platforms.clear();
+
+                //Delete music
+                if(this.music != null)
+                {
+                    music.stop();
+                    music.release();
+                }
+
+                scene.detachChild(mActivity.getThePlayer().getShape());
+                scene.detachChild(mActivity.getDebug());
+                //Delete foreground
+                scene.detachChild(foregroundImage);
+                System.gc();
+            /*}
+        });*/
     }
 }

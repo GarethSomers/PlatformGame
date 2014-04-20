@@ -1,120 +1,171 @@
 package com.platform.main;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.WorldManifold;
+import com.platform.main.gameobject.ClippingPlatform;
+import com.platform.main.gameobject.Doorway;
+import com.platform.main.gameobject.Enemy;
+import com.platform.main.gameobject.Ladder;
+import com.platform.main.gameobject.Player;
+import com.platform.main.gameobject.Lemon;
 
-public class MyContactListener
-        implements ContactListener
+public class MyContactListener implements ContactListener
 {
     MainActivity mActivity;
+    //variables
+    private Player localPlayer = null;
+    private boolean playersFeet = false;
+    private Ladder localLadder = null;
+    private ClippingPlatform localClippingPlatform = null;
+    private Enemy localEnemy = null;
+    private Doorway localDoorway = null;
+    private Lemon localLemon = null;
 
+    /*
+    * Constructor
+    *
+    */
     public MyContactListener(MainActivity paramMainActivity)
     {
         this.mActivity = paramMainActivity;
     }
 
-    public void beginContact(Contact paramContact)
+    /*
+    * This method is used to reset the objects used before processing a collision
+    *
+    * @param newState This is used to set variables with this value. For example setting jumping true or false when entering and exiting a jumping zone
+    */
+    public void resetObjects()
     {
-        Fixture[] arrayOfFixture = { paramContact.getFixtureA(), paramContact.getFixtureB() };
-        Player localPlayer = null;
-        Ladder localLadder = null;
-        ClippingPlatform localClippingPlatform = null;
-        Enemy localEnemy = null;
-        Object localObject1 = null;
-        Doorway localDoorway = null;
+        this.localPlayer = null;
+        this.playersFeet = false;
+        this.localLadder = null;
+        this.localClippingPlatform = null;
+        this.localEnemy = null;
+        this.localDoorway = null;
+        this.localLemon = null;
+    }
 
-        int i = arrayOfFixture.length;
-        int j = 0;
-        if (j >= i)
+    /*
+    * This method is used to identify the objects
+    *
+    * @param arrayOfFixture This is an array of the fixtures
+    */
+    public void identifyObjects(Fixture[] arrayOfFixture)
+    {
+        for(int i = 0; i < arrayOfFixture.length; i++)
         {
-            if (localPlayer != null)
-            {
-                getThePlayer().enableClimbing();
-            }
-            if (localObject1 != null)
-            {
-                getThePlayer().forceJump();
-                localEnemy.kill();
-            }
-        }
+            //This is the parent object. There is always a parent.
+            Object parentUserData = arrayOfFixture[i].getBody().getUserData();
+            //This is the child object. For to have this child there must be a parent.
+            Object childUserData = arrayOfFixture[i].getUserData();
 
-        while (localClippingPlatform == null)
-        {
-            Fixture localFixture = arrayOfFixture[j];
-            Object localObject2 = localFixture.getBody().getUserData();
-            Object localObject3 = localFixture.getUserData();
-            if ((localObject2 instanceof ClippingPlatform)) {
-                localClippingPlatform = (ClippingPlatform)localObject2;
+            //Do parent checks
+            if(parentUserData instanceof Player)
+            {
+                //Its the player
+                localPlayer = this.mActivity.getThePlayer();
+            }
+            else if(parentUserData instanceof Enemy)
+            {
+                localEnemy = (Enemy)parentUserData;
+            }
+            else if(parentUserData instanceof Ladder)
+            {
+                localLadder = (Ladder)parentUserData;
+            }
+            else if(parentUserData instanceof Doorway)
+            {
+                localDoorway = (Doorway)parentUserData;
+                //enable can go through door?
+            }
+            else if(parentUserData instanceof ClippingPlatform)
+            {
+                localClippingPlatform = (ClippingPlatform)parentUserData;
+            }
+            else if(parentUserData instanceof Lemon)
+            {
+                this.localLemon = (Lemon)parentUserData;
             }
 
-            if ((localObject3 instanceof String))
+            //Do child checks
+            if(childUserData instanceof String)
             {
-                String str = (String)localObject3;
-                if ((str != null) && (str.equals("playerFeet"))) {
-                    localObject1 = localFixture;
+                //if its a string
+                String theString = (String)childUserData;
+                if(theString.equals("playerFeet"))
+                {
+                    //if its feet
+                    playersFeet = true;
                 }
             }
-            j++;
+        }
+    }
 
-            if ((localObject2 instanceof Ladder)) {
-                //ladder
-                getThePlayer().allowJumping();
-                localLadder = (Ladder)localObject2;
-            } else if ((localObject2 instanceof Player)) {
-                //player
-                localPlayer = (Player)localObject2;
-            } else if ((localObject2 instanceof Enemy)) {
-                //enemy
-                localEnemy = (Enemy)localObject2;
-            } else if ((localObject2 instanceof Doorway)) {
-                //doorway
-                localDoorway = (Doorway)localObject2;
-                this.mActivity.log("Going Through Doorway");
-                this.mActivity.getLevelManager().scheduleLoadLevel(localDoorway.getDestination(), localDoorway.getDestinationX(), localDoorway.getDestinationY());
+    /*
+    * This method is used to process the objects
+    *
+    * @param newState This is used to set variables with this value. For example setting jumping true or false when entering and exiting a jumping zone
+    */
+    public void processObjects(boolean newState)
+    {
+        if( playersFeet == true)
+        {
+            //players feet must have hit something
+            if(localEnemy != null)
+            {
+                //he must have hit/left an enemy
+                this.mActivity.getThePlayer().forceJump();
+                localEnemy.kill();
+            }
+            else if(localLadder != null)
+            {
+                //he must have hit/left a ladder
+                this.mActivity.getThePlayer().setClimbing(newState);
+            }
+            else if(localClippingPlatform != null)
+            {
+                //he must have hit/left a platform
+                this.mActivity.getThePlayer().setJumping(newState);
+            }
+            else if(localLemon != null)
+            {
+                localLemon.collect();
             }
         }
+        else if(localPlayer != null)
+        {
+            //if the player hits an enemy etc.
+            if(localDoorway != null)
+            {
+                //he must have hit/left a platform
+                mActivity.getThePlayer().setInfrontOfDoorway(newState);
+                mActivity.getLevelManager().setupScheduleLoadLevel(localDoorway.getDestination(), localDoorway.getDestinationX(), localDoorway.getDestinationY());
+            }
+        }
+    }
 
+    public void processContact(Fixture[] arrayOfFixture, boolean newState)
+    {
+        //reset
+        this.resetObjects();
+        //identify objects
+        this.identifyObjects(arrayOfFixture);
+        //process objects
+        this.processObjects(newState);
+    }
+      
+    public void beginContact(Contact paramContact)
+    {
+        this.processContact(new Fixture[]{ paramContact.getFixtureA(), paramContact.getFixtureB() }, true);
     }
 
     public void endContact(Contact paramContact)
     {
-        int i = 0;
-        Fixture[] arrayOfFixture = { paramContact.getFixtureA(), paramContact.getFixtureB() };
-        Player localPlayer = null;
-        Ladder localLadder = null;
-        int j = arrayOfFixture.length;
-        if (i >= j)
-        {
-            if ((localPlayer != null) && (localLadder != null)) {
-                getThePlayer().disableClimbing();
-            }
-            return;
-        }
-        Fixture localFixture = arrayOfFixture[i];
-        Object localObject1 = localFixture.getBody().getUserData();
-        Object localObject2 = localFixture.getUserData();
-        if ((localObject1 instanceof Ladder)) {
-            localLadder = (Ladder)localObject1;
-        }
-
-        if ((localObject2 instanceof Player)) {
-            localPlayer = (Player)localObject2;
-        }
-        i++;
-        if ((localObject1 instanceof Player)) {
-            localPlayer = (Player)localObject1;
-        }
-    }
-
-    public Player getThePlayer()
-    {
-        return this.mActivity.getThePlayer();
+        this.processContact(new Fixture[]{ paramContact.getFixtureA(), paramContact.getFixtureB() }, false);
     }
 
     public void postSolve(Contact paramContact, ContactImpulse paramContactImpulse)
@@ -124,40 +175,42 @@ public class MyContactListener
 
     public void preSolve(Contact paramContact, Manifold paramManifold)
     {
-        /*Fixture localFixture1 = paramContact.getFixtureA();
-        Fixture localFixture2 = paramContact.getFixtureB();
-        Fixture localFixture3;
-        Fixture localFixture4;
-        Body localBody1;
-        Body localBody2;
-        WorldManifold localWorldManifold;
-        int i = 0;
-        if ((localFixture1.getBody().getUserData() != null) && ((localFixture1.getBody().getUserData() instanceof ClippingPlatform)))
-        {
-            localFixture3 = localFixture1;
-            localFixture4 = localFixture2;
-            localBody1 = localFixture3.getBody();
-            localBody2 = localFixture4.getBody();
-            localWorldManifold = paramContact.getWorldManifold();
-            i = localWorldManifold.getPoints().length;
-        }
-        for (int j = 0;; j++)
-        {
-            if (j >= i) {
-                paramContact.setEnabled(false);
-            }
-            Vector2 localVector2;
-            do
+        // getting the fixtures that collided
+        Fixture fixtureA = paramContact.getFixtureA();
+        Fixture fixtureB = paramContact.getFixtureB();
+        // variable to handle bodies y position
+        float playerYPosition;
+        float platformYPosition;
+        // checking if the collision bodies are the ones marked as "middle" and "player"
+        if ((fixtureA.getBody().getUserData() instanceof ClippingPlatform && fixtureB.getBody().getUserData() instanceof Player)
+          ||(fixtureA.getBody().getUserData() instanceof Player && fixtureB.getBody().getUserData() instanceof ClippingPlatform)) {
+            //By default disable the event from happening
+            paramContact.setEnabled(false);
+            //check if the player is moving up (jumping up)
+            if(this.mActivity.getThePlayer().getBody().getLinearVelocity().y < -0.1)
             {
-                do
-                {
-                    return;
-                } while ((localFixture2.getBody().getUserData() == null) || (!(localFixture2.getBody().getUserData() instanceof ClippingPlatform)));
-                localFixture3 = localFixture2;
-                localFixture4 = localFixture1;
-                break;
-                localVector2 = localBody1.getLocalVector(localBody1.getLinearVelocityFromWorldPoint(localWorldManifold.getPoints()[j]).sub(localBody2.getLinearVelocityFromWorldPoint(localWorldManifold.getPoints()[j])));
-            } while ((localVector2.y < -2.0F) || ((localVector2.y < 2.0F) && (localBody1.getLocalPoint(localWorldManifold.getPoints()[j]).y < 1.0F)));
-        }*/
+                //if so then don't detect anything
+                return;
+            }
+            // determining if the fixtureA represents the platform ("middle") or the player
+            if (fixtureA.getBody().getUserData() instanceof ClippingPlatform) {
+                // determining y positions
+                playerYPosition=fixtureB.getBody().getPosition().y;
+                platformYPosition=fixtureA.getBody().getPosition().y;
+            }
+            else
+            {
+                // determining y positions
+                playerYPosition=fixtureA.getBody().getPosition().y;
+                platformYPosition=fixtureB.getBody().getPosition().y;
+            }
+            // checking distance between bodies
+            float distance = playerYPosition - platformYPosition;
+            // if the distance is greater than player radius + half of the platform height...
+            if (distance<=0){
+                // don't manage the contact
+                paramContact.setEnabled(true);
+            }
+        }
     }
 }

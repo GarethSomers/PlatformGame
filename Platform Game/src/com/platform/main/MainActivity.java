@@ -7,14 +7,13 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 import com.badlogic.gdx.math.Vector2;
-import org.andengine.engine.Engine;
+import com.platform.main.gameobject.Player;
+
 import org.andengine.engine.camera.ZoomCamera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
-import org.andengine.engine.options.AudioOptions;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
-import org.andengine.engine.options.TouchOptions;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -46,7 +45,7 @@ public class MainActivity
 
     private void createCamera()
     {
-        this.camera.setChaseEntity(this.thePlayer.getSprite());
+        this.camera.setChaseEntity(this.thePlayer.getShape());
         this.camera.setBoundsEnabled(true);
         this.camera.setHUD(this.hud);
     }
@@ -91,16 +90,14 @@ public class MainActivity
 
     private void createDebugDraw()
     {
-        this.debug = new DebugRenderer(this.mPhysicsWorld, getVertexBufferObjectManager());
-        this.setDebug(this.debug);
-        this.getScene().attachChild(this.debug);
+        this.setDebug();
     }
 
     private void createPlayer()
     {
         this.thePlayer = new Player(50.0F, 50.0F, 100, this);
-        this.thePlayer.setXPos(getLevelManager().lastStartPosX);
-        this.thePlayer.setYPos(getLevelManager().lastStartPosY);
+        this.thePlayer.setX(getLevelManager().lastStartPosX);
+        this.thePlayer.setY(getLevelManager().lastStartPosY);
     }
 
     private void createScene()
@@ -112,7 +109,7 @@ public class MainActivity
     {
         this.camera = null;
         this.contactListener = null;
-        setDebug(null);
+        this.debug = null;
         this.levelManager = null;
         this.materialManager = null;
         this.mEngine = null;
@@ -121,6 +118,7 @@ public class MainActivity
         this.mRenderSurfaceView = null;
         this.speedText = null;
         this.thePlayer = null;
+        this.getLevelManager().getLevel().destroy();
         System.gc();
         finish();
     }
@@ -243,17 +241,16 @@ public class MainActivity
 
     public void onUpdate(float paramFloat)
     {
-        //this.speedText.setText(this.thePlayer.getSpeed());
+        this.speedText.setText(Integer.toString(this.thePlayer.getHealth()));
         this.thePlayer.updatePosition();
-        //this.levelManager.updateLevel();
+        this.levelManager.updateLevel();
     }
 
     public void reset()
     {
         this.thePlayer.setPos(this.levelManager.lastStartPosX, this.levelManager.lastStartPosY);
         this.thePlayer.setAlive(true);
-        this.thePlayer.jumpingAllowed = true;
-        this.thePlayer.jumping = false;
+        this.thePlayer.enableJumping();
         this.thePlayer.updatePosition();
     }
 
@@ -262,12 +259,13 @@ public class MainActivity
         this.camera = paramZoomCamera;
     }
 
-    public void setDebug(DebugRenderer paramDebugRenderer)
+    public void setDebug()
     {
         if (this.debug != null) {
             this.debug.detachSelf();
         }
-        this.debug = paramDebugRenderer;
+        this.debug = new DebugRenderer(this.getPhysicsWorld(),this.getVertexBufferObjectManager());
+        this.getScene().attachChild(this.debug);
     }
 
     public void setPhysicsWorld(PhysicsWorld paramPhysicsWorld)

@@ -1,6 +1,7 @@
-package com.platform.main;
+package com.platform.main.gameobject;
 
-import com.badlogic.gdx.physics.box2d.Body;
+import com.platform.main.MainActivity;
+import com.platform.main.gameobject.RectangularPlatform;
 
 public class ClippingPlatform
         extends RectangularPlatform
