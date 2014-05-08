@@ -16,7 +16,7 @@ public class RectangularPlatform extends BodyObject
     public RectangularPlatform(float paramFloat1, float paramFloat2, float paramFloat3, float paramFloat4, MainActivity paramMainActivity)
     {
         this.mActivity = paramMainActivity;
-        this.fixtureDef = PhysicsFactory.createFixtureDef(0.0F, 0.0F, 0.0F);
+        this.fixtureDef = PhysicsFactory.createFixtureDef(1.0F, 0.0F, 1.0F);
         this.theShape = new Rectangle(paramFloat1, paramFloat2, paramFloat3, paramFloat4, paramMainActivity.getVertexBufferObjectManager());
         this.theShape.setAlpha(0.0F);
         this.body = PhysicsFactory.createBoxBody(paramMainActivity.getPhysicsWorld(), this.theShape, BodyDef.BodyType.StaticBody, this.fixtureDef);

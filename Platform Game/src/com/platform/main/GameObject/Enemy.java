@@ -1,26 +1,33 @@
 package com.platform.main.gameobject;
 
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.platform.main.MainActivity;
 
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 
-public class Enemy
-        extends Person
+public class Enemy extends MovableSprite
 {
     private Fixture mFeet;
     private float range;
 
-    public Enemy(float paramFloat1, float paramFloat2, String paramString, MainActivity paramMainActivity)
+    //create generic object
+    public Enemy(float xPos, float yPos, String paramString, MainActivity mainActivity)
     {
-        this.mActivity = paramMainActivity;
+        this(xPos, yPos, 64, 120, "Enemy.png", 4, 5, mainActivity);
+    }
+
+    //create enemy
+    public Enemy(float xPos,float yPos,int width, int height, String image, int columns, int rows, MainActivity mainActivity)
+    {
+        //call movable sprite constructor
+        super(xPos, yPos, width, height, image, columns, rows, mainActivity);
+        //range
         this.range = 60.0F;
-        this.mTiledTextureRegion = paramMainActivity.getMaterialManager().getTiledTexture("Enemy", 64, 120, 4, 5);
-        this.theShape = new AnimatedSprite(paramFloat1, paramFloat2, this.mTiledTextureRegion, this.mActivity.getEngine().getVertexBufferObjectManager());
-        this.getShape().animate(this.PERSON_STANDING, this.PERSON_STANDING_S, this.PERSON_STANDING_E, true);
-        this.fixtureDef = PhysicsFactory.createFixtureDef(2.0F, 0.0F, 1.0F);
-        createBody();
+        //add feet
+        this.addFeet();
+        //set userdata
         this.body.setUserData(this);
     }
 

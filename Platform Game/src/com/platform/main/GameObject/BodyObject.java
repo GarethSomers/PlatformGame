@@ -94,4 +94,36 @@ public abstract class BodyObject
     {
         return this.theShape;
     }
+
+
+    public void addToPhysicsWorld()
+    {
+        if(this.physicsConnector != null)
+        {
+            this.mActivity.getPhysicsWorld().unregisterPhysicsConnector(physicsConnector);
+        }
+        this.physicsConnector = new PhysicsConnector(this.getShape(), this.body, true, false);
+        this.mActivity.getPhysicsWorld().registerPhysicsConnector(physicsConnector);
+    }
+
+    public void addToSpriteWorld()
+    {
+        if(this.getShape().hasParent() == true)
+        {
+            this.getShape().getParent().detachChild(this.getShape());
+        }
+        this.mActivity.getLevelManager().getScene().attachChild(this.getShape());
+    }
+
+    public void addToWorld()
+    {
+        this.addToPhysicsWorld();
+        this.addToSpriteWorld();
+    }
+
+    public void reload(int xPos, int yPos)
+    {
+        this.setPos(xPos, yPos);
+        this.addToWorld();
+    }
 }

@@ -96,7 +96,7 @@ public class MyContactListener implements ContactListener
             {
                 //if its a string
                 String theString = (String)childUserData;
-                if(theString.equals("playerFeet"))
+                if(theString.equals("feet"))
                 {
                     //if its feet
                     playersFeet = true;

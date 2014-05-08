@@ -3,14 +3,13 @@ package com.platform.main.gameobject;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.platform.main.MainActivity;
-import com.platform.main.gameobject.Person;
 
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.input.touch.TouchEvent;
 
 public class Player
-        extends Person
+        extends MovableSprite
 {
     private long[] PLAYER_KILLING;
     private int currentJumpID = -1;
@@ -19,9 +18,9 @@ public class Player
     private int climbing;
     private boolean infrontOfDoorway;
 
-    public Player(float paramFloat1, float paramFloat2, int paramInt, MainActivity paramMainActivity)
+    public Player(float xPos, float yPos, int paramInt, MainActivity mainActivity)
     {
-        this.mActivity = paramMainActivity;
+        super(xPos, yPos, 68, 120, "player.png", 4, 5, mainActivity);
         //set defaults
         this.JUMP_HEIGHT = 6;
         this.PLAYER_HEIGHT = 24;
@@ -29,15 +28,8 @@ public class Player
         this.PLAYER_ACCELERATION = 0.8F;
         this.MAX_SPEED = 3.5F;
         //setup object
-        this.mTiledTextureRegion = this.mActivity.getMaterialManager().getTiledTexture("player.png", 68, 120, 4, 5);
-        this.theShape = new AnimatedSprite(paramFloat1, paramFloat2, this.mTiledTextureRegion, this.mActivity.getEngine().getVertexBufferObjectManager());
-        this.getShape().animate(this.PERSON_STANDING, this.PERSON_STANDING_S, this.PERSON_STANDING_E, true);
-        this.currentAnimation = this.PERSON_STANDING_S;
-        this.fixtureDef = PhysicsFactory.createFixtureDef(5.0F, 0.0F, 0.0F);
-        createBody();
-        ((Fixture)this.body.getFixtureList().get(1)).setUserData("playerFeet");
-        this.body.setUserData(this);
-        displayPlayer();
+        this.addFeet();
+        this.addToWorld();
     }
 
     public void enableJumping()
@@ -90,12 +82,6 @@ public class Player
             setAnimation("climbing");
             this.enableJumping();
         }
-    }
-
-    public void displayPlayer()
-    {
-        addToPhysicsWorld();
-        this.mActivity.getLevelManager().getScene().attachChild(this.getShape());
     }
 
     public void forceJump()
@@ -176,13 +162,6 @@ public class Player
         }
     }
 
-    public void reload(int paramInt1, int paramInt2)
-    {
-        addToPhysicsWorld();
-        setPos(paramInt1, paramInt2);
-        displayPlayer();
-    }
-
     public void updatePosition()
     {
         if (!getAlive()) {
@@ -190,7 +169,7 @@ public class Player
         }
         handleYMovement();
         handleXMovement();
-        //this.mActivity.log(this.velocity_x+" : "+this.body.getLinearVelocity().y);
+        //move
         this.body.setLinearVelocity(this.velocity_x, this.body.getLinearVelocity().y);
     }
 

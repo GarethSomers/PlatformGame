@@ -16,7 +16,7 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.Vector2Pool;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 
-public abstract class Person extends BodyObject
+public abstract class MovableSprite extends AnimatedGameObject
 {
     protected int ORIGINAL_JUMP_HEIGHT = 6;
     protected int CLIMB_JUMP_HEIGHT = 3;
@@ -48,39 +48,25 @@ public abstract class Person extends BodyObject
     protected int PLAYER_WIDTH;
     protected int currentAnimation;
 
+    //additional object
+    protected Fixture feet;
+
     //movement
     protected boolean jumping = false;
     protected boolean jumpingAllowed = true;
     protected boolean moveLeft = false;
     protected boolean moveRight = false;
     protected float velocity_x = 0.0F;
-    protected Fixture feet;
     protected boolean alive = true;
     protected int health = 50;
 
-    public void addToPhysicsWorld()
+    public MovableSprite(float xPos, float yPos, int width, int height, String image, int columns, int rows, MainActivity mainActivity)
     {
-        if(this.physicsConnector != null)
-        {
-            this.mActivity.getPhysicsWorld().unregisterPhysicsConnector(physicsConnector);
-        }
-        this.physicsConnector = new PhysicsConnector(this.getShape(), this.body, true, false);
-        this.mActivity.getPhysicsWorld().registerPhysicsConnector(physicsConnector);
-    }
+        super(xPos, yPos, width, height, image, columns, rows, mainActivity);
 
-    public void createBody()
-    {
-        this.body = PhysicsFactory.createBoxBody(this.mActivity.getPhysicsWorld(), this.getShape(), BodyDef.BodyType.DynamicBody, this.fixtureDef);
-        this.getBody().setFixedRotation(true);
-        this.getBody().setLinearVelocity(0.0F, 0.0F);
-        addToPhysicsWorld();
-        PolygonShape localPolygonShape = new PolygonShape();
-        localPolygonShape.setAsBox(0.1F, 0.1F, new Vector2(0.0F, 0.4F), 0.0F);
-        FixtureDef localFixtureDef = PhysicsFactory.createFixtureDef(1.0F, 0.0F, 0.0F, true);
-        localFixtureDef.isSensor = true;
-        localFixtureDef.shape = localPolygonShape;
-        this.feet = this.getBody().createFixture(localFixtureDef);
-        localPolygonShape.dispose();
+        //setup animation
+        this.getShape().animate(this.PERSON_STANDING, this.PERSON_STANDING_S, this.PERSON_STANDING_E, true);
+        this.currentAnimation = this.PERSON_STANDING_S;
     }
 
     public boolean getAlive()
@@ -225,4 +211,21 @@ public abstract class Person extends BodyObject
         this.velocity_x = 0;
         this.moveStop();
     }
+
+    //add the feet
+    public void addFeet()
+    {
+        //create new polygon shape
+        PolygonShape localPolygonShape = new PolygonShape();
+        localPolygonShape.setAsBox(0.1F, 0.1F, new Vector2(0.0F, 0.4F), 0.0F);
+        FixtureDef localFixtureDef = PhysicsFactory.createFixtureDef(1.0F, 0.0F, 0.0F, true);
+        localFixtureDef.isSensor = true;
+        localFixtureDef.shape = localPolygonShape;
+        //localPolygonShape.dispose();
+        //create feet
+        this.feet = this.getBody().createFixture(localFixtureDef);
+        //set userdata
+        ((Fixture)this.body.getFixtureList().get(1)).setUserData("feet");
+    }
+
 }

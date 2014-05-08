@@ -1,7 +1,9 @@
 package com.platform.main.gameobject;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import org.andengine.extension.physics.box2d.PhysicsConnector;
@@ -9,27 +11,62 @@ import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.platform.main.*;
 
 public class AnimatedGameObject extends BodyObject
 {
+    //create dynamic (moveable) animated object with no animations.
     public AnimatedGameObject(float xPos, float yPos, int width, int height, String image, MainActivity paramMainActivity)
     {
-        this(xPos, yPos, width, height, image, 1, 1, paramMainActivity);
+        this(xPos, yPos, width, height, image, 1, 1,BodyDef.BodyType.DynamicBody, paramMainActivity);
     }
 
+    //create animatnion object with passed body type
+    public AnimatedGameObject(float xPos, float yPos, int width, int height, String image, BodyDef.BodyType bodyType, MainActivity paramMainActivity)
+    {
+        this(xPos, yPos, width, height, image, 1, 1,bodyType, paramMainActivity);
+    }
+
+    //create animated game object moveable
     public AnimatedGameObject(float xPos, float yPos, int width, int height, String image, int columns, int rows, MainActivity paramMainActivity)
     {
-        this.mActivity = paramMainActivity;
-        this.fixtureDef = PhysicsFactory.createFixtureDef(0.0F, 0.0F, 0.0F);
-        this.mTiledTextureRegion = this.mActivity.getMaterialManager().getTiledTexture(image, width*columns, height*rows, columns, rows);
-        this.theShape = new AnimatedSprite(xPos, yPos, this.mTiledTextureRegion, this.mActivity.getEngine().getVertexBufferObjectManager());
-        this.body = PhysicsFactory.createBoxBody(paramMainActivity.getPhysicsWorld(), this.getShape(), BodyDef.BodyType.StaticBody, this.fixtureDef);
-        this.body.setAwake(false);
-        this.body.setUserData(this);
-        paramMainActivity.getPhysicsWorld().registerPhysicsConnector(new PhysicsConnector(this.getShape(), this.body, false, false));
+        this(xPos, yPos, width, height, image, columns, rows,BodyDef.BodyType.DynamicBody, paramMainActivity);
     }
 
+    //main constructor
+    public AnimatedGameObject(float xPos, float yPos, int width, int height, String image, int columns, int rows, BodyDef.BodyType bodyType, MainActivity paramMainActivity)
+    {
+        //save main activity
+        this.mActivity = paramMainActivity;
+
+        //create fixture
+        this.fixtureDef = PhysicsFactory.createFixtureDef(1.0F, 0F, 1.0F);
+
+        //create tiled texture
+        this.mTiledTextureRegion = this.mActivity.getMaterialManager().getTiledTexture(image, width*columns, height*rows, columns, rows);
+
+        //create shape
+        this.theShape = new AnimatedSprite(xPos, yPos, this.mTiledTextureRegion, this.mActivity.getEngine().getVertexBufferObjectManager());
+
+        //create box body with shape
+        this.body = PhysicsFactory.createBoxBody(paramMainActivity.getPhysicsWorld(), this.getShape(), bodyType, this.fixtureDef);
+
+        //see variables
+        this.body.setAwake(false);
+        this.body.setUserData(this);
+        this.body.setFixedRotation(true);
+        this.body.setLinearVelocity(0.0F, 0.0F);
+
+        //register physics connection
+        paramMainActivity.getPhysicsWorld().registerPhysicsConnector(new PhysicsConnector(this.getShape(), this.body, true, true));
+
+        //add to the physics world
+        this.addToWorld();
+    }
+
+
+    //get the shape
     public AnimatedSprite getShape()
     {
         return (AnimatedSprite)this.theShape;

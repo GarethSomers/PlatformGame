@@ -43,7 +43,7 @@ public class LevelManager
 
     public void LoadLevel()
     {
-        LoadLevel("three", 50, 50);
+        LoadLevel("one", 50, 50);
     }
 
     /* Error */
@@ -109,8 +109,7 @@ public class LevelManager
                     }
                     else if(data[0].equals(this.TYPE_FROG))
                     {
-                        mActivity.log("Adding a frog");
-                        this.currentLevel.addGameObject(new Frog(Integer.parseInt(data[1]),Integer.parseInt(data[2]),mActivity));
+                        this.currentLevel.addGameObject(new Frog(720,920,mActivity));
                     }
                 }
                 catch(Exception e)
