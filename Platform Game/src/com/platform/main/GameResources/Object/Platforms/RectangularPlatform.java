@@ -1,15 +1,12 @@
-package com.platform.main.gameobject;
+package com.platform.main.GameResources.Object.Platforms;
 
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.platform.main.GameResources.Object.BodyObject;
 import com.platform.main.MainActivity;
 
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
-import org.andengine.extension.physics.box2d.PhysicsWorld;
 
 public class RectangularPlatform extends BodyObject
 {

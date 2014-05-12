@@ -1,11 +1,9 @@
-package com.platform.main.gameobject;
+package com.platform.main.GameResources.Object.Players;
 
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.platform.main.MainActivity;
 
 import org.andengine.entity.sprite.AnimatedSprite;
-import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.input.touch.TouchEvent;
 
 public class Player

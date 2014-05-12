@@ -20,7 +20,7 @@ public class MaterialManager
         this.mActivity = paramMainActivity;
     }
 
-    public ITextureRegion getMaterial(String paramString, int pWidth, int pHeight)
+    public ITextureRegion getTexture(String paramString, int pWidth, int pHeight)
     {
         TextureRegion localTextureRegion = null;
         try

@@ -1,9 +1,8 @@
-package com.platform.main.gameobject;
+package com.platform.main.GameResources.Object.Players;
 
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.platform.main.MainActivity;
 
-public class Frog extends AnimatedGameObject
+public class Frog extends Enemy
 {
     //variables
     protected boolean alive = true;

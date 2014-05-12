@@ -1,7 +1,6 @@
-package com.platform.main.gameobject;
+package com.platform.main.GameResources.Object.Platforms;
 
 import com.platform.main.MainActivity;
-import com.platform.main.gameobject.RectangularPlatform;
 
 public class ClippingPlatform
         extends RectangularPlatform

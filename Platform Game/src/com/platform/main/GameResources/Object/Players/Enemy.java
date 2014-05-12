@@ -1,19 +1,13 @@
-package com.platform.main.gameobject;
+package com.platform.main.GameResources.Object.Players;
 
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.platform.main.MainActivity;
-
-import org.andengine.entity.sprite.AnimatedSprite;
-import org.andengine.extension.physics.box2d.PhysicsFactory;
 
 public class Enemy extends MovableSprite
 {
-    private Fixture mFeet;
     private float range;
 
     //create generic object
-    public Enemy(float xPos, float yPos, String paramString, MainActivity mainActivity)
+    public Enemy(float xPos, float yPos, MainActivity mainActivity)
     {
         this(xPos, yPos, 64, 120, "Enemy.png", 4, 5, mainActivity);
     }

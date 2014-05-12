@@ -1,4 +1,4 @@
-package com.platform.main.gameobject;
+package com.platform.main.GameResources.Object.Platforms;
 
 import com.platform.main.MainActivity;
 

@@ -1,8 +1,8 @@
-package com.platform.main.gameobject;
+package com.platform.main.GameResources.Object.Interactions;
 
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.platform.main.GameResources.Object.Platforms.RectangularPlatform;
 import com.platform.main.MainActivity;
-import com.platform.main.gameobject.RectangularPlatform;
 
 public class Ladder
         extends RectangularPlatform

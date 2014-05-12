@@ -1,10 +1,9 @@
-package com.platform.main.gameobject;
+package com.platform.main.GameResources.Object.Interactions;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.platform.main.GameResources.Object.AnimatedGameObject;
 import com.platform.main.MainActivity;
-
-import javax.microedition.khronos.opengles.GL10;
 
 public class Lemon extends AnimatedGameObject
 {

@@ -7,7 +7,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 import com.badlogic.gdx.math.Vector2;
-import com.platform.main.gameobject.Player;
+import com.platform.main.GameResources.Level.GameLevel;
+import com.platform.main.GameResources.Object.Players.Player;
 
 import org.andengine.engine.camera.ZoomCamera;
 import org.andengine.engine.camera.hud.HUD;
@@ -95,7 +96,7 @@ public class MainActivity
 
     private void createPlayer()
     {
-        this.thePlayer = new Player(50.0F, 50.0F, 100, this);
+        this.thePlayer = new Player(10, 303, 100, this);
         this.thePlayer.setX(getLevelManager().lastStartPosX);
         this.thePlayer.setY(getLevelManager().lastStartPosY);
     }
@@ -214,13 +215,22 @@ public class MainActivity
         createLevelManager();
         createPhysics();
         createScene();
+        if(this.levelManager.getLevel() instanceof GameLevel)
+        {
+            completeLoadingScene();
+        }
+        return getScene();
+    }
+
+    public void completeLoadingScene()
+    {
+        this.getLevelManager().loadFirstLevel();
         createHud();
         createPlayer();
         createCamera();
         createContactListener();
         createDebugDraw();
         this.getScene().registerUpdateHandler(this);
-        return getScene();
     }
 
     public boolean onSceneTouchEvent(Scene paramScene, TouchEvent paramTouchEvent)
@@ -241,9 +251,16 @@ public class MainActivity
 
     public void onUpdate(float paramFloat)
     {
-        this.speedText.setText(Integer.toString(this.thePlayer.getHealth()));
-        this.thePlayer.updatePosition();
-        this.levelManager.updateLevel();
+        try
+        {
+            this.speedText.setText(Integer.toString(this.thePlayer.getHealth()));
+            this.thePlayer.updatePosition();
+            this.levelManager.updateLevel();
+        }
+        catch(Exception e)
+        {
+
+        }
     }
 
     public void reset()
