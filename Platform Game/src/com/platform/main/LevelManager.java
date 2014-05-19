@@ -52,7 +52,7 @@ public class LevelManager
 
     public void loadFirstLevel()
     {
-        LoadLevel("one", 50, 50);
+        LoadLevel("three", 50, 50);
     }
 
     /* Error */
@@ -110,17 +110,17 @@ public class LevelManager
                         else if(data[0].equals(this.TYPE_CLIPPING))
                         {
                             mActivity.log("Adding a clipping");
-                            ((GameLevel)this.currentLevel).addPlatform(new ClippingPlatform(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]),this.mActivity));
+                            ((GameLevel)this.currentLevel).addGameObject(new ClippingPlatform(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]),this.mActivity));
                         }
                         else if(data[0].equals(this.TYPE_LADDER))
                         {
                             mActivity.log("Adding a ladder");
-                            ((GameLevel)this.currentLevel).addPlatform(new Ladder(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]),this.mActivity));
+                            ((GameLevel)this.currentLevel).addGameObject(new Ladder(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]),this.mActivity));
                         }
                         else if(data[0].equals(this.TYPE_DOORWAY))
                         {
                             mActivity.log("Adding a doorway");
-                            ((GameLevel)this.currentLevel).addPlatform(new Doorway(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]), data[5], Integer.parseInt(data[6]), Integer.parseInt(data[7]), this.mActivity));
+                            ((GameLevel)this.currentLevel).addGameObject(new Doorway(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]), data[5], Integer.parseInt(data[6]), Integer.parseInt(data[7]), this.mActivity));
                         }
                         else if(data[0].equals(this.TYPE_LEMON))
                         {
@@ -130,12 +130,13 @@ public class LevelManager
                         else if(data[0].equals(this.TYPE_FROG))
                         {
                             mActivity.log("Adding a frog");
-                            ((GameLevel)this.currentLevel).addGameObject(new Frog(720,920,mActivity));
+                            ((GameLevel)this.currentLevel).addEnemy(new Frog(720,920,mActivity));
                         }
                     }
                     catch(Exception e)
                     {
                         mActivity.log("Could not add "+data[0]);
+                        e.printStackTrace();
                     }
                 }
             }
@@ -202,7 +203,7 @@ public class LevelManager
         }
         if(this.getLevel() instanceof GameLevel)
         {
-            this.getLevel().update();
+            ((GameLevel)this.getLevel()).update();
         }
     }
 }

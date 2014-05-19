@@ -1,6 +1,7 @@
 package com.platform.main.GameResources.Object.Players;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.platform.main.MainActivity;
 
 import org.andengine.entity.sprite.AnimatedSprite;
@@ -28,14 +29,10 @@ public class Player
         //setup object
         this.addFeet();
         this.addToWorld();
+        ((Fixture)this.body.getFixtureList().get(1)).setUserData("playersFeet");
     }
 
-    public void enableJumping()
-    {
-        this.jumpingAllowed = true;
-        this.jumping = false;
-    }
-
+    @Override
     public void disableJumping()
     {
         if(this.climbing == 0)
@@ -183,17 +180,6 @@ public class Player
         }
     }
 
-    public void setJumping(boolean newState)
-    {
-        if(newState == false)
-        {
-            this.disableJumping();
-        }
-        else
-        {
-            this.enableJumping();
-        }
-    }
 
     public void setInfrontOfDoorway(boolean newState)
     {

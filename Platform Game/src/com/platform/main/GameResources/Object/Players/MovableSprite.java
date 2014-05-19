@@ -61,6 +61,7 @@ public abstract class MovableSprite extends AnimatedGameObject
         //setup animation
         this.getShape().animate(this.PERSON_STANDING, this.PERSON_STANDING_S, this.PERSON_STANDING_E, true);
         this.currentAnimation = this.PERSON_STANDING_S;
+        this.getBody().getFixtureList().get(0).setFriction(0.1f);
     }
 
     public boolean getAlive()
@@ -186,7 +187,7 @@ public abstract class MovableSprite extends AnimatedGameObject
 
     public AnimatedSprite getShape()
     {
-        return (AnimatedSprite)this.getShape();
+        return (AnimatedSprite)this.theShape;
     }
 
     public void addHealth(int newHealth)
@@ -222,4 +223,27 @@ public abstract class MovableSprite extends AnimatedGameObject
         ((Fixture)this.body.getFixtureList().get(1)).setUserData("feet");
     }
 
+    public void setJumping(boolean newState)
+    {
+        if(newState == false)
+        {
+            this.disableJumping();
+        }
+        else
+        {
+            this.enableJumping();
+        }
+    }
+
+    public void enableJumping()
+    {
+        this.jumpingAllowed = true;
+        this.jumping = false;
+    }
+
+    public void disableJumping()
+    {
+        this.jumpingAllowed = false;
+        this.jumping = false;
+    }
 }

@@ -4,7 +4,7 @@ import com.platform.main.MainActivity;
 
 public class Enemy extends MovableSprite
 {
-    private float range;
+    protected float range;
 
     //create generic object
     public Enemy(float xPos, float yPos, MainActivity mainActivity)
@@ -18,16 +18,11 @@ public class Enemy extends MovableSprite
         //call movable sprite constructor
         super(xPos, yPos, width, height, image, columns, rows, mainActivity);
         //range
-        this.range = 60.0F;
+        this.range = 200.0F;
         //add feet
         this.addFeet();
         //set userdata
         this.body.setUserData(this);
-    }
-
-    public void displayBox()
-    {
-        this.mActivity.getScene().attachChild(this.getShape());
     }
 
     public boolean isPlayerAboveEnemy(float paramFloat1, float paramFloat2, float paramFloat3)
@@ -49,7 +44,6 @@ public class Enemy extends MovableSprite
     {
         this.getShape().animate(this.PERSON_DYING, this.PERSON_DYING_S, this.PERSON_DYING_E, false);
         this.getShape().clearUpdateHandlers();
-        this.mActivity.getLevelManager();
         this.alive = false;
     }
 
@@ -60,18 +54,19 @@ public class Enemy extends MovableSprite
 
     public void updateAI()
     {
-        if ((Math.abs(getCenterXPos() - this.mActivity.getThePlayer().getCenterXPos()) < this.range) && (Math.abs(getCenterYPos() - this.mActivity.getThePlayer().getCenterYPos()) < this.range) && (this.alive))
+        if ((this.getBody().getPosition().dst(this.mActivity.getThePlayer().getBody().getPosition())*this.mActivity.PIXEL_TO_METRE_RATIO) < (this.range) && (this.alive))
         {
             if (getCenterXPos() < this.mActivity.getThePlayer().getCenterXPos()) {
                 moveRight();
             }
-            while (getCenterXPos() <= this.mActivity.getThePlayer().getCenterXPos()) {
-                return;
+            else if (getCenterXPos() > this.mActivity.getThePlayer().getCenterXPos()) {
+                moveLeft();
             }
-            moveLeft();
-            return;
         }
-        moveStop();
+        else
+        {
+            moveStop();
+        }
     }
 
     public void updatePosition()

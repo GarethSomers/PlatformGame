@@ -6,6 +6,7 @@ import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.entity.sprite.AnimatedSprite;
 
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.platform.main.*;
 
 public class AnimatedGameObject extends BodyObject
@@ -56,7 +57,7 @@ public class AnimatedGameObject extends BodyObject
         paramMainActivity.getPhysicsWorld().registerPhysicsConnector(new PhysicsConnector(this.getShape(), this.body, true, true));
 
         //add to the physics world
-        this.addToWorld();
+        //this.addToWorld();
     }
 
 

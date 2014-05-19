@@ -18,11 +18,13 @@ public class MyContactListener implements ContactListener
     //variables
     private Player localPlayer = null;
     private boolean playersFeet = false;
+    private boolean localFeet = false;
     private Ladder localLadder = null;
     private ClippingPlatform localClippingPlatform = null;
     private Enemy localEnemy = null;
     private Doorway localDoorway = null;
     private Lemon localLemon = null;
+    private boolean twoEnemies = false;
 
     /*
     * Constructor
@@ -42,11 +44,13 @@ public class MyContactListener implements ContactListener
     {
         this.localPlayer = null;
         this.playersFeet = false;
+        this.localFeet = false;
         this.localLadder = null;
         this.localClippingPlatform = null;
         this.localEnemy = null;
         this.localDoorway = null;
         this.localLemon = null;
+        this.twoEnemies = false;
     }
 
     /*
@@ -71,6 +75,10 @@ public class MyContactListener implements ContactListener
             }
             else if(parentUserData instanceof Enemy)
             {
+                if(localEnemy != null)
+                {
+                    this.twoEnemies = true;
+                }
                 localEnemy = (Enemy)parentUserData;
             }
             else if(parentUserData instanceof Ladder)
@@ -96,10 +104,14 @@ public class MyContactListener implements ContactListener
             {
                 //if its a string
                 String theString = (String)childUserData;
-                if(theString.equals("feet"))
+                if(theString.equals("playersFeet"))
                 {
                     //if its feet
-                    playersFeet = true;
+                   this.playersFeet = true;
+                }
+                else if(theString.equals("feet"))
+                {
+                    this.localFeet = true;
                 }
             }
         }
@@ -115,10 +127,10 @@ public class MyContactListener implements ContactListener
         if( playersFeet == true)
         {
             //players feet must have hit something
-            if(localEnemy != null)
+            if(localEnemy != null && localEnemy.getAlive())
             {
                 //he must have hit/left an enemy
-                this.mActivity.getThePlayer().forceJump();
+                //this.mActivity.getThePlayer().forceJump();
                 localEnemy.kill();
             }
             else if(localLadder != null)
@@ -144,6 +156,13 @@ public class MyContactListener implements ContactListener
                 //he must have hit/left a platform
                 mActivity.getThePlayer().setInfrontOfDoorway(newState);
                 mActivity.getLevelManager().setupScheduleLoadLevel(localDoorway.getDestination(), localDoorway.getDestinationX(), localDoorway.getDestinationY());
+            }
+        }
+        else if(localEnemy != null)
+        {
+            if(localFeet != false && localClippingPlatform != null)
+            {
+                this.localEnemy.setJumping(newState);
             }
         }
     }
@@ -175,42 +194,52 @@ public class MyContactListener implements ContactListener
 
     public void preSolve(Contact paramContact, Manifold paramManifold)
     {
-        // getting the fixtures that collided
-        Fixture fixtureA = paramContact.getFixtureA();
-        Fixture fixtureB = paramContact.getFixtureB();
-        // variable to handle bodies y position
-        float playerYPosition;
-        float platformYPosition;
-        // checking if the collision bodies are the ones marked as "middle" and "player"
-        if ((fixtureA.getBody().getUserData() instanceof ClippingPlatform && fixtureB.getBody().getUserData() instanceof Player)
-          ||(fixtureA.getBody().getUserData() instanceof Player && fixtureB.getBody().getUserData() instanceof ClippingPlatform)) {
-            //By default disable the event from happening
-            paramContact.setEnabled(false);
-            //check if the player is moving up (jumping up)
-            if(this.mActivity.getThePlayer().getBody().getLinearVelocity().y < -0.1)
+        //reset
+        this.resetObjects();
+        //identify objects
+        this.identifyObjects(new Fixture[]{ paramContact.getFixtureA(), paramContact.getFixtureB()});
+        //By default disable the event from happening
+        paramContact.setEnabled(false);
+
+        //process player presolve
+        if (this.localPlayer != null || this.playersFeet == true)
+        {
+            // checking if the collision bodies are the ones marked as "middle" and "player"
+            if(this.localClippingPlatform != null)
             {
-                //if so then don't detect anything
-                return;
-            }
-            // determining if the fixtureA represents the platform ("middle") or the player
-            if (fixtureA.getBody().getUserData() instanceof ClippingPlatform) {
-                // determining y positions
-                playerYPosition=fixtureB.getBody().getPosition().y;
-                platformYPosition=fixtureA.getBody().getPosition().y;
-            }
-            else
-            {
-                // determining y positions
-                playerYPosition=fixtureA.getBody().getPosition().y;
-                platformYPosition=fixtureB.getBody().getPosition().y;
-            }
-            // checking distance between bodies
-            float distance = playerYPosition - platformYPosition;
-            // if the distance is greater than player radius + half of the platform height...
-            if (distance<=0){
-                // don't manage the contact
-                paramContact.setEnabled(true);
+                // variable to handle bodies y position
+                float playerYPosition;
+                float platformYPosition;
+                //check if the player is moving up (jumping up)
+                if(this.localPlayer.getBody().getLinearVelocity().y < -0.1)
+                {
+                    //if so then don't detect anything
+                    return;
+                }
+
+                //get positions
+                playerYPosition=this.localPlayer.getBody().getPosition().y;
+                platformYPosition=this.localClippingPlatform.getBody().getPosition().y;
+
+                // checking distance between bodies
+                float distance = playerYPosition - platformYPosition;
+                // if the distance is greater than player radius + half of the platform height...
+                if (distance>0){
+                    return;
+                }
             }
         }
+
+        if((this.localEnemy != null || this.localFeet == true)&&(this.localPlayer != null || this.playersFeet == true || this.twoEnemies == true ))
+        {
+            //if enemy is alive
+            if(this.localEnemy.getAlive() == false)
+            {
+                //disable the contact
+                return;
+            }
+        }
+        //By default disable the event from happening
+        paramContact.setEnabled(true);
     }
 }

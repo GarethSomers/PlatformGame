@@ -33,6 +33,7 @@ public class MainActivity
 {
     private static final int CAMERA_HEIGHT = 480;
     private static final int CAMERA_WIDTH = 720;
+    public static final float PIXEL_TO_METRE_RATIO = 50.00f;
     private ZoomCamera camera;
     private MyContactListener contactListener;
     private DebugRenderer debug;
@@ -251,16 +252,21 @@ public class MainActivity
 
     public void onUpdate(float paramFloat)
     {
-        try
+        if(this.thePlayer != null)
         {
-            this.speedText.setText(Integer.toString(this.thePlayer.getHealth()));
+            //this.speedText.setText(Integer.toString(this.thePlayer.getHealth()));
             this.thePlayer.updatePosition();
+        }
+
+        if(this.getLevelManager().getLevel() != null)
+        {
             this.levelManager.updateLevel();
         }
-        catch(Exception e)
-        {
-
-        }
+        //}
+        //catch(Exception e)
+        //{
+            //e.printStackTrace();
+        //}
     }
 
     public void reset()
@@ -282,7 +288,7 @@ public class MainActivity
             this.debug.detachSelf();
         }
         this.debug = new DebugRenderer(this.getPhysicsWorld(),this.getVertexBufferObjectManager());
-        this.getScene().attachChild(this.debug);
+        //this.getScene().attachChild(this.debug);
     }
 
     public void setPhysicsWorld(PhysicsWorld paramPhysicsWorld)
@@ -290,3 +296,4 @@ public class MainActivity
         this.mPhysicsWorld = paramPhysicsWorld;
     }
 }
+

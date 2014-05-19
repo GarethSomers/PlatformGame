@@ -51,12 +51,12 @@ public abstract class BodyObject
 
     public float getX()
     {
-        return this.getBody().getPosition().x;
+        return this.getShape().getX();
     }
 
     public float getY()
     {
-        return this.getBody().getPosition().y;
+        return this.getShape().getY();
     }
 
     public void setX(float paramFloat)
@@ -118,6 +118,7 @@ public abstract class BodyObject
     {
         this.addToPhysicsWorld();
         this.addToSpriteWorld();
+        this.attached = true;
     }
 
     public void reload(int xPos, int yPos)
