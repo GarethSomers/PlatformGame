@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 
 import org.andengine.entity.scene.Scene;
 
+
 public class LevelManager
 {
     private static final String TYPE_CLIPPING = "clipping";
@@ -35,14 +36,21 @@ public class LevelManager
     public int lastStartPosX = 0;
     public int lastStartPosY = 0;
     private MainActivity mActivity;
+    private HeadsUpDisplay hud;
     private String scheduledDestination;
     private int scheduledDestinationX;
     private int scheduledDestinationY;
     private boolean scheduledDestinationConfirm = false;
+    public LevelState currentState = LevelState.Loading;
 
     public LevelManager(MainActivity paramMainActivity)
     {
         this.mActivity = paramMainActivity;
+    }
+
+    public enum LevelState
+    {
+        Loading, Playing, Menu
     }
 
     public void LoadLevel()
@@ -52,12 +60,13 @@ public class LevelManager
 
     public void loadFirstLevel()
     {
-        LoadLevel("three", 50, 50);
+        LoadLevel("one", 10, 305);
     }
 
     /* Error */
     public void LoadLevel(String levelName, int lastStartPosX, int lastStartPosY)
     {
+        this.currentState = LevelState.Loading;
         //display loading screen
         this.lastStartPosX = lastStartPosX;
         this.lastStartPosY = lastStartPosY;
@@ -165,6 +174,11 @@ public class LevelManager
                 //reload the camera
                 mActivity.getCamera().setChaseEntity(this.mActivity.getThePlayer().getShape());
             }
+            this.currentState = LevelState.Playing;
+        }
+        else if(this.currentLevel instanceof Menu)
+        {
+            this.currentState = LevelState.Menu;
         }
     }
 
@@ -205,5 +219,14 @@ public class LevelManager
         {
             ((GameLevel)this.getLevel()).update();
         }
+    }
+
+    public HeadsUpDisplay getHUD()
+    {
+        return this.hud;
+    }
+    public void createHud()
+    {
+        this.hud = new HeadsUpDisplay(this.mActivity);
     }
 }

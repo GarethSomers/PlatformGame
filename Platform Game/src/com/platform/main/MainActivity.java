@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.hardware.SensorManager;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 import com.badlogic.gdx.math.Vector2;
@@ -16,6 +17,7 @@ import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
+import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.text.Text;
@@ -31,25 +33,23 @@ public class MainActivity
         extends SimpleBaseGameActivity
         implements IOnSceneTouchListener, IUpdateHandler
 {
-    private static final int CAMERA_HEIGHT = 480;
-    private static final int CAMERA_WIDTH = 720;
+    private static int CAMERA_HEIGHT = 480;
+    private static int CAMERA_WIDTH = 720;
     public static final float PIXEL_TO_METRE_RATIO = 50.00f;
     private ZoomCamera camera;
     private MyContactListener contactListener;
     private DebugRenderer debug;
-    HUD hud;
     private LevelManager levelManager;
-    private Font mFont;
     private PhysicsWorld mPhysicsWorld;
     private MaterialManager materialManager;
-    private Text speedText;
     private Player thePlayer;
+    public float zoomFactor = 3f;
 
     private void createCamera()
     {
         this.camera.setChaseEntity(this.thePlayer.getShape());
         this.camera.setBoundsEnabled(true);
-        this.camera.setHUD(this.hud);
+        this.camera.setHUD(this.getLevelManager().getHUD());
     }
 
     private void createContactListener()
@@ -61,17 +61,9 @@ public class MainActivity
     private void createEngineDefaults()
     {
         getEngine().registerUpdateHandler(new FPSLogger());
-        getCamera().setZoomFactor(2.0F);
+        getCamera().setZoomFactor(zoomFactor);
         getVertexBufferObjectManager();
         Looper.prepare();
-    }
-
-    private void createHud()
-    {
-        this.speedText = new Text(20.0F, 20.0F, this.mFont, "0", 99999, getVertexBufferObjectManager());
-        this.hud = new HUD();
-        this.hud.attachChild(this.speedText);
-        this.hud.setOnSceneTouchListener(this);
     }
 
     private void createLevelManager()
@@ -115,10 +107,8 @@ public class MainActivity
         this.levelManager = null;
         this.materialManager = null;
         this.mEngine = null;
-        this.mFont = null;
         this.mPhysicsWorld = null;
         this.mRenderSurfaceView = null;
-        this.speedText = null;
         this.thePlayer = null;
         this.getLevelManager().getLevel().destroy();
         System.gc();
@@ -143,12 +133,12 @@ public class MainActivity
 
     public int getCameraHeight()
     {
-        return 480;
+        return CAMERA_HEIGHT;
     }
 
     public int getCameraWidth()
     {
-        return 720;
+        return CAMERA_WIDTH;
     }
 
     public DebugRenderer getDebug()
@@ -193,10 +183,14 @@ public class MainActivity
 
     public EngineOptions onCreateEngineOptions()
     {
+        final DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        this.CAMERA_WIDTH = displayMetrics.widthPixels;
+        this.CAMERA_HEIGHT = displayMetrics.heightPixels;
+
         System.gc();
         this.camera = new ZoomCamera(0.0F, 0.0F, getCameraWidth(), getCameraHeight());
-        this.camera.setZoomFactor(1.0F);
-        EngineOptions localEngineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new FillResolutionPolicy(), getCamera());
+        EngineOptions localEngineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), getCamera());
         localEngineOptions.getTouchOptions().setNeedsMultiTouch(true);
         localEngineOptions.getAudioOptions().setNeedsMusic(true);
         localEngineOptions.getAudioOptions().setNeedsSound(true);
@@ -205,8 +199,7 @@ public class MainActivity
 
     public void onCreateResources()
     {
-        this.mFont = FontFactory.create(getFontManager(), getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, 1), 24.0F);
-        this.mFont.load();
+
     }
 
     public Scene onCreateScene()
@@ -218,7 +211,7 @@ public class MainActivity
         createScene();
         if(this.levelManager.getLevel() instanceof GameLevel)
         {
-            completeLoadingScene();
+           completeLoadingScene();
         }
         return getScene();
     }
@@ -226,7 +219,8 @@ public class MainActivity
     public void completeLoadingScene()
     {
         this.getLevelManager().loadFirstLevel();
-        createHud();
+        this.getLevelManager().createHud();
+        this.getLevelManager().getHUD().setOnSceneTouchListener(this);
         createPlayer();
         createCamera();
         createContactListener();
@@ -275,11 +269,6 @@ public class MainActivity
         this.thePlayer.setAlive(true);
         this.thePlayer.enableJumping();
         this.thePlayer.updatePosition();
-    }
-
-    public void setCamera(ZoomCamera paramZoomCamera)
-    {
-        this.camera = paramZoomCamera;
     }
 
     public void setDebug()

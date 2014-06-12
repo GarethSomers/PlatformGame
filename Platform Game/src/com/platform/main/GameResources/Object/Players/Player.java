@@ -63,6 +63,7 @@ public class Player
             {
                 this.enableJumping();
             }
+            this.mActivity.getLevelManager().getHUD().setJumpIconVisibility(false);
         }
     }
 
@@ -76,6 +77,7 @@ public class Player
             this.body.setGravityScale(0f);
             setAnimation("climbing");
             this.enableJumping();
+            this.mActivity.getLevelManager().getHUD().setJumpIconVisibility(true);
         }
     }
 
@@ -116,14 +118,14 @@ public class Player
                     this.currentRightID = -1;
                     moveLeft();
                 }
-                if ((paramFloat1 > 2 * this.mActivity.getCameraWidth() / 3) && (this.currentJumpID != paramTouchEvent.getPointerID()) && this.currentRightID == -1)
+                if ((paramFloat1 > 2 * (this.mActivity.getCameraWidth() / 3)) && (this.currentJumpID != paramTouchEvent.getPointerID()) && this.currentRightID == -1)
                 {
                     //this.mActivity.log("RIGHT");
                     this.currentRightID = paramTouchEvent.getPointerID();
                     this.currentLeftID = -1;
                     moveRight();
                 }
-                if ((paramFloat1 > this.mActivity.getCameraWidth() / 3) && (paramFloat1 < 2 * this.mActivity.getCameraWidth() / 3) && (this.jumpingAllowed) && this.currentJumpID == -1)
+                if ((paramFloat1 > this.mActivity.getCameraWidth() / 3) && (paramFloat1 < 2 * (this.mActivity.getCameraWidth() / 3)) && (this.jumpingAllowed) && this.currentJumpID == -1)
                 {
                     if(!this.infrontOfDoorway)
                     {
