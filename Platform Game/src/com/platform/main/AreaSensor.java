@@ -11,7 +11,7 @@ public abstract class AreaSensor
     private Rectangle clipping;
     protected FixtureDef fixtureDef;
     private float height;
-    protected MainActivity mActivity;
+    protected GameManager gameManager;
     protected TextureRegion mTextureRegion;
     protected boolean solid;
     private float width;

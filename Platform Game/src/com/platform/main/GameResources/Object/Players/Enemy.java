@@ -1,19 +1,19 @@
 package com.platform.main.GameResources.Object.Players;
 
-import com.platform.main.MainActivity;
+import com.platform.main.GameManager;
 
 public class Enemy extends MovableSprite
 {
     protected float range;
 
     //create generic object
-    public Enemy(float xPos, float yPos, MainActivity mainActivity)
+    public Enemy(float xPos, float yPos, GameManager mainActivity)
     {
         this(xPos, yPos, 64, 120, "Enemy.png", 4, 5, mainActivity);
     }
 
     //create enemy
-    public Enemy(float xPos,float yPos,int width, int height, String image, int columns, int rows, MainActivity mainActivity)
+    public Enemy(float xPos,float yPos,int width, int height, String image, int columns, int rows, GameManager mainActivity)
     {
         //call movable sprite constructor
         super(xPos, yPos, width, height, image, columns, rows, mainActivity);
@@ -54,12 +54,12 @@ public class Enemy extends MovableSprite
 
     public void updateAI()
     {
-        if ((this.getBody().getPosition().dst(this.mActivity.getThePlayer().getBody().getPosition())*this.mActivity.PIXEL_TO_METRE_RATIO) < (this.range) && (this.alive))
+        if ((this.getBody().getPosition().dst(this.gameManager.getThePlayer().getBody().getPosition())*this.gameManager.getMainActivity().PIXEL_TO_METRE_RATIO) < (this.range) && (this.alive))
         {
-            if (getCenterXPos() < this.mActivity.getThePlayer().getCenterXPos()) {
+            if (getCenterXPos() < this.gameManager.getThePlayer().getCenterXPos()) {
                 moveRight();
             }
-            else if (getCenterXPos() > this.mActivity.getThePlayer().getCenterXPos()) {
+            else if (getCenterXPos() > this.gameManager.getThePlayer().getCenterXPos()) {
                 moveLeft();
             }
         }

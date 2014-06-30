@@ -1,8 +1,8 @@
 package com.platform.main.GameResources.Object.Players;
 
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.platform.main.GameManager;
 import com.platform.main.GameResources.Object.Platforms.RectangularPlatform;
-import com.platform.main.MainActivity;
 
 public class Doorway
         extends RectangularPlatform
@@ -11,7 +11,7 @@ public class Doorway
     private int destinationX;
     private int destinationY;
 
-    public Doorway(float paramFloat1, float paramFloat2, float paramFloat3, float paramFloat4, String paramString, int paramInt1, int paramInt2, MainActivity paramMainActivity)
+    public Doorway(float paramFloat1, float paramFloat2, float paramFloat3, float paramFloat4, String paramString, int paramInt1, int paramInt2, GameManager paramMainActivity)
     {
         super(paramFloat1, paramFloat2, paramFloat3, paramFloat4, paramMainActivity);
         this.destination = paramString;

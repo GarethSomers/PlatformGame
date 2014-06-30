@@ -4,7 +4,6 @@ import com.platform.main.GameResources.Level.GameLevel;
 import com.platform.main.GameResources.Level.Menu.Menu;
 import com.platform.main.GameResources.Object.Platforms.ClippingPlatform;
 import com.platform.main.GameResources.Object.Players.Doorway;
-import com.platform.main.GameResources.Object.Players.Enemy;
 import com.platform.main.GameResources.Object.Players.Frog;
 import com.platform.main.GameResources.Object.Interactions.Ladder;
 import com.platform.main.GameResources.Object.Interactions.Lemon;
@@ -35,7 +34,7 @@ public class LevelManager
     private Level currentLevel;
     public int lastStartPosX = 0;
     public int lastStartPosY = 0;
-    private MainActivity mActivity;
+    private GameManager gameManager;
     private HeadsUpDisplay hud;
     private String scheduledDestination;
     private int scheduledDestinationX;
@@ -43,9 +42,9 @@ public class LevelManager
     private boolean scheduledDestinationConfirm = false;
     public LevelState currentState = LevelState.Loading;
 
-    public LevelManager(MainActivity paramMainActivity)
+    public LevelManager(GameManager paramMainActivity)
     {
-        this.mActivity = paramMainActivity;
+        this.gameManager = paramMainActivity;
     }
 
     public enum LevelState
@@ -85,8 +84,8 @@ public class LevelManager
             /*
             Show a menu
              */
-            this.currentLevel = new Menu(this.mActivity);
-            mActivity.log("Starting Menu");
+            this.currentLevel = new Menu(this.gameManager);
+            gameManager.getMainActivity().log("Starting Menu");
         }
         else
         {
@@ -94,7 +93,7 @@ public class LevelManager
                 /*
                 Open input Stream
                  */
-                InputStream file = mActivity.getAssets().open("levels/"+levelName+".lvl");
+                InputStream file = gameManager.getMainActivity().getAssets().open("levels/"+levelName+".lvl");
                 BufferedReader br = new BufferedReader(new InputStreamReader(file, "UTF-8"));
                 String line;
                 /*
@@ -102,7 +101,7 @@ public class LevelManager
                  */
                 while ((line = br.readLine()) != null) {
                     String data[] = line.split(",");
-                    //mActivity.log(data[0]);
+                    //gameManager.log(data[0]);
 
                     /*
                     If its a setup item (usually the first item)
@@ -111,46 +110,53 @@ public class LevelManager
                     {
                         if(data[0].equals(this.TYPE_SETUP))
                         {
-                            mActivity.log("Adding to setup");
-                            this.currentLevel = new GameLevel(this.mActivity);
+                            gameManager.getMainActivity().log("Adding to setup");
+                            this.currentLevel = new GameLevel(this.gameManager);
                             ((GameLevel)this.currentLevel).setBackgroundImages(data[1],data[2],Integer.parseInt(data[3]), Integer.parseInt(data[4]));
                             this.currentLevel.setMusicByString(data[4]);
                         }
                         else if(data[0].equals(this.TYPE_CLIPPING))
                         {
-                            mActivity.log("Adding a clipping");
-                            ((GameLevel)this.currentLevel).addGameObject(new ClippingPlatform(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]),this.mActivity));
+                            gameManager.getMainActivity().log("Adding a clipping");
+                            ((GameLevel)this.currentLevel).addGameObject(new ClippingPlatform(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]),this.gameManager));
                         }
                         else if(data[0].equals(this.TYPE_LADDER))
                         {
-                            mActivity.log("Adding a ladder");
-                            ((GameLevel)this.currentLevel).addGameObject(new Ladder(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]),this.mActivity));
+                            gameManager.getMainActivity().log("Adding a ladder");
+                            Ladder l = new Ladder(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]),this.gameManager);
+                            ((GameLevel)this.currentLevel).addGameObject(l);
+
+                            //if there is an extra field (related to quest ids)
+                            if(data.length > 5 && data[5] != null)
+                            {
+                                l.setQuestID(Integer.valueOf(data[5]));
+                            }
                         }
                         else if(data[0].equals(this.TYPE_DOORWAY))
                         {
-                            mActivity.log("Adding a doorway");
-                            ((GameLevel)this.currentLevel).addGameObject(new Doorway(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]), data[5], Integer.parseInt(data[6]), Integer.parseInt(data[7]), this.mActivity));
+                            gameManager.getMainActivity().log("Adding a doorway");
+                            ((GameLevel)this.currentLevel).addGameObject(new Doorway(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]), data[5], Integer.parseInt(data[6]), Integer.parseInt(data[7]), this.gameManager));
                         }
                         else if(data[0].equals(this.TYPE_LEMON))
                         {
-                            mActivity.log("Adding a lemon");
-                            ((GameLevel)this.currentLevel).addGameObject(new Lemon(Integer.parseInt(data[1]),Integer.parseInt(data[2]), mActivity));
+                            gameManager.getMainActivity().log("Adding a lemon");
+                            ((GameLevel)this.currentLevel).addGameObject(new Lemon(Integer.parseInt(data[1]),Integer.parseInt(data[2]), gameManager));
                         }
                         else if(data[0].equals(this.TYPE_FROG))
                         {
-                            mActivity.log("Adding a frog");
-                            ((GameLevel)this.currentLevel).addEnemy(new Frog(720,920,mActivity));
+                            gameManager.getMainActivity().log("Adding a frog");
+                            ((GameLevel)this.currentLevel).addEnemy(new Frog(720,920, gameManager));
                         }
                     }
                     catch(Exception e)
                     {
-                        mActivity.log("Could not add "+data[0]);
+                        gameManager.getMainActivity().log("Could not add " + data[0]);
                         e.printStackTrace();
                     }
                 }
             }
             catch (Exception e) {
-                mActivity.log("Could not load level (levels/" + levelName + ".lvl)");
+                gameManager.getMainActivity().log("Could not load level (levels/" + levelName + ".lvl)");
                 System.exit(0);
             }
         }
@@ -160,19 +166,19 @@ public class LevelManager
         //finalise the level
         this.currentLevel.completeLevelLoading();
         //set the new scene
-        mActivity.getEngine().setScene(this.getScene());
+        gameManager.getMainActivity().getEngine().setScene(this.getScene());
         //reload debug draw
-        this.currentLevel.getScene().registerUpdateHandler(this.mActivity);
+        this.currentLevel.getScene().registerUpdateHandler(this.gameManager.getMainActivity());
 
         if(this.currentLevel instanceof GameLevel)
         {
-            if(mActivity.getThePlayer() != null)
+            if(gameManager.getThePlayer() != null)
             {
-                this.mActivity.setDebug();
+                this.gameManager.setDebug();
                 //reload the player
-                mActivity.getThePlayer().reload(this.lastStartPosX, this.lastStartPosY);
+                gameManager.getThePlayer().reload(this.lastStartPosX, this.lastStartPosY);
                 //reload the camera
-                mActivity.getCamera().setChaseEntity(this.mActivity.getThePlayer().getShape());
+                gameManager.getMainActivity().getCamera().setChaseEntity(this.gameManager.getThePlayer().getShape());
             }
             this.currentState = LevelState.Playing;
         }
@@ -209,10 +215,10 @@ public class LevelManager
     {
         if (this.scheduledDestinationConfirm == true)
         {
-            this.mActivity.getThePlayer().moveFullStop();
+            this.gameManager.getThePlayer().moveFullStop();
             LoadLevel(this.scheduledDestination, this.scheduledDestinationX, this.scheduledDestinationY);
             this.scheduledDestinationConfirm = false;
-            this.mActivity.getThePlayer().setInfrontOfDoorway(false);
+            this.gameManager.getThePlayer().setInfrontOfDoorway(false);
             return;
         }
         if(this.getLevel() instanceof GameLevel)
@@ -227,6 +233,6 @@ public class LevelManager
     }
     public void createHud()
     {
-        this.hud = new HeadsUpDisplay(this.mActivity);
+        this.hud = new HeadsUpDisplay(this.gameManager);
     }
 }

@@ -1,24 +1,22 @@
 package com.platform.main.GameResources.Level;
 
-import com.platform.main.MainActivity;
+import com.platform.main.GameManager;
 
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.SpriteBackground;
-import org.andengine.entity.sprite.Sprite;
 
 /**
  * Created by Gareth Somers on 5/11/14.
  */
 public class Level {
-    protected MainActivity mActivity;
+    protected GameManager gameManager;
     protected Scene scene = new Scene();
     protected Music music;
 
-    public Level(MainActivity paramMainActivity)
+    public Level(GameManager paramMainActivity)
     {
-        this.mActivity = paramMainActivity;
+        this.gameManager = paramMainActivity;
         this.scene = new Scene();
     }
 
@@ -41,13 +39,13 @@ public class Level {
     {
         try
         {
-            this.setMusic(MusicFactory.createMusicFromAsset(mActivity.getEngine().getMusicManager(), mActivity, "mfx/" + pMusic + ".mp3"));
+            this.setMusic(MusicFactory.createMusicFromAsset(gameManager.getMainActivity().getEngine().getMusicManager(), gameManager.getMainActivity(), "mfx/" + pMusic + ".mp3"));
             getMusic().setLooping(true);
             getMusic().play();
         }
         catch(Exception e)
         {
-            mActivity.log("Could not load music (mfx/"+pMusic+".mp3)");
+            gameManager.getMainActivity().log("Could not load music (mfx/"+pMusic+".mp3)");
         }
     }
 

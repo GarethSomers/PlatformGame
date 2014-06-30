@@ -2,13 +2,13 @@ package com.platform.main.GameResources.Object.Interactions;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.platform.main.GameManager;
 import com.platform.main.GameResources.Object.AnimatedGameObject;
-import com.platform.main.MainActivity;
 
 public class Lemon extends AnimatedGameObject
 {
     protected boolean alive = true;
-    public Lemon(float paramFloat1, float paramFloat2, MainActivity mMainActivity)
+    public Lemon(float paramFloat1, float paramFloat2, GameManager mMainActivity)
     {
         super(paramFloat1, paramFloat2, 16, 16, "lemon.png", BodyDef.BodyType.StaticBody, mMainActivity);
         this.body.setUserData(this);
@@ -22,7 +22,7 @@ public class Lemon extends AnimatedGameObject
         {
             this.getShape().setVisible(false);
             this.alive = false;
-            this.mActivity.getThePlayer().addHealth(5);
+            this.gameManager.getThePlayer().addHealth(5);
         }
     }
 }

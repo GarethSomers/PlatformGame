@@ -6,7 +6,7 @@ clipping,92,192,409,1
 clipping,216,120,216,1
 clipping,509,149,8,1
 clipping,528,192,72,1
-ladder,235,200,219,45
+ladder,235,200,219,45,1
 ignore,platform,ground,400,10080,800,200,true,false
 ignore,platform,grass,100,10080,800,60,true,false
 ignore,platform-polygon,grass,300,10080,60,60,false,false,3,0,0,60,60,0,60

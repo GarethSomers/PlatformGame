@@ -2,7 +2,7 @@ package com.platform.main.GameResources.Object.Players;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.platform.main.MainActivity;
+import com.platform.main.GameManager;
 
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.input.touch.TouchEvent;
@@ -17,7 +17,7 @@ public class Player
     private int climbing;
     private boolean infrontOfDoorway;
 
-    public Player(float xPos, float yPos, int paramInt, MainActivity mainActivity)
+    public Player(float xPos, float yPos, int paramInt, GameManager mainActivity)
     {
         super(xPos, yPos, 68, 120, "player.png", 4, 5, mainActivity);
         //set defaults
@@ -63,7 +63,7 @@ public class Player
             {
                 this.enableJumping();
             }
-            this.mActivity.getLevelManager().getHUD().setJumpIconVisibility(false);
+            this.gameManager.getLevelManager().getHUD().setJumpIconVisibility(false);
         }
     }
 
@@ -77,7 +77,7 @@ public class Player
             this.body.setGravityScale(0f);
             setAnimation("climbing");
             this.enableJumping();
-            this.mActivity.getLevelManager().getHUD().setJumpIconVisibility(true);
+            this.gameManager.getLevelManager().getHUD().setJumpIconVisibility(true);
         }
     }
 
@@ -107,25 +107,25 @@ public class Player
     {
         if (getAlive())
         {
-            //this.mActivity.log("Trying to move");
+            //this.gameManager.log("Trying to move");
             if((this.currentJumpID != paramTouchEvent.getPointerID()) & (paramTouchEvent.getAction() == TouchEvent.ACTION_DOWN))
             {
                 //if he did not let go of jumping and the action is not up
-                if ((paramFloat1 < this.mActivity.getCameraWidth() / 3) && (this.currentJumpID != paramTouchEvent.getPointerID()) && this.currentLeftID == -1)
+                if ((paramFloat1 < this.gameManager.getMainActivity().getCameraWidth() / 3) && (this.currentJumpID != paramTouchEvent.getPointerID()) && this.currentLeftID == -1)
                 {
-                    //this.mActivity.log("LEFT");
+                    //this.gameManager.log("LEFT");
                     this.currentLeftID = paramTouchEvent.getPointerID();
                     this.currentRightID = -1;
                     moveLeft();
                 }
-                if ((paramFloat1 > 2 * (this.mActivity.getCameraWidth() / 3)) && (this.currentJumpID != paramTouchEvent.getPointerID()) && this.currentRightID == -1)
+                if ((paramFloat1 > 2 * (this.gameManager.getMainActivity().getCameraWidth() / 3)) && (this.currentJumpID != paramTouchEvent.getPointerID()) && this.currentRightID == -1)
                 {
-                    //this.mActivity.log("RIGHT");
+                    //this.gameManager.log("RIGHT");
                     this.currentRightID = paramTouchEvent.getPointerID();
                     this.currentLeftID = -1;
                     moveRight();
                 }
-                if ((paramFloat1 > this.mActivity.getCameraWidth() / 3) && (paramFloat1 < 2 * (this.mActivity.getCameraWidth() / 3)) && (this.jumpingAllowed) && this.currentJumpID == -1)
+                if ((paramFloat1 > this.gameManager.getMainActivity().getCameraWidth() / 3) && (paramFloat1 < 2 * (this.gameManager.getMainActivity().getCameraWidth() / 3)) && (this.jumpingAllowed) && this.currentJumpID == -1)
                 {
                     if(!this.infrontOfDoorway)
                     {
@@ -133,7 +133,7 @@ public class Player
                     }
                     else
                     {
-                        this.mActivity.getLevelManager().confirmScheduleLoadLevel();
+                        this.gameManager.getLevelManager().confirmScheduleLoadLevel();
                     }
                 }
             }
@@ -186,6 +186,7 @@ public class Player
     public void setInfrontOfDoorway(boolean newState)
     {
         this.infrontOfDoorway = newState;
+        this.gameManager.getLevelManager().getHUD().setDoorIconVisibility(newState);
     }
 
     public AnimatedSprite getShape()

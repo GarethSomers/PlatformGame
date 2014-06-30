@@ -4,8 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.platform.main.GameManager;
 import com.platform.main.GameResources.Object.AnimatedGameObject;
-import com.platform.main.MainActivity;
 
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -54,7 +54,7 @@ public abstract class MovableSprite extends AnimatedGameObject
     protected boolean alive = true;
     protected int health = 50;
 
-    public MovableSprite(float xPos, float yPos, int width, int height, String image, int columns, int rows, MainActivity mainActivity)
+    public MovableSprite(float xPos, float yPos, int width, int height, String image, int columns, int rows, GameManager mainActivity)
     {
         super(xPos, yPos, width, height, image, columns, rows, mainActivity);
 

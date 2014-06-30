@@ -37,26 +37,12 @@ public class MainActivity
     private static int CAMERA_WIDTH = 720;
     public static final float PIXEL_TO_METRE_RATIO = 50.00f;
     private ZoomCamera camera;
-    private MyContactListener contactListener;
-    private DebugRenderer debug;
-    private LevelManager levelManager;
-    private PhysicsWorld mPhysicsWorld;
-    private MaterialManager materialManager;
-    private Player thePlayer;
+    private GameManager gameManager;
     public float zoomFactor = 3f;
 
-    private void createCamera()
-    {
-        this.camera.setChaseEntity(this.thePlayer.getShape());
-        this.camera.setBoundsEnabled(true);
-        this.camera.setHUD(this.getLevelManager().getHUD());
-    }
 
-    private void createContactListener()
-    {
-        this.contactListener = new MyContactListener(this);
-        getPhysicsWorld().setContactListener(this.contactListener);
-    }
+
+
 
     private void createEngineDefaults()
     {
@@ -66,54 +52,7 @@ public class MainActivity
         Looper.prepare();
     }
 
-    private void createLevelManager()
-    {
-        this.levelManager = new LevelManager(this);
-    }
 
-    private void createMaterialManager()
-    {
-        this.materialManager = new MaterialManager(this);
-    }
-
-    private void createPhysics()
-    {
-        setPhysicsWorld(new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false));
-        this.getEngine().registerUpdateHandler(this.getPhysicsWorld());
-    }
-
-    private void createDebugDraw()
-    {
-        this.setDebug();
-    }
-
-    private void createPlayer()
-    {
-        this.thePlayer = new Player(10, 303, 100, this);
-        this.thePlayer.setX(getLevelManager().lastStartPosX);
-        this.thePlayer.setY(getLevelManager().lastStartPosY);
-    }
-
-    private void createScene()
-    {
-        this.levelManager.LoadLevel();
-    }
-
-    public void closeGame()
-    {
-        this.camera = null;
-        this.contactListener = null;
-        this.debug = null;
-        this.levelManager = null;
-        this.materialManager = null;
-        this.mEngine = null;
-        this.mPhysicsWorld = null;
-        this.mRenderSurfaceView = null;
-        this.thePlayer = null;
-        this.getLevelManager().getLevel().destroy();
-        System.gc();
-        finish();
-    }
 
     public void gameToast(final String paramString)
     {
@@ -141,35 +80,7 @@ public class MainActivity
         return CAMERA_WIDTH;
     }
 
-    public DebugRenderer getDebug()
-    {
-        return this.debug;
-    }
 
-    public LevelManager getLevelManager()
-    {
-        return this.levelManager;
-    }
-
-    public MaterialManager getMaterialManager()
-    {
-        return this.materialManager;
-    }
-
-    public PhysicsWorld getPhysicsWorld()
-    {
-        return this.mPhysicsWorld;
-    }
-
-    public Scene getScene()
-    {
-        return getLevelManager().getScene();
-    }
-
-    public Player getThePlayer()
-    {
-        return this.thePlayer;
-    }
 
     public Context getThis()
     {
@@ -205,28 +116,11 @@ public class MainActivity
     public Scene onCreateScene()
     {
         createEngineDefaults();
-        createMaterialManager();
-        createLevelManager();
-        createPhysics();
-        createScene();
-        if(this.levelManager.getLevel() instanceof GameLevel)
-        {
-           completeLoadingScene();
-        }
-        return getScene();
+        this.gameManager = new GameManager(this);
+        return this.gameManager.getScene();
     }
 
-    public void completeLoadingScene()
-    {
-        this.getLevelManager().loadFirstLevel();
-        this.getLevelManager().createHud();
-        this.getLevelManager().getHUD().setOnSceneTouchListener(this);
-        createPlayer();
-        createCamera();
-        createContactListener();
-        createDebugDraw();
-        this.getScene().registerUpdateHandler(this);
-    }
+
 
     public boolean onSceneTouchEvent(Scene paramScene, TouchEvent paramTouchEvent)
     {
@@ -238,51 +132,36 @@ public class MainActivity
         }
         else if ((paramTouchEvent.getX() > (this.getCameraWidth() - 50.0F)) & (paramTouchEvent.getY() < 50.0F))
         {
-            this.closeGame();
+            this.gameManager.closeGame();
         }
-        this.thePlayer.moveDetect(paramTouchEvent.getX(), paramTouchEvent.getY(), paramTouchEvent);
+        this.gameManager.getThePlayer().moveDetect(paramTouchEvent.getX(), paramTouchEvent.getY(), paramTouchEvent);
         return true;
     }
 
     public void onUpdate(float paramFloat)
     {
-        if(this.thePlayer != null)
+        if(this.gameManager.getThePlayer() != null)
         {
             //this.speedText.setText(Integer.toString(this.thePlayer.getHealth()));
-            this.thePlayer.updatePosition();
+            this.gameManager.getThePlayer().updatePosition();
         }
 
-        if(this.getLevelManager().getLevel() != null)
+        if(this.gameManager.getLevelManager().getLevel() != null)
         {
-            this.levelManager.updateLevel();
+            this.gameManager.getLevelManager().updateLevel();
         }
-        //}
-        //catch(Exception e)
-        //{
-            //e.printStackTrace();
-        //}
     }
 
     public void reset()
     {
-        this.thePlayer.setPos(this.levelManager.lastStartPosX, this.levelManager.lastStartPosY);
-        this.thePlayer.setAlive(true);
-        this.thePlayer.enableJumping();
-        this.thePlayer.updatePosition();
+        this.gameManager.getThePlayer().setPos(this.gameManager.getLevelManager().lastStartPosX, this.gameManager.getLevelManager().lastStartPosY);
+        this.gameManager.getThePlayer().setAlive(true);
+        this.gameManager.getThePlayer().enableJumping();
+        this.gameManager.getThePlayer().updatePosition();
     }
 
-    public void setDebug()
-    {
-        if (this.debug != null) {
-            this.debug.detachSelf();
-        }
-        this.debug = new DebugRenderer(this.getPhysicsWorld(),this.getVertexBufferObjectManager());
-        //this.getScene().attachChild(this.debug);
-    }
 
-    public void setPhysicsWorld(PhysicsWorld paramPhysicsWorld)
-    {
-        this.mPhysicsWorld = paramPhysicsWorld;
-    }
+
+
 }
 

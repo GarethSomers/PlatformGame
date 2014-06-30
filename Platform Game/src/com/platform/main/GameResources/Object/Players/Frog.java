@@ -1,6 +1,6 @@
 package com.platform.main.GameResources.Object.Players;
 
-import com.platform.main.MainActivity;
+import com.platform.main.GameManager;
 
 public class Frog extends Enemy
 {
@@ -9,7 +9,7 @@ public class Frog extends Enemy
     //animations
 
     //constructor
-    public Frog(float paramFloat1, float paramFloat2, MainActivity mMainActivity)
+    public Frog(float paramFloat1, float paramFloat2, GameManager mMainActivity)
     {
         super(paramFloat1, paramFloat2, 71, 23, "frog.png",2,4, mMainActivity);
         this.body.setUserData(this);
@@ -49,13 +49,13 @@ public class Frog extends Enemy
     @Override
     public void updateAI()
     {
-        if ((this.getBody().getPosition().dst(this.mActivity.getThePlayer().getBody().getPosition())*this.mActivity.PIXEL_TO_METRE_RATIO) < (this.range) && (this.alive))
+        if ((this.getBody().getPosition().dst(this.gameManager.getThePlayer().getBody().getPosition())*this.gameManager.getMainActivity().PIXEL_TO_METRE_RATIO) < (this.range) && (this.alive))
         {
             //check pos
-            if (getCenterXPos() < this.mActivity.getThePlayer().getCenterXPos()) {
+            if (getCenterXPos() < this.gameManager.getThePlayer().getCenterXPos()) {
                 moveRight();
             }
-            else if (getCenterXPos() > this.mActivity.getThePlayer().getCenterXPos()) {
+            else if (getCenterXPos() > this.gameManager.getThePlayer().getCenterXPos()) {
                 moveLeft();
             }
 

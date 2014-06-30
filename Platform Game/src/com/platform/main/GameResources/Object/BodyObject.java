@@ -3,7 +3,7 @@ package com.platform.main.GameResources.Object;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.platform.main.MainActivity;
+import com.platform.main.GameManager;
 
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
@@ -11,9 +11,9 @@ import org.andengine.entity.shape.RectangularShape;
 
 public abstract class BodyObject
 {
+    protected GameManager gameManager;
     protected Body body;
     protected FixtureDef fixtureDef;
-    protected MainActivity mActivity;
     protected RectangularShape theShape;
     protected TiledTextureRegion mTiledTextureRegion;
     protected boolean attached = false;
@@ -99,10 +99,10 @@ public abstract class BodyObject
     {
         if(this.physicsConnector != null)
         {
-            this.mActivity.getPhysicsWorld().unregisterPhysicsConnector(physicsConnector);
+            this.gameManager.getPhysicsWorld().unregisterPhysicsConnector(physicsConnector);
         }
         this.physicsConnector = new PhysicsConnector(this.getShape(), this.body, true, false);
-        this.mActivity.getPhysicsWorld().registerPhysicsConnector(physicsConnector);
+        this.gameManager.getPhysicsWorld().registerPhysicsConnector(physicsConnector);
     }
 
     public void addToSpriteWorld()
@@ -111,7 +111,7 @@ public abstract class BodyObject
         {
             this.getShape().getParent().detachChild(this.getShape());
         }
-        this.mActivity.getLevelManager().getScene().attachChild(this.getShape());
+        this.gameManager.getLevelManager().getScene().attachChild(this.getShape());
     }
 
     public void addToWorld()

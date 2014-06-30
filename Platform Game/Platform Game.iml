@@ -18,6 +18,19 @@
     <orderEntry type="module" module-name="AndEngine-GLES2" />
     <orderEntry type="module" module-name="AndEngineDebugDrawExtension-GLES2-latest-B2D" />
     <orderEntry type="module" module-name="AndEnginePhysicsBox2DExtension-GLES2" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../google-gson-2.2.4" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../google-gson-2.2.4" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../../../google-gson-2.2.4" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../../../google-gson-2.2.4" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

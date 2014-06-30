@@ -14,7 +14,7 @@ import com.platform.main.GameResources.Object.Interactions.Lemon;
 
 public class MyContactListener implements ContactListener
 {
-    MainActivity mActivity;
+    GameManager gameManager;
     //variables
     private Player localPlayer = null;
     private boolean playersFeet = false;
@@ -30,9 +30,9 @@ public class MyContactListener implements ContactListener
     * Constructor
     *
     */
-    public MyContactListener(MainActivity paramMainActivity)
+    public MyContactListener(GameManager paramMainActivity)
     {
-        this.mActivity = paramMainActivity;
+        this.gameManager = paramMainActivity;
     }
 
     /*
@@ -71,7 +71,7 @@ public class MyContactListener implements ContactListener
             if(parentUserData instanceof Player)
             {
                 //Its the player
-                localPlayer = this.mActivity.getThePlayer();
+                localPlayer = this.gameManager.getThePlayer();
             }
             else if(parentUserData instanceof Enemy)
             {
@@ -130,18 +130,19 @@ public class MyContactListener implements ContactListener
             if(localEnemy != null && localEnemy.getAlive())
             {
                 //he must have hit/left an enemy
-                //this.mActivity.getThePlayer().forceJump();
+                //this.gameManager.getThePlayer().forceJump();
                 localEnemy.kill();
             }
             else if(localLadder != null)
             {
                 //he must have hit/left a ladder
-                this.mActivity.getThePlayer().setClimbing(newState);
+                this.gameManager.getThePlayer().setClimbing(newState);
+                localLadder.triggerAction();
             }
             else if(localClippingPlatform != null)
             {
                 //he must have hit/left a platform
-                this.mActivity.getThePlayer().setJumping(newState);
+                this.gameManager.getThePlayer().setJumping(newState);
             }
             else if(localLemon != null)
             {
@@ -154,8 +155,8 @@ public class MyContactListener implements ContactListener
             if(localDoorway != null)
             {
                 //he must have hit/left a platform
-                mActivity.getThePlayer().setInfrontOfDoorway(newState);
-                mActivity.getLevelManager().setupScheduleLoadLevel(localDoorway.getDestination(), localDoorway.getDestinationX(), localDoorway.getDestinationY());
+                gameManager.getThePlayer().setInfrontOfDoorway(newState);
+                gameManager.getLevelManager().setupScheduleLoadLevel(localDoorway.getDestination(), localDoorway.getDestinationX(), localDoorway.getDestinationY());
             }
         }
         else if(localEnemy != null)

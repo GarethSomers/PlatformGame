@@ -1,6 +1,6 @@
 package com.platform.main.GameResources.Object.Players;
 
-import com.platform.main.MainActivity;
+import com.platform.main.GameManager;
 
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.opengl.texture.TextureOptions;
@@ -15,25 +15,25 @@ public class HurtBox
     private boolean alive;
     private AnimatedSprite animatedSprite;
     private float height = 24.0F;
-    private MainActivity mActivity;
+    private GameManager gameManager;
     private TiledTextureRegion mTiledTextureRegion;
     private float width = 14.0F;
     private float xPos = 100.0F;
     private float yPos = 100.0F;
 
-    public HurtBox(float paramFloat1, float paramFloat2, MainActivity paramMainActivity)
+    public HurtBox(float paramFloat1, float paramFloat2, GameManager paramMainActivity)
     {
         this.xPos = paramFloat1;
         this.yPos = (paramFloat2 - this.height);
-        this.mActivity = paramMainActivity;
+        this.gameManager = paramMainActivity;
         this.alive = true;
-        BuildableBitmapTextureAtlas localBuildableBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.mActivity.getEngine().getTextureManager(), 64, 24, TextureOptions.NEAREST);
-        this.mTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(localBuildableBitmapTextureAtlas, paramMainActivity, "gfx/enemy.png", 4, 1);
+        BuildableBitmapTextureAtlas localBuildableBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.gameManager.getMainActivity().getEngine().getTextureManager(), 64, 24, TextureOptions.NEAREST);
+        this.mTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(localBuildableBitmapTextureAtlas, gameManager.getMainActivity(), "gfx/enemy.png", 4, 1);
         try
         {
             localBuildableBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder(0, 0, 0));
             localBuildableBitmapTextureAtlas.load();
-            this.animatedSprite = new AnimatedSprite(this.xPos, this.yPos, this.mTiledTextureRegion, this.mActivity.getEngine().getVertexBufferObjectManager());
+            this.animatedSprite = new AnimatedSprite(this.xPos, this.yPos, this.mTiledTextureRegion, this.gameManager.getMainActivity().getEngine().getVertexBufferObjectManager());
             long[] arrayOfLong = { 100L, 200L, 300L, 400L };
             this.animatedSprite.animate(arrayOfLong);
             return;
@@ -49,7 +49,7 @@ public class HurtBox
 
     public void displayBox()
     {
-        this.mActivity.getScene().attachChild(this.animatedSprite);
+        this.gameManager.getScene().attachChild(this.animatedSprite);
     }
 
     public boolean getAlive()
