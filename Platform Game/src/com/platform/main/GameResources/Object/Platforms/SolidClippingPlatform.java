@@ -5,9 +5,25 @@ import com.platform.main.GameManager;
 public class SolidClippingPlatform
         extends RectangularPlatform
 {
-    public SolidClippingPlatform(float paramFloat1, float paramFloat2, float paramFloat3, float paramFloat4, GameManager paramMainActivity)
+    public SolidClippingPlatform(GameManager gameManager)
     {
-        super(paramFloat1, paramFloat2, paramFloat3, paramFloat4, paramMainActivity);
-        this.body.setUserData(this);
+        super(gameManager);
+    }
+
+    @Override
+    public void preCreateObject() {
+        this.updatePosition = false;
+    }
+
+    @Override
+    public void createObject() {
+        this.createShape();
+        this.createBody();
+    }
+
+    @Override
+    public void afterCreateObject() {
+        this.getShape().setAlpha(0);
+        this.getBody().setUserData(this);
     }
 }

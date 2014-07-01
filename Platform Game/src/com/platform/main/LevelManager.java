@@ -1,9 +1,10 @@
 package com.platform.main;
 
+import com.platform.main.GameResources.JsonLoader;
 import com.platform.main.GameResources.Level.GameLevel;
 import com.platform.main.GameResources.Level.Menu.Menu;
 import com.platform.main.GameResources.Object.Platforms.ClippingPlatform;
-import com.platform.main.GameResources.Object.Players.Doorway;
+import com.platform.main.GameResources.Object.Interactions.Doorway;
 import com.platform.main.GameResources.Object.Players.Frog;
 import com.platform.main.GameResources.Object.Interactions.Ladder;
 import com.platform.main.GameResources.Object.Interactions.Lemon;
@@ -41,10 +42,12 @@ public class LevelManager
     private int scheduledDestinationY;
     private boolean scheduledDestinationConfirm = false;
     public LevelState currentState = LevelState.Loading;
+    public JsonLoader jsonLoader;
 
     public LevelManager(GameManager paramMainActivity)
     {
         this.gameManager = paramMainActivity;
+        this.jsonLoader = new JsonLoader(gameManager);
     }
 
     public enum LevelState
@@ -62,7 +65,6 @@ public class LevelManager
         LoadLevel("one", 10, 305);
     }
 
-    /* Error */
     public void LoadLevel(String levelName, int lastStartPosX, int lastStartPosY)
     {
         this.currentState = LevelState.Loading;
@@ -89,6 +91,7 @@ public class LevelManager
         }
         else
         {
+            this.jsonLoader.loadLevel(levelName);
             try {
                 /*
                 Open input Stream
@@ -115,6 +118,7 @@ public class LevelManager
                             ((GameLevel)this.currentLevel).setBackgroundImages(data[1],data[2],Integer.parseInt(data[3]), Integer.parseInt(data[4]));
                             this.currentLevel.setMusicByString(data[4]);
                         }
+                        /*
                         else if(data[0].equals(this.TYPE_CLIPPING))
                         {
                             gameManager.getMainActivity().log("Adding a clipping");
@@ -123,14 +127,12 @@ public class LevelManager
                         else if(data[0].equals(this.TYPE_LADDER))
                         {
                             gameManager.getMainActivity().log("Adding a ladder");
-                            Ladder l = new Ladder(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]),this.gameManager);
+                            Ladder l = new Ladder(this.gameManager);
+                            l.setX(Float.parseFloat(data[1]));
+                            l.setY(Float.parseFloat(data[2]));
+                            l.setWidth(Float.parseFloat(data[3]));
+                            l.setHeight(Float.parseFloat(data[4]));
                             ((GameLevel)this.currentLevel).addGameObject(l);
-
-                            //if there is an extra field (related to quest ids)
-                            if(data.length > 5 && data[5] != null)
-                            {
-                                l.setQuestID(Integer.valueOf(data[5]));
-                            }
                         }
                         else if(data[0].equals(this.TYPE_DOORWAY))
                         {
@@ -146,7 +148,7 @@ public class LevelManager
                         {
                             gameManager.getMainActivity().log("Adding a frog");
                             ((GameLevel)this.currentLevel).addEnemy(new Frog(720,920, gameManager));
-                        }
+                        }*/
                     }
                     catch(Exception e)
                     {

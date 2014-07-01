@@ -3,34 +3,44 @@ package com.platform.main.GameResources.Object.Interactions;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.platform.main.GameManager;
 import com.platform.main.GameResources.Object.Platforms.RectangularPlatform;
-import com.platform.main.GameResources.Object.QuestTriggeringObject;
 
-public class Ladder extends RectangularPlatform implements QuestTriggeringObject
+public class Doorway
+        extends RectangularPlatform
 {
-    int questID = 0;
+    private String destination;
+    private int destinationX;
+    private int destinationY;
 
-    /*
-    * Ladder Used by JSONLoader. It sets the properties afterwards.
-     */
-    public Ladder(GameManager gameManager)
+    public Doorway(GameManager gameManager)
     {
         super(gameManager);
     }
 
-    public void setQuestID(int questID)
+    public String getDestination()
     {
-        this.questID = questID;
+        return this.destination;
     }
 
-    @Override
-    public void triggerAction() {
-        gameManager.getQuestManager().triggerAction(questID);
+    public int getDestinationX()
+    {
+        return this.destinationX;
     }
+
+    public int getDestinationY()
+    {
+        return this.destinationY;
+    }
+
+
+    /*********************************************************************************************/
+    /* CREATE OBJECT METHOD */
+    /*********************************************************************************************/
 
     @Override
     public void preCreateObject() {
         this.updatePosition = false;
     }
+
 
     @Override
     public void createObject() {

@@ -3,7 +3,7 @@ package com.platform.main;
 import android.hardware.SensorManager;
 
 import com.badlogic.gdx.math.Vector2;
-import com.platform.main.GameResources.JsonSimpleExample;
+import com.platform.main.GameResources.JsonLoader;
 import com.platform.main.GameResources.Level.GameLevel;
 import com.platform.main.GameResources.Object.Players.Player;
 
@@ -39,7 +39,6 @@ public class GameManager
         {
             completeLoadingScene();
         }
-        JsonSimpleExample jsonSimpleExample = new JsonSimpleExample(this);
     }
 
     /*
