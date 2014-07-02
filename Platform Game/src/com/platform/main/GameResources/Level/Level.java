@@ -1,6 +1,7 @@
 package com.platform.main.GameResources.Level;
 
 import com.platform.main.GameManager;
+import com.platform.main.GameResources.Object.DelayedCreationObject;
 
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
@@ -9,7 +10,7 @@ import org.andengine.entity.scene.Scene;
 /**
  * Created by Gareth Somers on 5/11/14.
  */
-public class Level {
+public abstract class Level implements DelayedCreationObject {
     protected GameManager gameManager;
     protected Scene scene = new Scene();
     protected Music music;
@@ -63,4 +64,6 @@ public class Level {
     {
 
     }
+
+
 }

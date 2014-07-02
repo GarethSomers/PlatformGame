@@ -9,22 +9,43 @@ import org.andengine.entity.sprite.AnimatedSprite;
 
 import com.platform.main.*;
 
-public class AnimatedGameObject extends BodyObject implements DelayedCreationObject
+public abstract class AnimatedGameObject extends BodyObject implements Animatable
 {
-    String image = "";
-    int columns = 0;
-    int rows = 0;
+    protected String image = "";
+    protected int columns = 0;
+    protected int rows = 0;
 
-    //main constructor
+    /*********************************************************************************************/
+    /* CONSTRUCTOR */
+    /*********************************************************************************************/
     public AnimatedGameObject(GameManager paramMainActivity)
     {
-        //save main activity
         this.gameManager = paramMainActivity;
-
-        //create box body with shape
-        this.body = PhysicsFactory.createBoxBody(paramMainActivity.getPhysicsWorld(), this.getShape(), this.bodyType, this.fixtureDef);
     }
 
+
+
+    /*********************************************************************************************/
+    /* SETTER IMAGE */
+    /*********************************************************************************************/
+    public void setImage(String newImage)
+    {
+        if(this.constructed == true)
+        {
+            gameManager.getMainActivity().gameToast("Tried to set message after it has been constructed");
+        }
+        else
+        {
+            this.image = newImage;
+        }
+    }
+
+
+
+
+    /*********************************************************************************************/
+    /* OVERRIDE SHAPE OBJECT */
+    /*********************************************************************************************/
 
     //get the shape
     public AnimatedSprite getShape()
@@ -33,28 +54,8 @@ public class AnimatedGameObject extends BodyObject implements DelayedCreationObj
     }
 
     @Override
-    public void preCreateObject() {
-        this.mTiledTextureRegion = this.gameManager.getMaterialManager().getTiledTexture(this.image, this.width*this.columns, this.height*this.rows, this.columns, this.rows);
-        this.bodyType = BodyDef.BodyType.StaticBody;
-    }
-
-    @Override
     public void createShape()
     {
         this.theShape = new AnimatedSprite(xPos, yPos, this.mTiledTextureRegion, this.gameManager.getMainActivity().getEngine().getVertexBufferObjectManager());
-    }
-
-    @Override
-    public void createObject() {
-        this.createShape();
-        this.createBody();
-    }
-
-    @Override
-    public void afterCreateObject() {
-        this.getBody().setAwake(false);
-        this.getBody().setUserData(this);
-        this.getBody().setFixedRotation(true);
-        this.getBody().setLinearVelocity(0.0F, 0.0F);
     }
 }

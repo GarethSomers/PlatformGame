@@ -8,11 +8,10 @@ import com.platform.main.GameResources.Object.AnimatedGameObject;
 public class Lemon extends AnimatedGameObject
 {
     protected boolean alive = true;
-    public Lemon(float paramFloat1, float paramFloat2, GameManager mMainActivity)
+    public Lemon(GameManager gameManager)
     {
-        super(paramFloat1, paramFloat2, 16, 16, "lemon.png", BodyDef.BodyType.StaticBody, mMainActivity);
-        this.body.setUserData(this);
-        this.fixtureDef.isSensor = true;
+        super(gameManager);
+
         ((Fixture)this.body.getFixtureList().get(0)).setSensor(true);
     }
 
@@ -24,5 +23,34 @@ public class Lemon extends AnimatedGameObject
             this.alive = false;
             this.gameManager.getThePlayer().addHealth(5);
         }
+    }
+
+    @Override
+    public void setAnimation(String paramString) {
+        this.setWidth(16);
+        this.setWidth(16);
+        this.setImage("lemon.png");
+        this.bodyType = BodyDef.BodyType.StaticBody;
+        this.body.setUserData(this);
+        this.fixtureDef.isSensor = true;
+    }
+
+    @Override
+    public void preCreateObject() {
+        this.mTiledTextureRegion = this.gameManager.getMaterialManager().getTiledTexture(this.image, this.width*this.columns, this.height*this.rows, this.columns, this.rows);
+        this.bodyType = BodyDef.BodyType.StaticBody;
+    }
+
+    @Override
+    public void createObject() {
+        this.createShape();
+        this.createBody();
+    }
+
+    @Override
+    public void afterCreateObject() {
+        this.getBody().setAwake(false);
+        this.getBody().setUserData(this);
+        this.getBody().setFixedRotation(true);
     }
 }

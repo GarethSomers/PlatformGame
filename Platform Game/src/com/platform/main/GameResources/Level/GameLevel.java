@@ -24,6 +24,10 @@ public class GameLevel extends Level
     private ArrayList<Enemy> hurtBoxes = new ArrayList();
     private ArrayList<BodyObject> objects = new ArrayList();
 
+    //dimensions
+    private int width = 100;
+    private int height = 100;
+
     public GameLevel(GameManager paramMainActivity)
     {
         super(paramMainActivity);
@@ -41,11 +45,7 @@ public class GameLevel extends Level
         //Set the camera
         gameManager.getMainActivity().getCamera().setBounds(0.0F, 0.0F, pWidth, pHeight);
 
-        //Add Default Movement Constraints
-        this.addGameObject(new SolidClippingPlatform(0.0F, -1.0F, pWidth, 1.0F, gameManager));
-        this.addGameObject(new SolidClippingPlatform(-1.0F, 0.0F, 1.0F, pHeight, gameManager));
-        this.addGameObject(new SolidClippingPlatform(0.0F, pHeight + 1, pWidth, 1.0F, gameManager));
-        this.addGameObject(new SolidClippingPlatform(pWidth + 1, 0.0F, 1.0F, pHeight, gameManager));
+
     }
 
     public void addRectangularPlatform(RectangularPlatform pRectangularPlatform)
@@ -194,5 +194,44 @@ public class GameLevel extends Level
                 System.gc();
             /*}
         });*/
+    }
+
+    @Override
+    public void preCreateObject() {
+        //Add Top Solid Block
+        SolidClippingPlatform topPlatform = new SolidClippingPlatform(gameManager);
+        topPlatform.setPos(0.0F,-1.0F);
+        topPlatform.setDimensions(this.width, 1.0F);
+        this.addGameObject(topPlatform);
+        //Add Left Solid Block
+        SolidClippingPlatform leftPlatform = new SolidClippingPlatform(gameManager);
+        topPlatform.setPos(-1.0F,-0.0F);
+        topPlatform.setDimensions(1.0F, this.height);
+        this.addGameObject(topPlatform);
+        //Add Left Solid Block
+        SolidClippingPlatform rightPlatform = new SolidClippingPlatform(gameManager);
+        topPlatform.setPos(this.width+1,0.0F);
+        topPlatform.setDimensions(1.0F, this.height);
+        this.addGameObject(topPlatform);
+        //Add Left Solid Block
+        SolidClippingPlatform bottomPlatform = new SolidClippingPlatform(gameManager);
+        topPlatform.setPos(0.0F,this.height+1);
+        topPlatform.setDimensions(this.width, 1.0F);
+        this.addGameObject(topPlatform);
+    }
+
+    @Override
+    public void createObject() {
+        this.preCreateObject();
+
+        //create object?
+        this.constructed = true;
+
+        this.afterCreateObject();
+    }
+
+    @Override
+    public void afterCreateObject() {
+
     }
 }

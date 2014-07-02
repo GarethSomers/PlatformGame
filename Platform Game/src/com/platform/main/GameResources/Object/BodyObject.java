@@ -12,7 +12,7 @@ import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.entity.shape.RectangularShape;
 
-public abstract class BodyObject
+public abstract class BodyObject implements DelayedCreationObject
 {
     protected GameManager gameManager;
     protected Body body;
@@ -26,15 +26,20 @@ public abstract class BodyObject
     protected boolean updatePosition = false;
 
     //these variables control whether or not to construct the object or check if its attached
-    protected boolean attached = false;
-    protected boolean constructed = false;
-
+    protected ObjectStatus status = ObjectStatus.DECLARED;
     //these are used by the JSON construction to allow the units to be entered one at a time.
-    protected int width = 0;
-    protected int height = 0;
+    protected float width = 0;
+    protected float height = 0;
     protected int xPos = 0;
     protected int yPos = 0;
 
+    /*********************************************************************************************/
+    /* OBJECT STATUS */
+    /*********************************************************************************************/
+    public enum ObjectStatus
+    {
+        DECLARED, CONSTRUCTED, ATTACHED
+    }
 
     /*********************************************************************************************/
     /* GETTER ALTERNATIVE POSITION */
@@ -59,6 +64,17 @@ public abstract class BodyObject
         return this.getX() + this.getWidth();
     }
 
+
+    /*********************************************************************************************/
+    /* SET DIMENSIONS */
+    /*********************************************************************************************/
+    public void setDimensions(float newWidth, float newHeight)
+    {
+        this.setWidth(newWidth);
+        this.setHeight(newHeight);
+    }
+
+
     /*********************************************************************************************/
     /* GETTER / SETTER WIDTH */
     /*********************************************************************************************/
@@ -67,7 +83,7 @@ public abstract class BodyObject
         return this.getShape().getWidth();
     }
 
-    public void setWidth(int newWidth)
+    public void setWidth(float newWidth)
     {
         this.width = newWidth;
         if(this.theShape != null)
@@ -84,9 +100,9 @@ public abstract class BodyObject
         return this.getShape().getHeight();
     }
 
-    public void setHeight(int newHeight)
+    public void setHeight(float newHeight)
     {
-        this.width = newHeight;
+        this.height = newHeight;
         if(this.theShape != null)
         {
             this.theShape.setHeight(newHeight);
@@ -144,13 +160,13 @@ public abstract class BodyObject
     /*********************************************************************************************/
     /* GETTER / SETTER ATTACHED */
     /*********************************************************************************************/
-    public boolean getAttached()
+    public ObjectStatus getStatus()
     {
-        return this.attached;
+        return this.status;
     }
-    public void setAttached(boolean attached)
+    public void setStatus(ObjectStatus newStatus)
     {
-        this.attached = attached;
+        this.status = status;
     }
 
 
@@ -162,7 +178,7 @@ public abstract class BodyObject
     /*
         GET BODY
      */
-    public Body getBody()
+    protected Body getBody()
     {
         return this.body;
     }
@@ -170,7 +186,7 @@ public abstract class BodyObject
     /*
         GET SHAPE
      */
-    public RectangularShape getShape()
+    protected RectangularShape getShape()
     {
         return this.theShape;
     }
@@ -194,6 +210,7 @@ public abstract class BodyObject
         }
         this.physicsConnector = new PhysicsConnector(this.getShape(), this.body, this.updatePosition, false);
         this.gameManager.getPhysicsWorld().registerPhysicsConnector(physicsConnector);
+        this.status = ObjectStatus.ATTACHED;
     }
 
     /*
@@ -216,7 +233,6 @@ public abstract class BodyObject
     {
         this.addToPhysicsWorld();
         this.addToSpriteWorld();
-        this.attached = true;
     }
 
 
@@ -232,16 +248,38 @@ public abstract class BodyObject
         this.addToWorld();
     }
 
-    public void createShape()
+    protected void createShape()
     {
         this.theShape = new Rectangle(this.xPos, this.yPos, this.width, this.height, gameManager.getMainActivity().getVertexBufferObjectManager());
     }
 
-    public void createBody()
+    protected void createBody()
     {
         // Create Body
         this.body = PhysicsFactory.createBoxBody(gameManager.getPhysicsWorld(), this.theShape, this.bodyType, this.fixtureDef);
         this.body.setAwake(false);
         this.body.setUserData(this);
     }
+
+
+
+    /*********************************************************************************************/
+    /* OBJECT CONSTRUCTION */
+    /*********************************************************************************************/
+    @Override
+    public void createObject() {
+        this.preCreateObject();
+
+        //create the shape object
+        this.createShape();
+        //create the body object
+        this.createBody();
+        //set attached to true
+        this.constructed = true;
+        //add them to the world
+        this.addToWorld();
+
+        this.afterCreateObject();
+    }
+
 }

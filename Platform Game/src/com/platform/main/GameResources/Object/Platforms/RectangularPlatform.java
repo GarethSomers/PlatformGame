@@ -9,7 +9,7 @@ import org.andengine.entity.primitive.Rectangle;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 
-public abstract class RectangularPlatform extends BodyObject implements DelayedCreationObject
+public abstract class RectangularPlatform extends BodyObject
 {
     //variables
     public RectangularPlatform(GameManager gameManager)

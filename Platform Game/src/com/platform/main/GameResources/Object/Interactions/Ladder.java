@@ -33,12 +33,6 @@ public class Ladder extends RectangularPlatform implements QuestTriggeringObject
     }
 
     @Override
-    public void createObject() {
-        this.createShape();
-        this.createBody();
-    }
-
-    @Override
     public void afterCreateObject() {
         this.getShape().setAlpha(0);
         ((Fixture)this.body.getFixtureList().get(0)).setSensor(true);

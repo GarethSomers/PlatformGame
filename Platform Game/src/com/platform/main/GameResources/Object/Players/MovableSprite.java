@@ -1,6 +1,7 @@
 package com.platform.main.GameResources.Object.Players;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -54,26 +55,35 @@ public abstract class MovableSprite extends AnimatedGameObject
     protected boolean alive = true;
     protected int health = 50;
 
-    public MovableSprite(float xPos, float yPos, int width, int height, String image, int columns, int rows, GameManager mainActivity)
+
+    /*********************************************************************************************/
+    /* CONSTRUCTOR */
+    /*********************************************************************************************/
+    public MovableSprite(GameManager mainActivity)
     {
-        super(xPos, yPos, width, height, image, columns, rows, mainActivity);
+        super(mainActivity);
 
         //setup animation
-        this.getShape().animate(this.PERSON_STANDING, this.PERSON_STANDING_S, this.PERSON_STANDING_E, true);
-        this.currentAnimation = this.PERSON_STANDING_S;
+
         this.getBody().getFixtureList().get(0).setFriction(0.1f);
     }
 
-    public boolean getAlive()
-    {
-        return this.alive;
-    }
 
+    /*********************************************************************************************/
+    /* SPEED  */
+    /*********************************************************************************************/
     public String getSpeed()
     {
         return String.valueOf(this.velocity_x);
     }
+    public void setSpeed(float velocity_x)
+    {
+        this.velocity_x = velocity_x;
+    }
 
+    /*********************************************************************************************/
+    /* HANDLE X MOVEMENT */
+    /*********************************************************************************************/
     public void handleXMovement()
     {
         if (this.moveLeft)
@@ -123,6 +133,9 @@ public abstract class MovableSprite extends AnimatedGameObject
         }
     }
 
+    /*********************************************************************************************/
+    /* HANDLE Y MOVEMENT */
+    /*********************************************************************************************/
     public void handleYMovement()
     {
         if (this.jumping)
@@ -133,9 +146,17 @@ public abstract class MovableSprite extends AnimatedGameObject
         }
     }
 
-    public void kill()
+
+
+
+    /*********************************************************************************************/
+    /* MOVEMENT SETTERS */
+    /*********************************************************************************************/
+    public void moveFullStop()
     {
-        this.alive = false;
+        this.getBody().setLinearVelocity(0,0);
+        this.velocity_x = 0;
+        this.moveStop();
     }
 
     public void moveLeft()
@@ -156,11 +177,17 @@ public abstract class MovableSprite extends AnimatedGameObject
         this.moveRight = false;
     }
 
-    public void setAlive(boolean paramBoolean)
-    {
-        this.alive = paramBoolean;
-    }
 
+
+
+
+
+
+
+
+    /*********************************************************************************************/
+    /* ANIMATION */
+    /*********************************************************************************************/
     public void setAnimation(String paramString)
     {
         if (paramString.equals("climbing") && !(this.currentAnimation == this.PERSON_CLIMBING_S))
@@ -185,29 +212,41 @@ public abstract class MovableSprite extends AnimatedGameObject
         }
     }
 
-    public AnimatedSprite getShape()
+
+
+
+
+    /*********************************************************************************************/
+    /* KILL / ALIVE / HEALTH */
+    /*********************************************************************************************/
+
+    //ALIVE
+    public boolean getAlive()
     {
-        return (AnimatedSprite)this.theShape;
+        return this.alive;
+    }
+    public void setAlive(boolean paramBoolean)
+    {
+        this.alive = paramBoolean;
     }
 
-    public void addHealth(int newHealth)
-    {
-        this.health += newHealth;
-    }
-
+    //HEALTH
+    public void addHealth(int newHealth) { this.health += newHealth; }
     public int getHealth()
     {
+
+
+
         return this.health;
     }
 
-    public void moveFullStop()
-    {
-        this.getBody().setLinearVelocity(0,0);
-        this.velocity_x = 0;
-        this.moveStop();
-    }
+    //KILL
+    public void kill() { this.alive = false; }
 
-    //add the feet
+
+    /*********************************************************************************************/
+    /* ADD FEET */
+    /*********************************************************************************************/
     public void addFeet()
     {
         //create new polygon shape
@@ -223,6 +262,12 @@ public abstract class MovableSprite extends AnimatedGameObject
         ((Fixture)this.body.getFixtureList().get(1)).setUserData("feet");
     }
 
+
+
+
+    /*********************************************************************************************/
+    /* JUMPING */
+    /*********************************************************************************************/
     public void setJumping(boolean newState)
     {
         if(newState == false)
@@ -245,5 +290,25 @@ public abstract class MovableSprite extends AnimatedGameObject
     {
         this.jumpingAllowed = false;
         this.jumping = false;
+    }
+
+
+
+    /*********************************************************************************************/
+    /* CREATE OBJECT CALLS */
+    /*********************************************************************************************/
+    @Override
+    public void preCreateObject() {
+        this.mTiledTextureRegion = this.gameManager.getMaterialManager().getTiledTexture(this.image, this.width*this.columns, this.height*this.rows, this.columns, this.rows);
+        this.bodyType = BodyDef.BodyType.StaticBody;
+    }
+
+    @Override
+    public void afterCreateObject() {
+        this.setAnimation("standing");
+        this.getBody().setAwake(false);
+        this.getBody().setUserData(this);
+        this.getBody().setFixedRotation(true);
+        this.getBody().setLinearVelocity(0.0F, 0.0F);
     }
 }
