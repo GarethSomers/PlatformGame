@@ -2,6 +2,7 @@ package com.platform.main.GameResources.Level;
 
 import com.platform.main.GameManager;
 import com.platform.main.GameResources.Object.DelayedCreationObject;
+import com.platform.main.ObjectStatus;
 
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
@@ -10,10 +11,11 @@ import org.andengine.entity.scene.Scene;
 /**
  * Created by Gareth Somers on 5/11/14.
  */
-public abstract class Level implements DelayedCreationObject {
+public abstract class Level {
     protected GameManager gameManager;
     protected Scene scene = new Scene();
     protected Music music;
+    protected ObjectStatus status = ObjectStatus.ATTACHED;
 
     public Level(GameManager paramMainActivity)
     {

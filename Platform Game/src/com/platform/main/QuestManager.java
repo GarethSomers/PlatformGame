@@ -1,7 +1,5 @@
 package com.platform.main;
 
-import com.platform.main.GameResources.Object.BodyObject;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;

@@ -9,11 +9,14 @@ public class Frog extends Enemy
     //animations
 
     //constructor
-    public Frog(float paramFloat1, float paramFloat2, GameManager mMainActivity)
+    public Frog(GameManager mMainActivity)
     {
-        super(paramFloat1, paramFloat2, 71, 23, "frog.png",2,4, mMainActivity);
-        this.body.setUserData(this);
-
+        super(mMainActivity);
+        this.setWidth(71);
+        this.setHeight(23);
+        this.setImage("frog.png");
+        this.columns = 2;
+        this.rows = 4;
         this.PERSON_CLIMBING = new long[]{ 50L, 100L, 150L, 200L };
         this.PERSON_CLIMBING_S = 0;
         this.PERSON_CLIMBING_E = 3;
@@ -33,8 +36,6 @@ public class Frog extends Enemy
         this.PERSON_WALKING_S = 0;
         this.PERSON_WALKING_E = 3;
 
-
-        this.getShape().animate(this.PERSON_STANDING, this.PERSON_STANDING_S, this.PERSON_STANDING_E, true);
     }
 
     public void jump()

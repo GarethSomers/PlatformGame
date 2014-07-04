@@ -1,15 +1,10 @@
 package com.platform.main.GameResources.Object;
 
-import com.badlogic.gdx.physics.box2d.BodyDef;
-
-import org.andengine.entity.primitive.Rectangle;
-import org.andengine.extension.physics.box2d.PhysicsConnector;
-import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.entity.sprite.AnimatedSprite;
 
 import com.platform.main.*;
 
-public abstract class AnimatedGameObject extends BodyObject implements Animatable
+public abstract class AnimatedGameObject extends GameObject implements Animatable
 {
     protected String image = "";
     protected int columns = 0;
@@ -30,7 +25,7 @@ public abstract class AnimatedGameObject extends BodyObject implements Animatabl
     /*********************************************************************************************/
     public void setImage(String newImage)
     {
-        if(this.constructed == true)
+        if(this.status != ObjectStatus.ATTACHED)
         {
             gameManager.getMainActivity().gameToast("Tried to set message after it has been constructed");
         }

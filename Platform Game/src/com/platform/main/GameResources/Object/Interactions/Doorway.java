@@ -41,13 +41,6 @@ public class Doorway
         this.updatePosition = false;
     }
 
-
-    @Override
-    public void createObject() {
-        this.createShape();
-        this.createBody();
-    }
-
     @Override
     public void afterCreateObject() {
         this.getShape().setAlpha(0);

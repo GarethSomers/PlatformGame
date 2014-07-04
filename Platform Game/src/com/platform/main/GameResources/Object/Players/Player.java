@@ -17,9 +17,15 @@ public class Player
     private int climbing;
     private boolean infrontOfDoorway;
 
-    public Player(float xPos, float yPos, int paramInt, GameManager mainActivity)
+    public Player(GameManager mainActivity)
     {
-        super(xPos, yPos, 68, 120, "player.png", 4, 5, mainActivity);
+        super( mainActivity);
+        this.setPos(xPos,yPos);
+        this.setWidth(68);
+        this.setHeight(120);
+        this.setImage("player.png");
+        this.columns = 5;
+        this.rows = 4;
         //set defaults
         this.JUMP_HEIGHT = 6;
         this.PLAYER_HEIGHT = 24;

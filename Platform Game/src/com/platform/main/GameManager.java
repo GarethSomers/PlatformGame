@@ -14,6 +14,9 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 /**
  * Created by Gareth Somers on 6/19/14.
  */
+/*********************************************************************************************/
+    /* OBJECT STATUS */
+
 public class GameManager
 {
     private MainActivity mainActivity;
@@ -90,7 +93,7 @@ public class GameManager
 
     private void createPlayer()
     {
-        this.thePlayer = new Player(10, 303, 100, this);
+        this.thePlayer = new Player(this);
         this.thePlayer.setX(getLevelManager().lastStartPosX);
         this.thePlayer.setY(getLevelManager().lastStartPosY);
     }

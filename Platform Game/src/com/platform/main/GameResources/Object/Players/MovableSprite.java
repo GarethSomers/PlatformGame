@@ -299,7 +299,7 @@ public abstract class MovableSprite extends AnimatedGameObject
     /*********************************************************************************************/
     @Override
     public void preCreateObject() {
-        this.mTiledTextureRegion = this.gameManager.getMaterialManager().getTiledTexture(this.image, this.width*this.columns, this.height*this.rows, this.columns, this.rows);
+        this.mTiledTextureRegion = this.gameManager.getMaterialManager().getTiledTexture(this.image, ((int)this.width)*this.columns,  ((int)this.height)*this.rows, this.columns, this.rows);
         this.bodyType = BodyDef.BodyType.StaticBody;
     }
 

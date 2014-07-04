@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.platform.main.GameManager;
+import com.platform.main.ObjectStatus;
 
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
@@ -12,7 +13,7 @@ import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.entity.shape.RectangularShape;
 
-public abstract class BodyObject implements DelayedCreationObject
+public abstract class GameObject implements DelayedCreationObject
 {
     protected GameManager gameManager;
     protected Body body;
@@ -32,14 +33,6 @@ public abstract class BodyObject implements DelayedCreationObject
     protected float height = 0;
     protected int xPos = 0;
     protected int yPos = 0;
-
-    /*********************************************************************************************/
-    /* OBJECT STATUS */
-    /*********************************************************************************************/
-    public enum ObjectStatus
-    {
-        DECLARED, CONSTRUCTED, ATTACHED
-    }
 
     /*********************************************************************************************/
     /* GETTER ALTERNATIVE POSITION */
@@ -178,7 +171,7 @@ public abstract class BodyObject implements DelayedCreationObject
     /*
         GET BODY
      */
-    protected Body getBody()
+    public Body getBody()
     {
         return this.body;
     }
@@ -186,7 +179,7 @@ public abstract class BodyObject implements DelayedCreationObject
     /*
         GET SHAPE
      */
-    protected RectangularShape getShape()
+    public RectangularShape getShape()
     {
         return this.theShape;
     }
@@ -268,18 +261,21 @@ public abstract class BodyObject implements DelayedCreationObject
     /*********************************************************************************************/
     @Override
     public void createObject() {
-        this.preCreateObject();
+        if(this.status == ObjectStatus.DECLARED)
+        {
+            this.preCreateObject();
 
-        //create the shape object
-        this.createShape();
-        //create the body object
-        this.createBody();
-        //set attached to true
-        this.constructed = true;
-        //add them to the world
-        this.addToWorld();
+            //create the shape object
+            this.createShape();
+            //create the body object
+            this.createBody();
+            //set attached to true
+            this.setStatus(ObjectStatus.CONSTRUCTED);
+            //add them to the world
+            this.addToWorld();
 
-        this.afterCreateObject();
+            this.afterCreateObject();
+        }
     }
 
 }

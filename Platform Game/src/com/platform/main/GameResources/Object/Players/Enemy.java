@@ -4,40 +4,17 @@ import com.platform.main.GameManager;
 
 public class Enemy extends MovableSprite
 {
-    protected float range;
+    protected float range = 200.0F;
 
     //create generic object
-    public Enemy(float xPos, float yPos, GameManager mainActivity)
+    public Enemy(GameManager mainActivity)
     {
-        this(xPos, yPos, 64, 120, "Enemy.png", 4, 5, mainActivity);
-    }
-
-    //create enemy
-    public Enemy(float xPos,float yPos,int width, int height, String image, int columns, int rows, GameManager mainActivity)
-    {
-        //call movable sprite constructor
-        super(xPos, yPos, width, height, image, columns, rows, mainActivity);
-        //range
-        this.range = 200.0F;
-        //add feet
-        this.addFeet();
-        //set userdata
-        this.body.setUserData(this);
-    }
-
-    public boolean isPlayerAboveEnemy(float paramFloat1, float paramFloat2, float paramFloat3)
-    {
-        boolean bool1 = paramFloat1 < getEndPos();
-        boolean bool2 = false;
-        if (bool1)
-        {
-            boolean bool3 = paramFloat2 < getY();
-            bool2 = false;
-            if (bool3) {
-                bool2 = true;
-            }
-        }
-        return bool2;
+        super(mainActivity);
+        this.setImage("Enemy.png");
+        this.setWidth(64);
+        this.setHeight(120);
+        this.columns = 4;
+        this.rows = 5;
     }
 
     public void kill()
@@ -78,5 +55,17 @@ public class Enemy extends MovableSprite
         handleYMovement();
         handleXMovement();
         this.body.setLinearVelocity(this.velocity_x, this.body.getLinearVelocity().y);
+    }
+
+    @Override
+    public void afterCreateObject()
+    {
+        //add feet
+        this.addFeet();
+        this.setAnimation("standing");
+        this.getBody().setAwake(false);
+        this.getBody().setUserData(this);
+        this.getBody().setFixedRotation(true);
+        this.getBody().setLinearVelocity(0.0F, 0.0F);
     }
 }

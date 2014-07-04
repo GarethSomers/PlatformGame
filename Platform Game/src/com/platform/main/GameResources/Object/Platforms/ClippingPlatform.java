@@ -16,12 +16,6 @@ public class ClippingPlatform
     }
 
     @Override
-    public void createObject() {
-        this.createShape();
-        this.createBody();
-    }
-
-    @Override
     public void afterCreateObject() {
         this.getShape().setAlpha(0);
         this.getBody().setUserData(this);
