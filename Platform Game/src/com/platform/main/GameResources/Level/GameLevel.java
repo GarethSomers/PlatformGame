@@ -1,11 +1,14 @@
 package com.platform.main.GameResources.Level;
 
 import com.platform.main.GameManager;
-import com.platform.main.GameResources.Object.GameObject;
-import com.platform.main.GameResources.Object.DelayedCreationObject;
-import com.platform.main.GameResources.Object.Players.Enemy;
-import com.platform.main.GameResources.Object.Platforms.SolidClippingPlatform;
-import com.platform.main.ObjectStatus;
+import com.platform.main.GameResources.LevelObjects.BodyObject;
+import com.platform.main.GameResources.DelayedCreationObject;
+import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Enemy;
+import com.platform.main.GameResources.LevelObjects.GameObject;
+import com.platform.main.GameResources.LevelObjects.Platforms.SolidClippingPlatform;
+import com.platform.main.GameResources.LevelObjects.ObjectStatus;
+import com.platform.main.GameResources.LevelObjects.StaticObject.Background;
+import com.platform.main.GameResources.LevelObjects.StaticObject.ParallaxLayer;
 
 import java.util.ArrayList;
 
@@ -24,21 +27,22 @@ public class GameLevel extends Level implements DelayedCreationObject
     private ArrayList<Enemy> enemiesNeedRemoving = new ArrayList();
     private ArrayList<Enemy> hurtBoxes = new ArrayList();
     private ArrayList<GameObject> objects = new ArrayList();
+    private ArrayList<Background> parralaxBackgrounds = new ArrayList();
 
     //dimensions
     private int width = 100;
     private int height = 100;
+    private ParallaxLayer parallaxLayer;
 
     public GameLevel(GameManager paramMainActivity)
     {
         super(paramMainActivity);
     }
 
-    public void addBackgroundImage(Sprite backgroundImage)
-    {
 
-    }
-
+    /*********************************************************************************************/
+    /* ADD GAME OBJECT */
+    /*********************************************************************************************/
     public void addGameObject(GameObject aAnimatedGameObject)
     {
         //if its an enemy
@@ -50,6 +54,20 @@ public class GameLevel extends Level implements DelayedCreationObject
         this.objects.add(aAnimatedGameObject);
     }
 
+
+    /*********************************************************************************************/
+    /* ADD PARALLAX BACKGROUND */
+    /*********************************************************************************************/
+    public void addParallaxBackground(Background aBackground)
+    {
+        this.parralaxBackgrounds.add(aBackground);
+    }
+
+
+
+    /*********************************************************************************************/
+    /* GET OBJECTS */
+    /*********************************************************************************************/
     public ArrayList<Enemy> getEnemies()
     {
         return this.hurtBoxes;
@@ -60,21 +78,18 @@ public class GameLevel extends Level implements DelayedCreationObject
         return this.enemiesNeedRemoving;
     }
 
+
+    /*********************************************************************************************/
+    /* GET SET MUSIC */
+    /*********************************************************************************************/
     public Music getMusic()
     {
         return this.music;
     }
-
-    public Scene getScene()
-    {
-        return this.scene;
-    }
-
     public void setMusic(Music pMusic) throws Exception
     {
         this.music = pMusic;
     }
-
     public void setMusicByString(String pMusic)
     {
         try
@@ -89,6 +104,12 @@ public class GameLevel extends Level implements DelayedCreationObject
         }
     }
 
+
+
+    /*********************************************************************************************/
+    /* UPDATE SCENE */
+    /*********************************************************************************************/
+
     public void update()
     {
         for(Enemy e : this.getEnemies())
@@ -102,6 +123,42 @@ public class GameLevel extends Level implements DelayedCreationObject
         this.getEnemiesNeedRemoving().clear();
     }
 
+
+
+    /*********************************************************************************************/
+    /* GETTER / SETTER WIDTH */
+    /*********************************************************************************************/
+    public int getWidth()
+    {
+        return this.width;
+    }
+
+    public void setWidth(int newWidth)
+    {
+        this.width = newWidth;
+    }
+
+
+
+    /*********************************************************************************************/
+    /* GETTER / SETTER HEIGHT */
+    /*********************************************************************************************/
+    public int getHeight()
+    {
+        return this.height;
+    }
+
+    public void setHeight(int newHeight)
+    {
+        this.height = newHeight;
+    }
+
+
+
+
+    /*********************************************************************************************/
+    /* DESTROYABLE OBJECT */
+    /*********************************************************************************************/
     public void destroy()
     {
         //Delete Enemies
@@ -112,7 +169,10 @@ public class GameLevel extends Level implements DelayedCreationObject
                     try {
                         final int myI = i;
                         scene.detachChild(objects.get(myI).getShape());
-                        gameManager.getPhysicsWorld().destroyBody(objects.get(myI).getBody());
+                        if(objects.get(myI) instanceof BodyObject)
+                        {
+                            gameManager.getPhysicsWorld().destroyBody(((BodyObject) objects.get(myI)).getBody());
+                        }
                     } catch (Exception e) {
                         gameManager.getMainActivity().log("Level : Could not destroy enemy " + e);
                     }
@@ -146,6 +206,11 @@ public class GameLevel extends Level implements DelayedCreationObject
         });*/
     }
 
+
+    /*********************************************************************************************/
+    /* DELAYED CREATION */
+    /*********************************************************************************************/
+
     @Override
     public void preCreateObject() {
         //Add Top Solid Block
@@ -155,37 +220,56 @@ public class GameLevel extends Level implements DelayedCreationObject
         this.addGameObject(topPlatform);
         //Add Left Solid Block
         SolidClippingPlatform leftPlatform = new SolidClippingPlatform(gameManager);
-        topPlatform.setPos(-1.0F,-0.0F);
-        topPlatform.setDimensions(1.0F, this.height);
-        this.addGameObject(topPlatform);
+        leftPlatform.setPos(-1.0F,-0.0F);
+        leftPlatform.setDimensions(1.0F, this.height);
+        this.addGameObject(leftPlatform);
         //Add Left Solid Block
         SolidClippingPlatform rightPlatform = new SolidClippingPlatform(gameManager);
-        topPlatform.setPos(this.width+1,0.0F);
-        topPlatform.setDimensions(1.0F, this.height);
-        this.addGameObject(topPlatform);
+        rightPlatform.setPos(this.width+1,0.0F);
+        rightPlatform.setDimensions(1.0F, this.height);
+        this.addGameObject(rightPlatform);
         //Add Left Solid Block
         SolidClippingPlatform bottomPlatform = new SolidClippingPlatform(gameManager);
-        topPlatform.setPos(0.0F,this.height+1);
-        topPlatform.setDimensions(this.width, 1.0F);
-        this.addGameObject(topPlatform);
+        bottomPlatform.setPos(0.0F,this.height+1);
+        bottomPlatform.setDimensions(this.width, 1.0F);
+        this.addGameObject(bottomPlatform);
 
         gameManager.getMainActivity().getCamera().setBounds(0.0F, 0.0F, this.width, this.height);
+
+        //SETUP PARRALAX BACKGROUND
+        this.parallaxLayer = new ParallaxLayer(gameManager.getMainActivity().getCamera(), true, this.getWidth());
+        this.parallaxLayer.setParallaxChangePerSecond(2);
+        this.parallaxLayer.setParallaxScrollFactor(1);
     }
 
     @Override
     public void createObject() {
         this.preCreateObject();
 
+        for(int i = 0; i < parralaxBackgrounds.size(); i++)
+        {
+            parralaxBackgrounds.get(i).createObject();
+        }
+
+        this.scene.attachChild(this.parallaxLayer);
+
         for (int i = 0; i < objects.size(); i++) {
             objects.get(i).createObject();
         }
-        this.status = ObjectStatus.DECLARED;
+        this.status = ObjectStatus.CONSTRUCTED;
 
         this.afterCreateObject();
     }
 
     @Override
-    public void afterCreateObject() {
+    public void afterCreateObject() { }
 
+
+    /*********************************************************************************************/
+    /* ATTACH PARRALAX BACKGROUND */
+    /*********************************************************************************************/
+
+    public void attachParralaxBackground(Sprite shape) {
+        this.parallaxLayer.attachParallaxEntity(new ParallaxLayer.ParallaxEntity(10, shape, true));
     }
 }

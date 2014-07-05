@@ -3,11 +3,6 @@ package com.platform.main;
 import com.platform.main.GameResources.JsonLoader;
 import com.platform.main.GameResources.Level.GameLevel;
 import com.platform.main.GameResources.Level.Menu.Menu;
-import com.platform.main.GameResources.Object.Platforms.ClippingPlatform;
-import com.platform.main.GameResources.Object.Interactions.Doorway;
-import com.platform.main.GameResources.Object.Players.Frog;
-import com.platform.main.GameResources.Object.Interactions.Ladder;
-import com.platform.main.GameResources.Object.Interactions.Lemon;
 import com.platform.main.GameResources.Level.Level;
 
 import java.io.BufferedReader;
@@ -91,34 +86,24 @@ public class LevelManager
         }
         else
         {
-            this.jsonLoader.loadLevel(levelName);
-            try {
-                /*
-                Open input Stream
-                 */
+            this.currentLevel = this.jsonLoader.loadLevel(levelName);
+            /*try {
                 InputStream file = gameManager.getMainActivity().getAssets().open("levels/"+levelName+".lvl");
                 BufferedReader br = new BufferedReader(new InputStreamReader(file, "UTF-8"));
                 String line;
-                /*
-                Loop through CSV entries
-                 */
                 while ((line = br.readLine()) != null) {
                     String data[] = line.split(",");
                     //gameManager.log(data[0]);
-
-                    /*
-                    If its a setup item (usually the first item)
-                     */
                     try
                     {
-                        if(data[0].equals(this.TYPE_SETUP))
+                       /* if(data[0].equals(this.TYPE_SETUP))
                         {
                             gameManager.getMainActivity().log("Adding to setup");
                             this.currentLevel = new GameLevel(this.gameManager);
                             ((GameLevel)this.currentLevel).setBackgroundImages(data[1],data[2],Integer.parseInt(data[3]), Integer.parseInt(data[4]));
                             this.currentLevel.setMusicByString(data[4]);
                         }
-                        /*
+
                         else if(data[0].equals(this.TYPE_CLIPPING))
                         {
                             gameManager.getMainActivity().log("Adding a clipping");
@@ -148,7 +133,7 @@ public class LevelManager
                         {
                             gameManager.getMainActivity().log("Adding a frog");
                             ((GameLevel)this.currentLevel).addEnemy(new Frog(720,920, gameManager));
-                        }*/
+                        }
                     }
                     catch(Exception e)
                     {
@@ -160,13 +145,9 @@ public class LevelManager
             catch (Exception e) {
                 gameManager.getMainActivity().log("Could not load level (levels/" + levelName + ".lvl)");
                 System.exit(0);
-            }
+            }*/
         }
 
-        //set camrea
-        this.currentLevel.getScene();
-        //finalise the level
-        this.currentLevel.completeLevelLoading();
         //set the new scene
         gameManager.getMainActivity().getEngine().setScene(this.getScene());
         //reload debug draw
@@ -174,6 +155,7 @@ public class LevelManager
 
         if(this.currentLevel instanceof GameLevel)
         {
+            ((GameLevel)this.currentLevel).createObject();
             if(gameManager.getThePlayer() != null)
             {
                 this.gameManager.setDebug();

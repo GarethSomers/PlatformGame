@@ -86,12 +86,6 @@ public class Menu extends Level implements MenuScene.IOnMenuItemClickListener {
     }
 
     @Override
-    public void completeLevelLoading()
-    {
-        //nothing
-    }
-
-    @Override
     public void destroy()
     {
 

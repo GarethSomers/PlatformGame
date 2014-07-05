@@ -1,9 +1,9 @@
-package com.platform.main.GameResources.Object.Platforms;
+package com.platform.main.GameResources.LevelObjects.Platforms;
 
 import com.platform.main.GameManager;
+import com.platform.main.GameResources.LevelObjects.ObjectStatus;
 
-public class ClippingPlatform
-        extends RectangularPlatform
+public class ClippingPlatform extends RectangularPlatform
 {
     public ClippingPlatform(GameManager gameManager)
     {

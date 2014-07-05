@@ -5,12 +5,12 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.platform.main.GameResources.Object.Platforms.ClippingPlatform;
-import com.platform.main.GameResources.Object.Interactions.Doorway;
-import com.platform.main.GameResources.Object.Players.Enemy;
-import com.platform.main.GameResources.Object.Interactions.Ladder;
-import com.platform.main.GameResources.Object.Players.Player;
-import com.platform.main.GameResources.Object.Interactions.Lemon;
+import com.platform.main.GameResources.LevelObjects.Platforms.ClippingPlatform;
+import com.platform.main.GameResources.LevelObjects.Interactions.Doorway;
+import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Enemy;
+import com.platform.main.GameResources.LevelObjects.Interactions.Ladder;
+import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Player;
+import com.platform.main.GameResources.LevelObjects.Interactions.Lemon;
 
 public class MyContactListener implements ContactListener
 {

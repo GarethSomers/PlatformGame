@@ -1,4 +1,4 @@
-package com.platform.main.GameResources.Object;
+package com.platform.main.GameResources.LevelObjects.AnimatedObjects;
 
 /**
  * Created by Gareth Somers on 7/2/14.

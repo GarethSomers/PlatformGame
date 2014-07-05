@@ -1,6 +1,4 @@
-package com.platform.main.GameResources.Object;
-
-import com.platform.main.MainActivity;
+package com.platform.main.GameResources.LevelObjects;
 
 /**
  * Created by Gareth Somers on 6/19/14.

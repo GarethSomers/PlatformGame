@@ -1,9 +1,9 @@
-package com.platform.main.GameResources.Object.Interactions;
+package com.platform.main.GameResources.LevelObjects.Interactions;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.platform.main.GameManager;
-import com.platform.main.GameResources.Object.AnimatedGameObject;
+import com.platform.main.GameResources.LevelObjects.AnimatedObjects.AnimatedGameObject;
 
 public class Lemon extends AnimatedGameObject
 {

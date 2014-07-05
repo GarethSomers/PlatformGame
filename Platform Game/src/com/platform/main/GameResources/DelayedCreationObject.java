@@ -1,4 +1,4 @@
-package com.platform.main.GameResources.Object;
+package com.platform.main.GameResources;
 
 /**
  * Created by Gareth Somers on 7/1/14.

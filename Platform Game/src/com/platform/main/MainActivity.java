@@ -1,32 +1,20 @@
 package com.platform.main;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.hardware.SensorManager;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
-import com.badlogic.gdx.math.Vector2;
-import com.platform.main.GameResources.Level.GameLevel;
-import com.platform.main.GameResources.Object.Players.Player;
 
 import org.andengine.engine.camera.ZoomCamera;
-import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
-import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.text.Text;
 import org.andengine.entity.util.FPSLogger;
-import org.andengine.extension.debugdraw.DebugRenderer;
-import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.font.Font;
-import org.andengine.opengl.font.FontFactory;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 public class MainActivity

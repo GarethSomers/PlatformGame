@@ -1,9 +1,9 @@
-package com.platform.main.GameResources.Object.Interactions;
+package com.platform.main.GameResources.LevelObjects.Interactions;
 
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.platform.main.GameManager;
-import com.platform.main.GameResources.Object.Platforms.RectangularPlatform;
-import com.platform.main.GameResources.Object.QuestTriggeringObject;
+import com.platform.main.GameResources.LevelObjects.Platforms.RectangularPlatform;
+import com.platform.main.GameResources.LevelObjects.QuestTriggeringObject;
 
 public class Ladder extends RectangularPlatform implements QuestTriggeringObject
 {

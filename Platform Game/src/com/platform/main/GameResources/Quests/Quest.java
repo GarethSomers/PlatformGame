@@ -1,4 +1,6 @@
-package com.platform.main;
+package com.platform.main.GameResources.Quests;
+
+import com.platform.main.GameManager;
 
 /**
  * Created by Gareth Somers on 6/19/14.
@@ -24,5 +26,9 @@ public class Quest
         {
             this.gameManager.getMainActivity().gameToast(objective);
         }
+    }
+
+    public int getQuestID() {
+        return questID;
     }
 }

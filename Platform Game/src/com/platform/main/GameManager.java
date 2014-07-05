@@ -3,9 +3,8 @@ package com.platform.main;
 import android.hardware.SensorManager;
 
 import com.badlogic.gdx.math.Vector2;
-import com.platform.main.GameResources.JsonLoader;
 import com.platform.main.GameResources.Level.GameLevel;
-import com.platform.main.GameResources.Object.Players.Player;
+import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Player;
 
 import org.andengine.entity.scene.Scene;
 import org.andengine.extension.debugdraw.DebugRenderer;
@@ -94,8 +93,7 @@ public class GameManager
     private void createPlayer()
     {
         this.thePlayer = new Player(this);
-        this.thePlayer.setX(getLevelManager().lastStartPosX);
-        this.thePlayer.setY(getLevelManager().lastStartPosY);
+        this.thePlayer.createObject();
     }
 
     /*
@@ -148,7 +146,7 @@ public class GameManager
             this.debug.detachSelf();
         }
         this.debug = new DebugRenderer(this.getPhysicsWorld(),this.mainActivity.getVertexBufferObjectManager());
-        //this.getScene().attachChild(this.debug);
+        this.getScene().attachChild(this.debug);
     }
 
     public void setPhysicsWorld(PhysicsWorld paramPhysicsWorld)
@@ -169,6 +167,7 @@ public class GameManager
         createContactListener();
         createDebugDraw();
         this.getScene().registerUpdateHandler(mainActivity);
+        this.getScene().sortChildren();
     }
 
     public void closeGame()

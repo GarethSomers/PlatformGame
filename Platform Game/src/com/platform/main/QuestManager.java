@@ -1,5 +1,7 @@
 package com.platform.main;
 
+import com.platform.main.GameResources.Quests.Quest;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -65,7 +67,7 @@ public class QuestManager {
     {
         for(Quest q : this.quests)
         {
-            if(q.questID == questID)
+            if(q.getQuestID() == questID)
             {
                 q.triggerAction();
             }

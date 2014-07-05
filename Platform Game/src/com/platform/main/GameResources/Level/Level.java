@@ -1,12 +1,13 @@
 package com.platform.main.GameResources.Level;
 
 import com.platform.main.GameManager;
-import com.platform.main.GameResources.Object.DelayedCreationObject;
-import com.platform.main.ObjectStatus;
+import com.platform.main.GameResources.LevelObjects.ObjectStatus;
+import com.platform.main.GameResources.LevelObjects.StaticObject.ParallaxLayer;
 
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
 import org.andengine.entity.scene.Scene;
+import org.andengine.entity.sprite.Sprite;
 
 /**
  * Created by Gareth Somers on 5/11/14.
@@ -16,6 +17,7 @@ public abstract class Level {
     protected Scene scene = new Scene();
     protected Music music;
     protected ObjectStatus status = ObjectStatus.ATTACHED;
+    private ParallaxLayer parallaxLayer;
 
     public Level(GameManager paramMainActivity)
     {
@@ -52,11 +54,6 @@ public abstract class Level {
         }
     }
 
-
-    public void completeLevelLoading()
-    {
-
-    }
     public void destroy()
     {
 
@@ -65,7 +62,14 @@ public abstract class Level {
     public void update()
     {
 
+
     }
 
+    /*********************************************************************************************/
+    /* ATTACH PARRALAX BACKGROUND */
+    /*********************************************************************************************/
 
+    public void attachParralaxBackground(Sprite shape) {
+        this.parallaxLayer.attachParallaxEntity(new ParallaxLayer.ParallaxEntity(10, shape, true));
+    }
 }
