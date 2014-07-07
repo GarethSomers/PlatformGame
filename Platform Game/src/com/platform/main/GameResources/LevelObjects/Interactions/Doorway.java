@@ -8,29 +8,38 @@ public class Doorway
         extends RectangularPlatform
 {
     private String destination;
-    private int destinationX;
-    private int destinationY;
+    private int destinationX = 50;
+    private int destinationY = 50;
 
     public Doorway(GameManager gameManager)
     {
         super(gameManager);
     }
 
-    public String getDestination()
-    {
-        return this.destination;
-    }
 
+    /*********************************************************************************************/
+    /* SET DESTINATION X */
+    /*********************************************************************************************/
     public int getDestinationX()
     {
         return this.destinationX;
     }
+    public void setDestinationX(int destinationX) { this.destinationX = destinationX; }
 
-    public int getDestinationY()
+    /*********************************************************************************************/
+    /* SET DESTINATION Y */
+    /*********************************************************************************************/
+    public int getDestinationY() { return this.destinationY; }
+    public void setDestinationY(int destinationY) { this.destinationY = destinationY; }
+
+    /*********************************************************************************************/
+    /* DESTINATION SETTER AND GETTER */
+    /*********************************************************************************************/
+    public String getDestination()
     {
-        return this.destinationY;
+        return this.destination;
     }
-
+    public void setDestination(String destination) { this.destination = destination; }
 
     /*********************************************************************************************/
     /* CREATE OBJECT METHOD */

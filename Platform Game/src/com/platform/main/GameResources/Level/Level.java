@@ -2,6 +2,7 @@ package com.platform.main.GameResources.Level;
 
 import com.platform.main.GameManager;
 import com.platform.main.GameResources.LevelObjects.ObjectStatus;
+import com.platform.main.GameResources.LevelObjects.StaticObject.ParallaxBackground;
 import com.platform.main.GameResources.LevelObjects.StaticObject.ParallaxLayer;
 
 import org.andengine.audio.music.Music;
@@ -17,7 +18,7 @@ public abstract class Level {
     protected Scene scene = new Scene();
     protected Music music;
     protected ObjectStatus status = ObjectStatus.ATTACHED;
-    private ParallaxLayer parallaxLayer;
+    protected ParallaxLayer parallaxLayer;
 
     public Level(GameManager paramMainActivity)
     {
@@ -65,11 +66,20 @@ public abstract class Level {
 
     }
 
+
     /*********************************************************************************************/
     /* ATTACH PARRALAX BACKGROUND */
     /*********************************************************************************************/
 
-    public void attachParralaxBackground(Sprite shape) {
-        this.parallaxLayer.attachParallaxEntity(new ParallaxLayer.ParallaxEntity(10, shape, true));
+    public void attachParralaxBackground(com.platform.main.GameResources.LevelObjects.StaticObject.ParallaxBackground background) {
+        if(background.getParallaxOffset() == 0)
+        {
+            this.parallaxLayer.attachParallaxEntity(new ParallaxLayer.ParallaxEntity(background.getParallaxSpeed(), background.getShape(), true));
+        }
+        else
+        {
+            this.parallaxLayer.attachParallaxEntity(new ParallaxLayer.ParallaxEntity(background.getParallaxSpeed(), background.getShape(), true, background.getParallaxOffset()));
+        }
     }
+
 }

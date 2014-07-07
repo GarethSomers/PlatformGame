@@ -196,5 +196,16 @@
             "height": "500",
             "image": "one_back.jpg"
 		}
+    },
+    "doorways": {
+        "0": {
+            "x": "448",
+            "y": "126",
+            "width": "160",
+            "height": "43",
+            "dest": "two",
+            "destX": "1770",
+            "destY": "660"
+        }
     }
 }

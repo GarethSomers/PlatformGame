@@ -7,6 +7,8 @@ import com.platform.main.GameResources.LevelObjects.ObjectStatus;
  * Created by Gareth Somers on 7/5/14.
  */
 public class ParallaxBackground extends Background {
+    int offset = 0;
+    float parallaxSpeed = 0.2f;
     public ParallaxBackground(GameManager gameManager1) {
         super(gameManager1);
     }
@@ -21,6 +23,22 @@ public class ParallaxBackground extends Background {
         {
             this.getShape().getParent().detachChild(this.getShape());
         }
-        this.gameManager.getLevelManager().getLevel().attachParralaxBackground(this.getShape());
+        this.gameManager.getLevelManager().getLevel().attachParralaxBackground(this);
+    }
+
+    public int getParallaxOffset()
+    {
+        return this.offset;
+    }
+    public void setParallaxOffset(int currentValue) {
+        this.offset = currentValue;
+    }
+
+    public float getParallaxSpeed()
+    {
+        return this.parallaxSpeed;
+    }
+    public void setParallaxSpeed(float i) {
+        this.parallaxSpeed = i;
     }
 }

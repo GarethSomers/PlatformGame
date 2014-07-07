@@ -4,6 +4,7 @@ import com.platform.main.GameManager;
 import com.platform.main.GameResources.Level.GameLevel;
 import com.platform.main.GameResources.Level.Level;
 import com.platform.main.GameResources.LevelObjects.GameObject;
+import com.platform.main.GameResources.LevelObjects.Interactions.Doorway;
 import com.platform.main.GameResources.LevelObjects.Interactions.Ladder;
 import com.platform.main.GameResources.LevelObjects.Platforms.ClippingPlatform;
 import com.platform.main.GameResources.LevelObjects.Platforms.SolidClippingPlatform;
@@ -87,6 +88,7 @@ public class JsonLoader {
             this.processBackgrounds(tempLevel, jObject, false);
             this.processPlatforms(tempLevel,jObject,"cloud");
             this.processPlatforms(tempLevel,jObject,"solid");
+            this.processDoorways(tempLevel,jObject);
             //processLadders(tempLevel, jObject);
 
         }
@@ -178,7 +180,92 @@ public class JsonLoader {
         }
     }
 
+    /*********************************************************************************************/
+    /* PROCESS PlATFORMS */
+    /*********************************************************************************************/
+    private void processDoorways(GameLevel tempLevel,JSONObject jObject)
+    {
+        JSONObject objectsList = null;
+        try {
+            objectsList = jObject.getJSONObject("doorways");
+        } catch (JSONException e) {
+            gameManager.getMainActivity().log("Failed parsing into platforms");
+            e.printStackTrace();
+            objectsList = null;
+        }
 
+        /*
+            WHILE i = 0 (each record is stored as an array [0], [1], etc
+         */
+        if(objectsList != null)
+        {
+            /*
+            Loop through each ladder
+             */
+            int i = 0;
+            while(i >= 0)
+            {
+                //Create new ladder object
+                Doorway newObject = new Doorway(gameManager);
+
+                try
+                {
+                    //GET THE CURRENT LADDER
+                    JSONObject currentObject = objectsList.getJSONObject(String.valueOf(i));
+
+                    //GET ASSOSIATED ARRAYS
+                    JSONArray currentObjectNames = currentObject.names();
+                    JSONArray currentObjectValues = currentObject.toJSONArray(currentObjectNames);
+
+                    //GET THE ARRAY KEYS
+                    String currentKey = "";
+                    String currentValue = "";
+                    for(int c = 0 ; c < currentObjectValues.length(); c++){
+                        //SET THIS LOOPS VARIABLES
+                        currentKey = currentObjectNames.getString(c);
+                        currentValue = currentObjectValues.getString(c);
+
+                        //CHECK WHAT WE ARE TRYING TO SET
+                        if(currentKey.equals("x")){
+                            newObject.setX(Integer.parseInt(currentValue)); // X
+                        }
+                        else if(currentKey.equals("y")){
+                            newObject.setY(Integer.parseInt(currentValue)); // Y
+                        }
+                        else  if(currentKey.equals("width")){
+                            newObject.setWidth(Integer.parseInt(currentValue)); // WIDTH
+                        }
+                        else if(currentKey.equals("height"))
+                        {
+                            newObject.setHeight((Integer.parseInt(currentValue))); // HEIGHT
+                        }
+                        else if(currentKey.equals("dest"))
+                        {
+                            newObject.setDestination(currentValue); //DESTINATION
+                        }
+                        else if(currentKey.equals("destX"))
+                        {
+                            newObject.setDestinationX(Integer.parseInt(currentValue)); //DESTINATION X
+                        }
+                        else if(currentKey.equals("destY"))
+                        {
+                            newObject.setDestinationY(Integer.parseInt(currentValue)); //DESTINATION Y
+                        }
+                    }
+                    i++;
+                }
+                catch (Exception e)
+                {
+                    /*
+                        This happens when [i] is not found. There may be more entries if for some reason it is not consistent : [1],[3],[6].
+                        Break out of the loop
+                     */
+                    break;
+                }
+                tempLevel.addGameObject(newObject);
+            }
+        }
+    }
 
     /*********************************************************************************************/
     /* PROCESS BACKGROUNDS */
@@ -327,6 +414,14 @@ public class JsonLoader {
                         else if(currentKey.equals("zindex"))
                         {
                             newObject.setZIndex(Integer.parseInt(currentValue)); // Z INDEX
+                        }
+                        else if(currentKey.equals("parallax-offset") && newObject instanceof ParallaxBackground)
+                        {
+                            ((ParallaxBackground)newObject).setParallaxOffset(Integer.parseInt(currentValue)); // Z INDEX
+                        }
+                        else if(currentKey.equals("parallax-speed") && newObject instanceof ParallaxBackground)
+                        {
+                            ((ParallaxBackground)newObject).setParallaxSpeed(Float.parseFloat(currentValue)); // Z INDEX
                         }
                     }
                     i++;

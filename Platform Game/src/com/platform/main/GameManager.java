@@ -146,6 +146,7 @@ public class GameManager
             this.debug.detachSelf();
         }
         this.debug = new DebugRenderer(this.getPhysicsWorld(),this.mainActivity.getVertexBufferObjectManager());
+        this.debug.setZIndex(999);
         this.getScene().attachChild(this.debug);
     }
 

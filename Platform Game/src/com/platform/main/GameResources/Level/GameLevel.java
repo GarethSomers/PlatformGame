@@ -32,7 +32,6 @@ public class GameLevel extends Level implements DelayedCreationObject
     //dimensions
     private int width = 100;
     private int height = 100;
-    private ParallaxLayer parallaxLayer;
 
     public GameLevel(GameManager paramMainActivity)
     {
@@ -262,14 +261,12 @@ public class GameLevel extends Level implements DelayedCreationObject
     }
 
     @Override
-    public void afterCreateObject() { }
-
-
-    /*********************************************************************************************/
-    /* ATTACH PARRALAX BACKGROUND */
-    /*********************************************************************************************/
-
-    public void attachParralaxBackground(Sprite shape) {
-        this.parallaxLayer.attachParallaxEntity(new ParallaxLayer.ParallaxEntity(10, shape, true));
+    public void afterCreateObject()
+    {
+        this.gameManager.setDebug();
+        this.getScene().sortChildren();
     }
+
+
+
 }

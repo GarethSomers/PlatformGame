@@ -57,7 +57,7 @@ public class LevelManager
 
     public void loadFirstLevel()
     {
-        LoadLevel("one", 10, 305);
+        LoadLevel("one", 100, 100);
     }
 
     public void LoadLevel(String levelName, int lastStartPosX, int lastStartPosY)
