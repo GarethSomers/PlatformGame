@@ -89,7 +89,7 @@ public class JsonLoader {
             this.processPlatforms(tempLevel,jObject,"cloud");
             this.processPlatforms(tempLevel,jObject,"solid");
             this.processDoorways(tempLevel,jObject);
-            //processLadders(tempLevel, jObject);
+            processLadders(tempLevel, jObject);
 
         }
         return tempLevel;

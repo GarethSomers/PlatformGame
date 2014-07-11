@@ -14,7 +14,7 @@
             "height": "214"
         },
         "1": {
-            "x": "2643",
+            "x": "2673",
             "y": "1130",
             "width": "157",
             "height": "211"
@@ -22,16 +22,16 @@
     },
     "platforms-cloud": {
         "0": {
-            "x": "941",
-            "y": "335",
-            "width": "72",
+            "x": "629",
+            "y": "1128",
+            "width": "216",
             "height": "1"
         },
         "1": {
-            "x": "634",
-            "y": "1",
-            "width": "551",
-            "height": "691"
+            "x": "550",
+            "y": "960",
+            "width": "634",
+            "height": "1"
         },
         "2": {
             "x": "1175",
@@ -117,67 +117,44 @@
             "y": "0",
             "width": "50",
             "height": "1440",
-            "image": "two-and-three_back.jpg"
+            "image": "two-and-three_back.jpg",
+            "parallax-speed": "-0.98f"
 		},
         "1": {
             "x": "0",
-            "y": "0",
-            "width": "933",
-            "height": "720",
-            "image": "three-and-two-back_01.png",
-            "parallax-offset": "2800",
-            "speed": "2"
+            "y": "848",
+            "width": "1000",
+            "height": "498",
+            "image": "three-and-two-back.png",
+            "parallax-speed": "-0.96f"
 		},
-		"2": {
-            "x": "933",
-            "y": "0",
-            "width": "934",
-            "height": "720",
-            "image": "three-and-two-back_02.png",
-            "parallax-offset": "2800"
-		},
-        "3": {
-            "x": "1867",
-            "y": "720",
-            "width": "933",
-            "height": "720",
-            "image": "three-and-two-back_03.png",
-            "parallax-offset": "2800"
-		},
-        "4": {
-            "x": "933",
-            "y": "0",
-            "width": "933",
-            "height": "720",
-            "image": "three-and-two-back_04.png",
-            "parallax-offset": "2800"
-		},
-		"5": {
-            "x": "1867",
-            "y": "720",
-            "width": "934",
-            "height": "720",
-            "image": "three-and-two-back_05.png",
-            "parallax-offset": "2800"
-		},
-        "6": {
-            "x": "0",
-            "y": "720",
-            "width": "933",
-            "height": "720",
-            "image": "three-and-two-back_06.png",
-            "parallax-offset": "2800"
-		}
+        "2": {
+            "x": "220",
+            "y": "456",
+            "width": "1257",
+            "height": "742",
+            "image": "two-back.png",
+            "parallax-speed": "-0.75f"
+        }
     },
     "doorways": {
         "0": {
             "x": "1632",
             "y": "621",
             "width": "160",
-            "height": "43",
+            "height": "63",
             "dest": "one",
             "destX": "525",
             "destY": "150"
+        },
+        "1": {
+            "x": "385",
+            "y": "1290",
+            "width": "90",
+            "height": "50",
+            "dest": "four",
+            "destX": "1060",
+            "destY": "900"
         }
     }
 }

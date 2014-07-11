@@ -11,6 +11,8 @@ import org.andengine.entity.primitive.Rectangle;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.entity.shape.RectangularShape;
+import org.andengine.extension.physics.box2d.util.Vector2Pool;
+import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 
 public abstract class BodyObject extends GameObject
 {
@@ -56,6 +58,9 @@ public abstract class BodyObject extends GameObject
         this.setPos(xPos, yPos);
         this.addToSpriteWorld();
         this.addToPhysicsWorld();
+        Vector2 v2 = Vector2Pool.obtain((xPos /*+ this.getShape().getWidthScaled()*/) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, (yPos /*+ this.getShape().getHeightScaled()*/) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT);
+        body.setTransform(v2, body.getAngle());
+        Vector2Pool.recycle(v2);
     }
 
     protected void createBody()

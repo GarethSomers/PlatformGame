@@ -9,6 +9,7 @@ import com.platform.main.GameResources.LevelObjects.ObjectStatus;
 public class ParallaxBackground extends Background {
     int offset = 0;
     float parallaxSpeed = 0.2f;
+    int repeat = -1;
     public ParallaxBackground(GameManager gameManager1) {
         super(gameManager1);
     }
@@ -40,5 +41,14 @@ public class ParallaxBackground extends Background {
     }
     public void setParallaxSpeed(float i) {
         this.parallaxSpeed = i;
+    }
+
+    public int getRepeat()
+    {
+        return this.repeat;
+    }
+    public void setRepeat(int newRepeat)
+    {
+        this.repeat = newRepeat;
     }
 }

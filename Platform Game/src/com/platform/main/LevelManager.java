@@ -28,8 +28,8 @@ public class LevelManager
     private static final String TYPE_FROG = "frog";
     private static final String TYPE_MENU = "menu";
     private Level currentLevel;
-    public int lastStartPosX = 0;
-    public int lastStartPosY = 0;
+    public int lastStartPosX = 100;
+    public int lastStartPosY = 100;
     private GameManager gameManager;
     private HeadsUpDisplay hud;
     private String scheduledDestination;
@@ -52,15 +52,19 @@ public class LevelManager
 
     public void LoadLevel()
     {
-        LoadLevel("menu", 50, 50);
+        this.scheduledDestinationX = 100;
+        this.scheduledDestinationY = 100;
+        LoadLevel("menu");
     }
 
     public void loadFirstLevel()
     {
-        LoadLevel("one", 100, 100);
+        this.scheduledDestinationX = 700;
+        this.scheduledDestinationY = 400;
+        LoadLevel("one");
     }
 
-    public void LoadLevel(String levelName, int lastStartPosX, int lastStartPosY)
+    public void LoadLevel(String levelName)
     {
         this.currentState = LevelState.Loading;
         //display loading screen
@@ -87,65 +91,6 @@ public class LevelManager
         else
         {
             this.currentLevel = this.jsonLoader.loadLevel(levelName);
-            /*try {
-                InputStream file = gameManager.getMainActivity().getAssets().open("levels/"+levelName+".lvl");
-                BufferedReader br = new BufferedReader(new InputStreamReader(file, "UTF-8"));
-                String line;
-                while ((line = br.readLine()) != null) {
-                    String data[] = line.split(",");
-                    //gameManager.log(data[0]);
-                    try
-                    {
-                       /* if(data[0].equals(this.TYPE_SETUP))
-                        {
-                            gameManager.getMainActivity().log("Adding to setup");
-                            this.currentLevel = new GameLevel(this.gameManager);
-                            ((GameLevel)this.currentLevel).setBackgroundImages(data[1],data[2],Integer.parseInt(data[3]), Integer.parseInt(data[4]));
-                            this.currentLevel.setMusicByString(data[4]);
-                        }
-
-                        else if(data[0].equals(this.TYPE_CLIPPING))
-                        {
-                            gameManager.getMainActivity().log("Adding a clipping");
-                            ((GameLevel)this.currentLevel).addGameObject(new ClippingPlatform(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]),this.gameManager));
-                        }
-                        else if(data[0].equals(this.TYPE_LADDER))
-                        {
-                            gameManager.getMainActivity().log("Adding a ladder");
-                            Ladder l = new Ladder(this.gameManager);
-                            l.setX(Float.parseFloat(data[1]));
-                            l.setY(Float.parseFloat(data[2]));
-                            l.setWidth(Float.parseFloat(data[3]));
-                            l.setHeight(Float.parseFloat(data[4]));
-                            ((GameLevel)this.currentLevel).addGameObject(l);
-                        }
-                        else if(data[0].equals(this.TYPE_DOORWAY))
-                        {
-                            gameManager.getMainActivity().log("Adding a doorway");
-                            ((GameLevel)this.currentLevel).addGameObject(new Doorway(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]), data[5], Integer.parseInt(data[6]), Integer.parseInt(data[7]), this.gameManager));
-                        }
-                        else if(data[0].equals(this.TYPE_LEMON))
-                        {
-                            gameManager.getMainActivity().log("Adding a lemon");
-                            ((GameLevel)this.currentLevel).addGameObject(new Lemon(Integer.parseInt(data[1]),Integer.parseInt(data[2]), gameManager));
-                        }
-                        else if(data[0].equals(this.TYPE_FROG))
-                        {
-                            gameManager.getMainActivity().log("Adding a frog");
-                            ((GameLevel)this.currentLevel).addEnemy(new Frog(720,920, gameManager));
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        gameManager.getMainActivity().log("Could not add " + data[0]);
-                        e.printStackTrace();
-                    }
-                }
-            }
-            catch (Exception e) {
-                gameManager.getMainActivity().log("Could not load level (levels/" + levelName + ".lvl)");
-                System.exit(0);
-            }*/
         }
 
         //set the new scene
@@ -160,7 +105,7 @@ public class LevelManager
             {
                 this.gameManager.setDebug();
                 //reload the player
-                gameManager.getThePlayer().reload(this.lastStartPosX, this.lastStartPosY);
+                gameManager.getThePlayer().reload(this.scheduledDestinationX, this.scheduledDestinationY);
                 //reload the camera
                 gameManager.getMainActivity().getCamera().setChaseEntity(this.gameManager.getThePlayer().getShape());
             }
@@ -188,6 +133,8 @@ public class LevelManager
         this.scheduledDestination = paramString;
         this.scheduledDestinationX = scheduledDestinationX;
         this.scheduledDestinationY = scheduledDestinationY;
+        this.lastStartPosX = scheduledDestinationX;
+        this.lastStartPosY = scheduledDestinationY;
     }
 
     public void confirmScheduleLoadLevel()
@@ -200,7 +147,7 @@ public class LevelManager
         if (this.scheduledDestinationConfirm == true)
         {
             this.gameManager.getThePlayer().moveFullStop();
-            LoadLevel(this.scheduledDestination, this.scheduledDestinationX, this.scheduledDestinationY);
+            LoadLevel(this.scheduledDestination);
             this.scheduledDestinationConfirm = false;
             this.gameManager.getThePlayer().setInfrontOfDoorway(false);
             return;

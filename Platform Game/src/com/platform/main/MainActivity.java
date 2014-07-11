@@ -21,12 +21,11 @@ public class MainActivity
         extends SimpleBaseGameActivity
         implements IOnSceneTouchListener, IUpdateHandler
 {
-    private static int CAMERA_HEIGHT = 480;
-    private static int CAMERA_WIDTH = 720;
-    public static final float PIXEL_TO_METRE_RATIO = 50.00f;
+    private static int CAMERA_HEIGHT = 720;
+    private static int CAMERA_WIDTH = 1280;
     private ZoomCamera camera;
     private GameManager gameManager;
-    public float zoomFactor = 3f;
+    public float zoomFactor = 2.5f;
 
 
 
@@ -84,6 +83,7 @@ public class MainActivity
     {
         final DisplayMetrics displayMetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
         this.CAMERA_WIDTH = displayMetrics.widthPixels;
         this.CAMERA_HEIGHT = displayMetrics.heightPixels;
 
@@ -113,7 +113,7 @@ public class MainActivity
     public boolean onSceneTouchEvent(Scene paramScene, TouchEvent paramTouchEvent)
     {
         //TODO fix the close and reset buttons
-        if ((paramTouchEvent.getX() < 50.0F) & (paramTouchEvent.getY() < 50.0F))
+        if ((paramTouchEvent.getX() < 50.0F) & (paramTouchEvent.getY() < 100.0F))
         {
             //if left side
             this.reset();
@@ -142,7 +142,7 @@ public class MainActivity
 
     public void reset()
     {
-        this.gameManager.getThePlayer().setPos(this.gameManager.getLevelManager().lastStartPosX, this.gameManager.getLevelManager().lastStartPosY);
+        this.gameManager.getThePlayer().reload(this.gameManager.getLevelManager().lastStartPosX, this.gameManager.getLevelManager().lastStartPosY);
         this.gameManager.getThePlayer().setAlive(true);
         this.gameManager.getThePlayer().enableJumping();
         this.gameManager.getThePlayer().updatePosition();
