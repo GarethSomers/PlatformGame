@@ -17,7 +17,7 @@ import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 public abstract class BodyObject extends GameObject
 {
     protected Body body;
-    protected FixtureDef fixtureDef = PhysicsFactory.createFixtureDef(1f, 0f, 1f);
+    protected FixtureDef fixtureDef = PhysicsFactory.createFixtureDef(1f, 0f, 0.2f);
     protected PhysicsConnector physicsConnector;
     protected BodyDef.BodyType bodyType = null;
 

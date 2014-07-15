@@ -155,7 +155,8 @@ public class MyContactListener implements ContactListener
             if(localDoorway != null)
             {
                 //he must have hit/left a platform
-                gameManager.getThePlayer().setInfrontOfDoorway(newState);
+                //gameManager.getThePlayer().setInfrontOfDoorway(newState);
+                gameManager.getLevelManager().getHUD().setDoorButtonVisibility(newState);
                 gameManager.getLevelManager().setupScheduleLoadLevel(localDoorway.getDestination(), localDoorway.getDestinationX(), localDoorway.getDestinationY());
             }
         }

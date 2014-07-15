@@ -19,7 +19,7 @@ import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 public class MainActivity
         extends SimpleBaseGameActivity
-        implements IOnSceneTouchListener, IUpdateHandler
+        implements /*IOnSceneTouchListener,*/ IUpdateHandler
 {
     private static int CAMERA_HEIGHT = 720;
     private static int CAMERA_WIDTH = 1280;
@@ -110,7 +110,7 @@ public class MainActivity
 
 
 
-    public boolean onSceneTouchEvent(Scene paramScene, TouchEvent paramTouchEvent)
+    /*public boolean onSceneTouchEvent(Scene paramScene, TouchEvent paramTouchEvent)
     {
         //TODO fix the close and reset buttons
         if ((paramTouchEvent.getX() < 50.0F) & (paramTouchEvent.getY() < 100.0F))
@@ -124,7 +124,7 @@ public class MainActivity
         }
         this.gameManager.getThePlayer().moveDetect(paramTouchEvent.getX(), paramTouchEvent.getY(), paramTouchEvent);
         return true;
-    }
+    }*/
 
     public void onUpdate(float paramFloat)
     {

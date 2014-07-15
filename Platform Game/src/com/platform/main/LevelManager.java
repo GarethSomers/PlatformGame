@@ -149,7 +149,7 @@ public class LevelManager
             this.gameManager.getThePlayer().moveFullStop();
             LoadLevel(this.scheduledDestination);
             this.scheduledDestinationConfirm = false;
-            this.gameManager.getThePlayer().setInfrontOfDoorway(false);
+            //this.gameManager.getThePlayer().setInfrontOfDoorway(false);
             return;
         }
         if(this.getLevel() instanceof GameLevel)

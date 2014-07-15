@@ -162,13 +162,15 @@ public class GameManager
     {
         this.getLevelManager().loadFirstLevel();
         this.getLevelManager().createHud();
-        this.getLevelManager().getHUD().setOnSceneTouchListener(mainActivity);
+        //this.getLevelManager().getHUD().setOnSceneTouchListener(mainActivity);
         createPlayer();
         createCamera();
         createContactListener();
         createDebugDraw();
         this.getScene().registerUpdateHandler(mainActivity);
         this.getScene().sortChildren();
+        this.getLevelManager().getHUD().setTouchAreaBindingOnActionMoveEnabled(true);
+        this.getLevelManager().getHUD().setTouchAreaBindingOnActionDownEnabled(true);
     }
 
     public void closeGame()
