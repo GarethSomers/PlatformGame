@@ -26,6 +26,7 @@ public class HeadsUpDisplay extends HUD
     ButtonSprite rightButton;
     ButtonSprite jumpButton;
     ButtonSprite doorButton;
+    ButtonSprite dropButton;
 
     public HeadsUpDisplay(final GameManager gameManager)
     {
@@ -148,6 +149,28 @@ public class HeadsUpDisplay extends HUD
         this.jumpButton.setScale(gameManager.getMainActivity().zoomFactor,gameManager.getMainActivity().zoomFactor);
         this.registerTouchArea(jumpButton);
         this.attachChild(jumpButton);
+
+
+        /*********************************************************************************************/
+        /* DROP BUTTON */
+        /*********************************************************************************************/
+        this.dropButton = new ButtonSprite(gameManager.getMainActivity().getCameraWidth()-hudPadding-hudPadding-50-(50*gameManager.getMainActivity().zoomFactor), gameManager.getMainActivity().getCameraHeight()-hudPadding-50, gameManager.getMaterialManager().getTexture("HUD/moveDrop.png",50,50), gameManager.getMainActivity().getEngine().getVertexBufferObjectManager()) {
+            @Override
+            public boolean onAreaTouched(TouchEvent pTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+                if(pTouchEvent.isActionDown()) {
+                    gameManager.getThePlayer().enableDropping();
+                }
+                else if (pTouchEvent.isActionUp() || pTouchEvent.isActionOutside())
+                {
+                    gameManager.getThePlayer().disableDropping();
+                }
+                return super.onAreaTouched(pTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
+            }
+        };
+        this.dropButton.setScaleCenter(50,50);
+        this.dropButton.setScale(gameManager.getMainActivity().zoomFactor,gameManager.getMainActivity().zoomFactor);
+        this.registerTouchArea(dropButton);
+        this.attachChild(dropButton);
 
 
 

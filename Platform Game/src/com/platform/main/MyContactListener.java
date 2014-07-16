@@ -1,5 +1,6 @@
 package com.platform.main;
 
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -11,6 +12,9 @@ import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObje
 import com.platform.main.GameResources.LevelObjects.Interactions.Ladder;
 import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Player;
 import com.platform.main.GameResources.LevelObjects.Interactions.Lemon;
+import com.platform.main.GameResources.LevelObjects.Platforms.SolidClippingPlatform;
+
+import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 
 public class MyContactListener implements ContactListener
 {
@@ -25,6 +29,7 @@ public class MyContactListener implements ContactListener
     private Doorway localDoorway = null;
     private Lemon localLemon = null;
     private boolean twoEnemies = false;
+    private SolidClippingPlatform localSolidClippingPlatform;
 
     /*
     * Constructor
@@ -47,6 +52,7 @@ public class MyContactListener implements ContactListener
         this.localFeet = false;
         this.localLadder = null;
         this.localClippingPlatform = null;
+        this.localSolidClippingPlatform = null;
         this.localEnemy = null;
         this.localDoorway = null;
         this.localLemon = null;
@@ -94,6 +100,10 @@ public class MyContactListener implements ContactListener
             {
                 localClippingPlatform = (ClippingPlatform)parentUserData;
             }
+            else if(parentUserData instanceof SolidClippingPlatform)
+            {
+                localSolidClippingPlatform = (SolidClippingPlatform)parentUserData;
+            }
             else if(parentUserData instanceof Lemon)
             {
                 this.localLemon = (Lemon)parentUserData;
@@ -140,6 +150,11 @@ public class MyContactListener implements ContactListener
                 localLadder.triggerAction();
             }
             else if(localClippingPlatform != null)
+            {
+                //he must have hit/left a platform
+                this.gameManager.getThePlayer().setJumping(newState);
+            }
+            else if(localSolidClippingPlatform != null)
             {
                 //he must have hit/left a platform
                 this.gameManager.getThePlayer().setJumping(newState);
@@ -212,21 +227,22 @@ public class MyContactListener implements ContactListener
                 // variable to handle bodies y position
                 float playerYPosition;
                 float platformYPosition;
-                //check if the player is moving up (jumping up)
-                if(this.localPlayer.getBody().getLinearVelocity().y < -0.1)
+                //check if the player is moving down and dropping is pressed
+                if(this.localPlayer.getBody().getLinearVelocity().y > 0f && this.localPlayer.getDropping() == true)
                 {
-                    //if so then don't detect anything
                     return;
                 }
 
                 //get positions
-                playerYPosition=this.localPlayer.getBody().getPosition().y;
-                platformYPosition=this.localClippingPlatform.getBody().getPosition().y;
+                playerYPosition=this.localPlayer.getBody().getPosition().y*PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT;
+                platformYPosition=this.localClippingPlatform.getBody().getPosition().y*PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT;
 
                 // checking distance between bodies
                 float distance = playerYPosition - platformYPosition;
+                float playerRadius = (this.localClippingPlatform.getHeight()/PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT)/2;
+                float halfPlatformHeight = (this.localPlayer.getHeight()/PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT)/2;
                 // if the distance is greater than player radius + half of the platform height...
-                if (distance>0){
+                if (distance > -12.5){
                     return;
                 }
             }

@@ -17,7 +17,7 @@ import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 public abstract class BodyObject extends GameObject
 {
     protected Body body;
-    protected FixtureDef fixtureDef = PhysicsFactory.createFixtureDef(1f, 0f, 0.2f);
+    protected FixtureDef fixtureDef = PhysicsFactory.createFixtureDef(0.5f, 0.05f, 0.4f);
     protected PhysicsConnector physicsConnector;
     protected BodyDef.BodyType bodyType = null;
 
@@ -53,15 +53,7 @@ public abstract class BodyObject extends GameObject
     /* METHODS */
     /*********************************************************************************************/
 
-    public void reload(int xPos, int yPos)
-    {
-        this.setPos(xPos, yPos);
-        this.addToSpriteWorld();
-        this.addToPhysicsWorld();
-        Vector2 v2 = Vector2Pool.obtain((xPos /*+ this.getShape().getWidthScaled()*/) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, (yPos /*+ this.getShape().getHeightScaled()*/) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT);
-        body.setTransform(v2, body.getAngle());
-        Vector2Pool.recycle(v2);
-    }
+
 
     protected void createBody()
     {

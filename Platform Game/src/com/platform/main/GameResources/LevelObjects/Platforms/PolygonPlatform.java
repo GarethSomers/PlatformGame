@@ -7,14 +7,14 @@ import com.platform.main.GameResources.LevelObjects.ObjectStatus;
 
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 
-public abstract class RectangularPlatform extends BodyObject
+public abstract class PolygonPlatform extends BodyObject
 {
     //variables
-    public RectangularPlatform(GameManager gameManager)
+    public PolygonPlatform(GameManager gameManager)
     {
         this.updatePosition = false;
         this.bodyType = BodyDef.BodyType.StaticBody;
-        this.fixtureDef = PhysicsFactory.createFixtureDef(1.0F, 0.0F, 0.5F);
+        this.fixtureDef = PhysicsFactory.createFixtureDef(1.0F, 0.0F, 0.8F);
         this.gameManager = gameManager;
     }
 

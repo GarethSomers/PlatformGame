@@ -134,7 +134,7 @@
             "width": "1257",
             "height": "742",
             "image": "two-back.png",
-            "parallax-speed": "-0.75f"
+            "parallax-speed": "-0.25f"
         }
     },
     "doorways": {

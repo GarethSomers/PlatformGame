@@ -183,6 +183,82 @@ public class JsonLoader {
     /*********************************************************************************************/
     /* PROCESS PlATFORMS */
     /*********************************************************************************************/
+    private void processPolygons(GameLevel tempLevel,JSONObject jObject)
+    {
+        JSONObject objectsList = null;
+        try {
+            objectsList = jObject.getJSONObject("polygons");
+        } catch (JSONException e) {
+            gameManager.getMainActivity().log("Failed parsing into platforms");
+            e.printStackTrace();
+            objectsList = null;
+        }
+
+        /*
+            WHILE i = 0 (each record is stored as an array [0], [1], etc
+         */
+        if(objectsList != null)
+        {
+            /*
+            Loop through each ladder
+             */
+            int i = 0;
+            while(i >= 0)
+            {
+                //Create new ladder object
+                GameObject newObject = null;
+                newObject = new ClippingPlatform(gameManager);
+
+                try
+                {
+                    //GET THE CURRENT LADDER
+                    JSONObject currentObject = objectsList.getJSONObject(String.valueOf(i));
+
+                    //GET ASSOSIATED ARRAYS
+                    JSONArray currentObjectNames = currentObject.names();
+                    JSONArray currentObjectValues = currentObject.toJSONArray(currentObjectNames);
+
+                    //GET THE ARRAY KEYS
+                    String currentKey = "";
+                    String currentValue = "";
+                    for(int c = 0 ; c < currentObjectValues.length(); c++){
+                        //SET THIS LOOPS VARIABLES
+                        currentKey = currentObjectNames.getString(c);
+                        currentValue = currentObjectValues.getString(c);
+
+                        //CHECK WHAT WE ARE TRYING TO SET
+                        if(currentKey.equals("x")){
+                            newObject.setX(Integer.parseInt(currentValue)); // X
+                        }
+                        else if(currentKey.equals("y")){
+                            newObject.setY(Integer.parseInt(currentValue)); // Y
+                        }
+                        else  if(currentKey.equals("width")){
+                            newObject.setWidth(Integer.parseInt(currentValue)); // WIDTH
+                        }
+                        else if(currentKey.equals("height"))
+                        {
+                            newObject.setHeight((Integer.parseInt(currentValue))); // HEIGHT
+                        }
+                    }
+                    i++;
+                }
+                catch (Exception e)
+                {
+                    /*
+                        This happens when [i] is not found. There may be more entries if for some reason it is not consistent : [1],[3],[6].
+                        Break out of the loop
+                     */
+                    break;
+                }
+                tempLevel.addGameObject(newObject);
+            }
+        }
+    }
+
+    /*********************************************************************************************/
+    /* PROCESS PlATFORMS */
+    /*********************************************************************************************/
     private void processDoorways(GameLevel tempLevel,JSONObject jObject)
     {
         JSONObject objectsList = null;
