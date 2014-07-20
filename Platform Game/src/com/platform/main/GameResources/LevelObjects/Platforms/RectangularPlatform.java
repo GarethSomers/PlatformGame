@@ -14,7 +14,7 @@ public abstract class RectangularPlatform extends BodyObject
     {
         this.updatePosition = false;
         this.bodyType = BodyDef.BodyType.StaticBody;
-        this.fixtureDef = PhysicsFactory.createFixtureDef(1.0F, 0.0F, 0.5F);
+        this.fixtureDef = PhysicsFactory.createFixtureDef(1.0F, 0.0F, 0.6F);
         this.gameManager = gameManager;
     }
 

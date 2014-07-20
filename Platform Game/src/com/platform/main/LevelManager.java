@@ -61,7 +61,7 @@ public class LevelManager
     {
         this.scheduledDestinationX = 700;
         this.scheduledDestinationY = 400;
-        LoadLevel("one");
+        LoadLevel("two");
     }
 
     public void LoadLevel(String levelName)

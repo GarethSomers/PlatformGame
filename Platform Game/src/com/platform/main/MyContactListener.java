@@ -22,6 +22,7 @@ public class MyContactListener implements ContactListener
     //variables
     private Player localPlayer = null;
     private boolean playersFeet = false;
+    private boolean playersHead = false;
     private boolean localFeet = false;
     private Ladder localLadder = null;
     private ClippingPlatform localClippingPlatform = null;
@@ -30,6 +31,8 @@ public class MyContactListener implements ContactListener
     private Lemon localLemon = null;
     private boolean twoEnemies = false;
     private SolidClippingPlatform localSolidClippingPlatform;
+    private boolean localEnemyFeet = false;
+    private boolean localEnemyHead = false;
 
     /*
     * Constructor
@@ -57,6 +60,8 @@ public class MyContactListener implements ContactListener
         this.localDoorway = null;
         this.localLemon = null;
         this.twoEnemies = false;
+        this.localEnemyFeet = false;
+        this.localEnemyHead = false;
     }
 
     /*
@@ -73,7 +78,9 @@ public class MyContactListener implements ContactListener
             //This is the child object. For to have this child there must be a parent.
             Object childUserData = arrayOfFixture[i].getUserData();
 
-            //Do parent checks
+            /*********************************************************************************************/
+            /* CHECK THE PARENT OBJECT */
+            /*********************************************************************************************/
             if(parentUserData instanceof Player)
             {
                 //Its the player
@@ -109,15 +116,28 @@ public class MyContactListener implements ContactListener
                 this.localLemon = (Lemon)parentUserData;
             }
 
-            //Do child checks
+            /*********************************************************************************************/
+            /* CHILD OBJECTS */
+            /*********************************************************************************************/
             if(childUserData instanceof String)
             {
                 //if its a string
                 String theString = (String)childUserData;
                 if(theString.equals("playersFeet"))
                 {
-                    //if its feet
                    this.playersFeet = true;
+                }
+                else if(theString.equals("playersHead"))
+                {
+                    this.playersHead = true;
+                }
+                else if(theString.equals("enemyFeet"))
+                {
+                    this.localEnemyFeet = true;
+                }
+                else if(theString.equals("enemyHead"))
+                {
+                    this.localEnemyHead = true;
                 }
                 else if(theString.equals("feet"))
                 {
@@ -136,11 +156,15 @@ public class MyContactListener implements ContactListener
     {
         if( playersFeet == true)
         {
+            /*********************************************************************************************/
+            /* IF PLAYERS FEET ARE DECLARED */
+            /*********************************************************************************************/
+
             //players feet must have hit something
-            if(localEnemy != null && localEnemy.getAlive())
+            if(localEnemyHead == true && localEnemy != null && localEnemy.getAlive())
             {
                 //he must have hit/left an enemy
-                //this.gameManager.getThePlayer().forceJump();
+                this.gameManager.getThePlayer().forceJump();
                 localEnemy.kill();
             }
             else if(localLadder != null)
@@ -164,6 +188,20 @@ public class MyContactListener implements ContactListener
                 localLemon.collect();
             }
         }
+        else if(localEnemyHead == true)
+        {
+            if(playersHead == true && localPlayer != null)
+            {
+                this.localPlayer.kill();
+            }
+        }
+        else if(localEnemyFeet == true)
+        {
+            if(localClippingPlatform != null)
+            {
+                this.localEnemy.setJumping(newState);
+            }
+        }
         else if(localPlayer != null)
         {
             //if the player hits an enemy etc.
@@ -173,13 +211,6 @@ public class MyContactListener implements ContactListener
                 //gameManager.getThePlayer().setInfrontOfDoorway(newState);
                 gameManager.getLevelManager().getHUD().setDoorButtonVisibility(newState);
                 gameManager.getLevelManager().setupScheduleLoadLevel(localDoorway.getDestination(), localDoorway.getDestinationX(), localDoorway.getDestinationY());
-            }
-        }
-        else if(localEnemy != null)
-        {
-            if(localFeet != false && localClippingPlatform != null)
-            {
-                this.localEnemy.setJumping(newState);
             }
         }
     }
