@@ -245,15 +245,15 @@ public class GameLevel extends Level implements DelayedCreationObject
     public void createObject() {
         this.preCreateObject();
 
-        for(int i = 0; i < parralaxBackgrounds.size(); i++)
+        for(GameObject p : parralaxBackgrounds )
         {
-            parralaxBackgrounds.get(i).createObject();
+            p.createObject();
         }
-
         this.scene.attachChild(this.parallaxLayer);
 
-        for (int i = 0; i < objects.size(); i++) {
-            objects.get(i).createObject();
+        for(GameObject g : objects )
+        {
+            g.createObject();
         }
         this.status = ObjectStatus.CONSTRUCTED;
 

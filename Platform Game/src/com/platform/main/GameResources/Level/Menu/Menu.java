@@ -5,11 +5,16 @@ import com.platform.main.GameResources.Level.Level;
 
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.scene.menu.MenuScene;
+import org.andengine.entity.scene.menu.animator.AlphaMenuAnimator;
+import org.andengine.entity.scene.menu.animator.IMenuAnimator;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class Menu extends Level implements MenuScene.IOnMenuItemClickListener {
     protected AnimatedSprite foregroundImage;
@@ -24,17 +29,25 @@ public class Menu extends Level implements MenuScene.IOnMenuItemClickListener {
         super(paramMainActivity);
         this.scene = new MenuScene();
 
-        //create menu items
-        final IMenuItem optionsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(1, 190, 49, this.gameManager.getMaterialManager().getTexture("btnplay.png", 190, 49), this.gameManager.getMainActivity().getVertexBufferObjectManager()), 1.1f, 1);
-        final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(2, 190, 49, this.gameManager.getMaterialManager().getTexture("btnquit.png", 190, 49), this.gameManager.getMainActivity().getVertexBufferObjectManager()), 1.1f, 1);
+        /*********************************************************************************************/
+        /* CREATE LOGO */
+        /*********************************************************************************************/
+        Sprite menuLogo = new Sprite((gameManager.getMainActivity().getCameraWidth()/2)-(200/2),(gameManager.getMainActivity().getCameraHeight()/8)*3-(144/2),gameManager.getMaterialManager().getTexture("HUD/logoSmall.png",200,144),gameManager.getMainActivity().getEngine().getVertexBufferObjectManager());
+        this.scene.attachChild(menuLogo);
+        menuLogo.setWidth(200);
+        menuLogo.setHeight(144);
+        menuLogo.setScale(gameManager.getMainActivity().zoomFactor);
 
-        //set positions (not working?)
-        optionsMenuItem.setPosition(gameManager.getMainActivity().getCameraWidth() / 2 - optionsMenuItem.getWidth() / 2, gameManager.getMainActivity().getCameraHeight() / 4);
-        playMenuItem.setPosition(gameManager.getMainActivity().getCameraWidth() / 2 - playMenuItem.getWidth() / 2, 400);
+        //create menu items
+        final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(1, 190, 49, this.gameManager.getMaterialManager().getTexture("btnplay.png", 190, 49), this.gameManager.getMainActivity().getVertexBufferObjectManager()), 1.1f, 1);
+        final IMenuItem quitMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(2, 190, 49, this.gameManager.getMaterialManager().getTexture("btnquit.png", 190, 49), this.gameManager.getMainActivity().getVertexBufferObjectManager()), 1.1f, 1);
+
+        //set menu settings
+        this.getScene().setMenuAnimator(new AlphaMenuAnimator(50f));
 
         //add menu items
-        this.getScene().addMenuItem(optionsMenuItem);
         this.getScene().addMenuItem(playMenuItem);
+        this.getScene().addMenuItem(quitMenuItem);
 
         //set the camera
         this.getScene().setCamera(this.gameManager.getMainActivity().getCamera());
@@ -54,6 +67,10 @@ public class Menu extends Level implements MenuScene.IOnMenuItemClickListener {
 
         //register click listerner
         this.getScene().setOnMenuItemClickListener(this);
+
+        //fix pos of menu items
+        playMenuItem.setPosition((this.gameManager.getMainActivity().getCameraWidth()/2)-(190/2),(this.gameManager.getMainActivity().getCameraHeight()/4)*3-50);
+        quitMenuItem.setPosition((this.gameManager.getMainActivity().getCameraWidth()/2)-(190/2),(this.gameManager.getMainActivity().getCameraHeight()/4)*3+50);
     }
 
     /*
@@ -122,11 +139,9 @@ public class Menu extends Level implements MenuScene.IOnMenuItemClickListener {
         {
             case 1:
                 //action
-                gameManager.getMainActivity().toastOnUIThread("1");
                 this.gameManager.completeLoadingScene();
                 return true;
             case 2:
-                gameManager.getMainActivity().toastOnUIThread("2");
                 return true;
             default:
                 return false;

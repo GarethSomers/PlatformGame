@@ -19,7 +19,6 @@ import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 public class MainActivity
         extends SimpleBaseGameActivity
-        implements /*IOnSceneTouchListener,*/ IUpdateHandler
 {
     private static int CAMERA_HEIGHT = 720;
     private static int CAMERA_WIDTH = 1280;
@@ -126,27 +125,6 @@ public class MainActivity
         return true;
     }*/
 
-    public void onUpdate(float paramFloat)
-    {
-        if(this.gameManager.getThePlayer() != null)
-        {
-            //this.speedText.setText(Integer.toString(this.thePlayer.getHealth()));
-            this.gameManager.getThePlayer().updatePosition();
-        }
-
-        if(this.gameManager.getLevelManager().getLevel() != null)
-        {
-            this.gameManager.getLevelManager().updateLevel();
-        }
-    }
-
-    public void reset()
-    {
-        this.gameManager.getThePlayer().reload(this.gameManager.getLevelManager().lastStartPosX, this.gameManager.getLevelManager().lastStartPosY);
-        this.gameManager.getThePlayer().setAlive(true);
-        this.gameManager.getThePlayer().enableJumping();
-        this.gameManager.getThePlayer().updatePosition();
-    }
 
 
 

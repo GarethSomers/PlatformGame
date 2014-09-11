@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.platform.main.GameResources.Level.GameLevel;
 import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Player;
 
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.scene.Scene;
 import org.andengine.extension.debugdraw.DebugRenderer;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
@@ -13,20 +14,23 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 /**
  * Created by Gareth Somers on 6/19/14.
  */
-/*********************************************************************************************/
-    /* OBJECT STATUS */
-
 public class GameManager
+        implements /*IOnSceneTouchListener,*/ IUpdateHandler
 {
     private MainActivity mainActivity;
     private LevelManager levelManager;
-    private GameManager gameManager;
     private MyContactListener contactListener;
     private DebugRenderer debug;
     private QuestManager questManager;
     private PhysicsWorld mPhysicsWorld;
     private MaterialManager materialManager;
     private Player thePlayer;
+    private EventsManager eventsManager;
+    private GameState gameManagerState = GameState.DECLARED;
+    enum GameState
+    {
+        DECLARED, PLAYING, DEAD
+    }
 
     public GameManager(MainActivity mainActivity)
     {
@@ -147,7 +151,7 @@ public class GameManager
         }
         this.debug = new DebugRenderer(this.getPhysicsWorld(),this.mainActivity.getVertexBufferObjectManager());
         this.debug.setZIndex(999);
-        this.getScene().attachChild(this.debug);
+        //this.getScene().attachChild(this.debug);
     }
 
     public void setPhysicsWorld(PhysicsWorld paramPhysicsWorld)
@@ -160,6 +164,7 @@ public class GameManager
      */
     public void completeLoadingScene()
     {
+        this.eventsManager = new EventsManager(this);
         this.getLevelManager().loadFirstLevel();
         this.getLevelManager().createHud();
         //this.getLevelManager().getHUD().setOnSceneTouchListener(mainActivity);
@@ -167,10 +172,11 @@ public class GameManager
         createCamera();
         createContactListener();
         createDebugDraw();
-        this.getScene().registerUpdateHandler(mainActivity);
+        this.getScene().registerUpdateHandler(this);
         this.getScene().sortChildren();
         this.getLevelManager().getHUD().setTouchAreaBindingOnActionMoveEnabled(true);
         this.getLevelManager().getHUD().setTouchAreaBindingOnActionDownEnabled(true);
+        this.gameManagerState = GameState.PLAYING;
     }
 
     public void closeGame()
@@ -186,4 +192,49 @@ public class GameManager
         System.gc();
         mainActivity.finish();
     }
+
+    public EventsManager getEventsManager() {
+        return eventsManager;
+    }
+
+
+    public void setEventsManager(EventsManager eventsManager) {
+        this.eventsManager = eventsManager;
+    }
+
+    public void gameOver() {
+        if(this.gameManagerState == GameState.PLAYING)
+        {
+            this.gameManagerState = GameState.DEAD;
+            this.getLevelManager().getHUD().setGameOver(true);
+            this.getThePlayer().kill();
+        }
+    }
+
+    public void onUpdate(float paramFloat)
+    {
+        if(this.gameManagerState == GameState.PLAYING)
+        {
+            if(this.getThePlayer() != null)
+            {
+                //this.speedText.setText(Integer.toString(this.thePlayer.getHealth()));
+                this.getThePlayer().updatePosition();
+            }
+
+            if(this.getLevelManager().getLevel() != null)
+            {
+                this.getLevelManager().updateLevel();
+            }
+        }
+    }
+
+    @Override
+    public void reset()
+    {
+        this.getThePlayer().reload(this.getLevelManager().lastStartPosX, this.getLevelManager().lastStartPosY);
+        this.getThePlayer().setAlive(true);
+        this.getThePlayer().enableJumping();
+        this.getThePlayer().updatePosition();
+    }
+
 }

@@ -31,6 +31,7 @@ public class LevelManager
     public int lastStartPosX = 100;
     public int lastStartPosY = 100;
     private GameManager gameManager;
+
     private HeadsUpDisplay hud;
     private String scheduledDestination;
     private int scheduledDestinationX;
@@ -52,16 +53,14 @@ public class LevelManager
 
     public void LoadLevel()
     {
-        this.scheduledDestinationX = 100;
-        this.scheduledDestinationY = 100;
         LoadLevel("menu");
     }
 
     public void loadFirstLevel()
     {
-        this.scheduledDestinationX = 700;
-        this.scheduledDestinationY = 400;
-        LoadLevel("two");
+        this.scheduledDestinationX = 300;
+        this.scheduledDestinationY = 300;
+        LoadLevel("one");
     }
 
     public void LoadLevel(String levelName)
@@ -96,7 +95,7 @@ public class LevelManager
         //set the new scene
         gameManager.getMainActivity().getEngine().setScene(this.getScene());
         //reload debug draw
-        this.currentLevel.getScene().registerUpdateHandler(this.gameManager.getMainActivity());
+        this.currentLevel.getScene().registerUpdateHandler(this.gameManager);
 
         if(this.currentLevel instanceof GameLevel)
         {
@@ -110,6 +109,7 @@ public class LevelManager
                 gameManager.getMainActivity().getCamera().setChaseEntity(this.gameManager.getThePlayer().getShape());
             }
             this.currentState = LevelState.Playing;
+            this.gameManager.getEventsManager().startEventsManager();
         }
         else if(this.currentLevel instanceof Menu)
         {

@@ -12,6 +12,7 @@ public class ParallaxBackground extends Background {
     int repeat = -1;
     public ParallaxBackground(GameManager gameManager1) {
         super(gameManager1);
+        this.zIndex = 1;
     }
 
     /*********************************************************************************************/

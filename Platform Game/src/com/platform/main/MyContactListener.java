@@ -6,6 +6,9 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.platform.main.GameResources.Level.GameLevel;
+import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.MovableSprite;
+import com.platform.main.GameResources.LevelObjects.Interactions.Collectable;
 import com.platform.main.GameResources.LevelObjects.Platforms.ClippingPlatform;
 import com.platform.main.GameResources.LevelObjects.Interactions.Doorway;
 import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Enemy;
@@ -14,6 +17,7 @@ import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObje
 import com.platform.main.GameResources.LevelObjects.Interactions.Lemon;
 import com.platform.main.GameResources.LevelObjects.Platforms.SolidClippingPlatform;
 
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 
 public class MyContactListener implements ContactListener
@@ -28,7 +32,7 @@ public class MyContactListener implements ContactListener
     private ClippingPlatform localClippingPlatform = null;
     private Enemy localEnemy = null;
     private Doorway localDoorway = null;
-    private Lemon localLemon = null;
+    private Collectable localCollectable = null;
     private boolean twoEnemies = false;
     private SolidClippingPlatform localSolidClippingPlatform;
     private boolean localEnemyFeet = false;
@@ -58,7 +62,7 @@ public class MyContactListener implements ContactListener
         this.localSolidClippingPlatform = null;
         this.localEnemy = null;
         this.localDoorway = null;
-        this.localLemon = null;
+        this.localCollectable = null;
         this.twoEnemies = false;
         this.localEnemyFeet = false;
         this.localEnemyHead = false;
@@ -111,9 +115,9 @@ public class MyContactListener implements ContactListener
             {
                 localSolidClippingPlatform = (SolidClippingPlatform)parentUserData;
             }
-            else if(parentUserData instanceof Lemon)
+            else if(parentUserData instanceof Collectable)
             {
-                this.localLemon = (Lemon)parentUserData;
+                this.localCollectable = (Lemon)parentUserData;
             }
 
             /*********************************************************************************************/
@@ -165,7 +169,8 @@ public class MyContactListener implements ContactListener
             {
                 //he must have hit/left an enemy
                 this.gameManager.getThePlayer().forceJump();
-                localEnemy.kill();
+                //localEnemy.kill();
+                //((GameLevel)this.gameManager.getLevelManager().getLevel()).getEnemiesNeedRemoving().add(localEnemy);
             }
             else if(localLadder != null)
             {
@@ -183,16 +188,16 @@ public class MyContactListener implements ContactListener
                 //he must have hit/left a platform
                 this.gameManager.getThePlayer().setJumping(newState);
             }
-            else if(localLemon != null)
+            else if(localCollectable != null)
             {
-                localLemon.collect();
+                localCollectable.collect();
             }
         }
         else if(localEnemyHead == true)
         {
             if(playersHead == true && localPlayer != null)
             {
-                this.localPlayer.kill();
+                //this.gameManager.gameOver();
             }
         }
         else if(localEnemyFeet == true)
@@ -246,49 +251,57 @@ public class MyContactListener implements ContactListener
         this.resetObjects();
         //identify objects
         this.identifyObjects(new Fixture[]{ paramContact.getFixtureA(), paramContact.getFixtureB()});
-        //By default disable the event from happening
-        paramContact.setEnabled(false);
 
+        /*********************************************************************************************/
+        /* CLOUD CHECKS */
+        /*********************************************************************************************/
+        //Check for the player (ensuring that not enemies were involved)
+        if((this.playersFeet == true || this.localPlayer != null) && this.localEnemy == null && this.localEnemyFeet == false)
+        {
+            paramContact.setEnabled(checkCollison(this.localPlayer,this.localClippingPlatform));
+        }
+        else if(this.localEnemyFeet == true || this.localEnemy != null)
+        {
+            paramContact.setEnabled(checkCollison(this.localEnemy,this.localClippingPlatform));
+        }
+    }
+    public boolean checkCollison(MovableSprite aPerson, ClippingPlatform aClippingPlatform)
+    {
         //process player presolve
-        if (this.localPlayer != null || this.playersFeet == true)
+        if (aPerson != null)
         {
             // checking if the collision bodies are the ones marked as "middle" and "player"
-            if(this.localClippingPlatform != null)
+            if(aClippingPlatform != null)
             {
                 // variable to handle bodies y position
                 float playerYPosition;
                 float platformYPosition;
-                //check if the player is moving down and dropping is pressed
-                if(this.localPlayer.getBody().getLinearVelocity().y > 0f && this.localPlayer.getDropping() == true)
+
+                //if is player check hes not dropping
+                if(aPerson instanceof Player)
                 {
-                    return;
+                    if(((Player)aPerson).getDropping() == true && aPerson.getBody().getLinearVelocity().y > 0f)
+                    {
+                        return false;
+                    }
                 }
 
                 //get positions
-                playerYPosition=this.localPlayer.getBody().getPosition().y*PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT;
-                platformYPosition=this.localClippingPlatform.getBody().getPosition().y*PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT;
+                playerYPosition=aPerson.getBody().getPosition().y*PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT;
+                platformYPosition=aClippingPlatform.getBody().getPosition().y*PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT;
 
                 // checking distance between bodies
                 float distance = playerYPosition - platformYPosition;
-                float playerRadius = (this.localClippingPlatform.getHeight()/PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT)/2;
-                float halfPlatformHeight = (this.localPlayer.getHeight()/PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT)/2;
+                float halfPlatformHeight = aClippingPlatform.getShape().getHeight()/2;
+                float playerRadius = aPerson.getShape().getHeight()/2;
                 // if the distance is greater than player radius + half of the platform height...
-                if (distance > -12.5){
-                    return;
+                gameManager.getMainActivity().log(String.valueOf(distance));
+                if (distance > -(playerRadius+halfPlatformHeight)){
+                    return false;
                 }
             }
         }
-
-        if((this.localEnemy != null || this.localFeet == true)&&(this.localPlayer != null || this.playersFeet == true || this.twoEnemies == true ))
-        {
-            //if enemy is alive
-            if(this.localEnemy.getAlive() == false)
-            {
-                //disable the contact
-                return;
-            }
-        }
-        //By default disable the event from happening
-        paramContact.setEnabled(true);
+        return true;
     }
 }
+

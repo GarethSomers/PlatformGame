@@ -3,11 +3,16 @@ package com.platform.main.GameResources;
 import com.platform.main.GameManager;
 import com.platform.main.GameResources.Level.GameLevel;
 import com.platform.main.GameResources.Level.Level;
+import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Enemy;
 import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Frog;
+import com.platform.main.GameResources.LevelObjects.BodyObject;
 import com.platform.main.GameResources.LevelObjects.GameObject;
+import com.platform.main.GameResources.LevelObjects.Interactions.Collectable;
 import com.platform.main.GameResources.LevelObjects.Interactions.Doorway;
 import com.platform.main.GameResources.LevelObjects.Interactions.Ladder;
+import com.platform.main.GameResources.LevelObjects.Interactions.Lemon;
 import com.platform.main.GameResources.LevelObjects.Platforms.ClippingPlatform;
+import com.platform.main.GameResources.LevelObjects.Platforms.RectangularPlatform;
 import com.platform.main.GameResources.LevelObjects.Platforms.SolidClippingPlatform;
 import com.platform.main.GameResources.LevelObjects.StaticObject.Background;
 import com.platform.main.GameResources.LevelObjects.StaticObject.ParallaxBackground;
@@ -20,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 /*
 *   JsonLoader Used to load levels/content in json format
@@ -85,264 +91,25 @@ public class JsonLoader {
          */
         if (jObject != null) {
             this.processSetup(tempLevel,jObject);
-            this.processBackgrounds(tempLevel, jObject, true);
+            this.processBatch("backgrounds",tempLevel,jObject);
+            this.processBatch("parallax",tempLevel,jObject);
+            this.processBatch("platforms-cloud",tempLevel,jObject);
+            this.processBatch("platforms-solid",tempLevel,jObject);
+            this.processBatch("doorways",tempLevel,jObject);
+            this.processBatch("enemies",tempLevel,jObject);
+            this.processBatch("collectables",tempLevel,jObject);
+            this.processBatch("ladders",tempLevel,jObject);
+            /*this.processBackgrounds(tempLevel, jObject, true);
             this.processBackgrounds(tempLevel, jObject, false);
             this.processPlatforms(tempLevel,jObject,"cloud");
             this.processPlatforms(tempLevel,jObject,"solid");
             this.processDoorways(tempLevel,jObject);
             this.processEnemies(tempLevel,jObject);
-            processLadders(tempLevel, jObject);
+            this.processCollectables(tempLevel,jObject);
+            processLadders(tempLevel, jObject);*/
 
         }
         return tempLevel;
-    }
-
-    /*********************************************************************************************/
-    /* PROCESS PlATFORMS */
-    /*********************************************************************************************/
-    private void processPlatforms(GameLevel tempLevel,JSONObject jObject,String type)
-    {
-        JSONObject objectsList = null;
-        try {
-            objectsList = jObject.getJSONObject("platforms-"+type);
-        } catch (JSONException e) {
-            gameManager.getMainActivity().log("Failed parsing into platforms");
-            e.printStackTrace();
-            objectsList = null;
-        }
-
-        /*
-            WHILE i = 0 (each record is stored as an array [0], [1], etc
-         */
-        if(objectsList != null)
-        {
-            /*
-            Loop through each ladder
-             */
-            int i = 0;
-            while(i >= 0)
-            {
-                //Create new ladder object
-                GameObject newObject = null;
-                if(type.equals("solid")) {
-                    newObject = new SolidClippingPlatform(gameManager);
-                } else if(type.equals("cloud")) {
-                    newObject = new ClippingPlatform(gameManager);
-                }
-                else
-                {
-                    this.gameManager.getMainActivity().gameToast("Failed loading in platforms-"+type);
-                    return;
-                }
-
-                try
-                {
-                    //GET THE CURRENT LADDER
-                    JSONObject currentObject = objectsList.getJSONObject(String.valueOf(i));
-
-                    //GET ASSOSIATED ARRAYS
-                    JSONArray currentObjectNames = currentObject.names();
-                    JSONArray currentObjectValues = currentObject.toJSONArray(currentObjectNames);
-
-                    //GET THE ARRAY KEYS
-                    String currentKey = "";
-                    String currentValue = "";
-                    for(int c = 0 ; c < currentObjectValues.length(); c++){
-                        //SET THIS LOOPS VARIABLES
-                        currentKey = currentObjectNames.getString(c);
-                        currentValue = currentObjectValues.getString(c);
-
-                        //CHECK WHAT WE ARE TRYING TO SET
-                        if(currentKey.equals("x")){
-                            newObject.setX(Integer.parseInt(currentValue)); // X
-                        }
-                        else if(currentKey.equals("y")){
-                            newObject.setY(Integer.parseInt(currentValue)); // Y
-                        }
-                        else  if(currentKey.equals("width")){
-                            newObject.setWidth(Integer.parseInt(currentValue)); // WIDTH
-                        }
-                        else if(currentKey.equals("height"))
-                        {
-                            newObject.setHeight((Integer.parseInt(currentValue))); // HEIGHT
-                        }
-                    }
-                    i++;
-                }
-                catch (Exception e)
-                {
-                    /*
-                        This happens when [i] is not found. There may be more entries if for some reason it is not consistent : [1],[3],[6].
-                        Break out of the loop
-                     */
-                    break;
-                }
-                tempLevel.addGameObject(newObject);
-            }
-        }
-    }
-
-    /*********************************************************************************************/
-    /* PROCESS PlATFORMS */
-    /*********************************************************************************************/
-    private void processPolygons(GameLevel tempLevel,JSONObject jObject)
-    {
-        JSONObject objectsList = null;
-        try {
-            objectsList = jObject.getJSONObject("polygons");
-        } catch (JSONException e) {
-            gameManager.getMainActivity().log("Failed parsing into platforms");
-            e.printStackTrace();
-            objectsList = null;
-        }
-
-        /*
-            WHILE i = 0 (each record is stored as an array [0], [1], etc
-         */
-        if(objectsList != null)
-        {
-            /*
-            Loop through each ladder
-             */
-            int i = 0;
-            while(i >= 0)
-            {
-                //Create new ladder object
-                GameObject newObject = null;
-                newObject = new ClippingPlatform(gameManager);
-
-                try
-                {
-                    //GET THE CURRENT LADDER
-                    JSONObject currentObject = objectsList.getJSONObject(String.valueOf(i));
-
-                    //GET ASSOSIATED ARRAYS
-                    JSONArray currentObjectNames = currentObject.names();
-                    JSONArray currentObjectValues = currentObject.toJSONArray(currentObjectNames);
-
-                    //GET THE ARRAY KEYS
-                    String currentKey = "";
-                    String currentValue = "";
-                    for(int c = 0 ; c < currentObjectValues.length(); c++){
-                        //SET THIS LOOPS VARIABLES
-                        currentKey = currentObjectNames.getString(c);
-                        currentValue = currentObjectValues.getString(c);
-
-                        //CHECK WHAT WE ARE TRYING TO SET
-                        if(currentKey.equals("x")){
-                            newObject.setX(Integer.parseInt(currentValue)); // X
-                        }
-                        else if(currentKey.equals("y")){
-                            newObject.setY(Integer.parseInt(currentValue)); // Y
-                        }
-                        else  if(currentKey.equals("width")){
-                            newObject.setWidth(Integer.parseInt(currentValue)); // WIDTH
-                        }
-                        else if(currentKey.equals("height"))
-                        {
-                            newObject.setHeight((Integer.parseInt(currentValue))); // HEIGHT
-                        }
-                    }
-                    i++;
-                }
-                catch (Exception e)
-                {
-                    /*
-                        This happens when [i] is not found. There may be more entries if for some reason it is not consistent : [1],[3],[6].
-                        Break out of the loop
-                     */
-                    break;
-                }
-                tempLevel.addGameObject(newObject);
-            }
-        }
-    }
-
-    /*********************************************************************************************/
-    /* PROCESS PlATFORMS */
-    /*********************************************************************************************/
-    private void processDoorways(GameLevel tempLevel,JSONObject jObject)
-    {
-        JSONObject objectsList = null;
-        try {
-            objectsList = jObject.getJSONObject("doorways");
-        } catch (JSONException e) {
-            gameManager.getMainActivity().log("Failed parsing into platforms");
-            e.printStackTrace();
-            objectsList = null;
-        }
-
-        /*
-            WHILE i = 0 (each record is stored as an array [0], [1], etc
-         */
-        if(objectsList != null)
-        {
-            /*
-            Loop through each ladder
-             */
-            int i = 0;
-            while(i >= 0)
-            {
-                //Create new ladder object
-                Doorway newObject = new Doorway(gameManager);
-
-                try
-                {
-                    //GET THE CURRENT LADDER
-                    JSONObject currentObject = objectsList.getJSONObject(String.valueOf(i));
-
-                    //GET ASSOSIATED ARRAYS
-                    JSONArray currentObjectNames = currentObject.names();
-                    JSONArray currentObjectValues = currentObject.toJSONArray(currentObjectNames);
-
-                    //GET THE ARRAY KEYS
-                    String currentKey = "";
-                    String currentValue = "";
-                    for(int c = 0 ; c < currentObjectValues.length(); c++){
-                        //SET THIS LOOPS VARIABLES
-                        currentKey = currentObjectNames.getString(c);
-                        currentValue = currentObjectValues.getString(c);
-
-                        //CHECK WHAT WE ARE TRYING TO SET
-                        if(currentKey.equals("x")){
-                            newObject.setX(Integer.parseInt(currentValue)); // X
-                        }
-                        else if(currentKey.equals("y")){
-                            newObject.setY(Integer.parseInt(currentValue)); // Y
-                        }
-                        else  if(currentKey.equals("width")){
-                            newObject.setWidth(Integer.parseInt(currentValue)); // WIDTH
-                        }
-                        else if(currentKey.equals("height"))
-                        {
-                            newObject.setHeight((Integer.parseInt(currentValue))); // HEIGHT
-                        }
-                        else if(currentKey.equals("dest"))
-                        {
-                            newObject.setDestination(currentValue); //DESTINATION
-                        }
-                        else if(currentKey.equals("destX"))
-                        {
-                            newObject.setDestinationX(Integer.parseInt(currentValue)); //DESTINATION X
-                        }
-                        else if(currentKey.equals("destY"))
-                        {
-                            newObject.setDestinationY(Integer.parseInt(currentValue)); //DESTINATION Y
-                        }
-                    }
-                    i++;
-                }
-                catch (Exception e)
-                {
-                    /*
-                        This happens when [i] is not found. There may be more entries if for some reason it is not consistent : [1],[3],[6].
-                        Break out of the loop
-                     */
-                    break;
-                }
-                tempLevel.addGameObject(newObject);
-            }
-        }
     }
 
     /*********************************************************************************************/
@@ -412,22 +179,15 @@ public class JsonLoader {
 
 
     /*********************************************************************************************/
-    /* PROCESS BACKGROUNDS */
+    /* PROCESS COLLECTABLES */
     /*********************************************************************************************/
-    private void processBackgrounds(GameLevel tempLevel,JSONObject jObject, boolean parallax)
+    private void processBatch(String whatToProcess, GameLevel tempLevel, JSONObject jObject)
     {
         JSONObject objectsList = null;
         try {
-            if(parallax)
-            {
-                objectsList = jObject.getJSONObject("parallax");
-            }
-            else
-            {
-                objectsList = jObject.getJSONObject("backgrounds");
-            }
+            objectsList = jObject.getJSONObject(whatToProcess);
         } catch (JSONException e) {
-            gameManager.getMainActivity().log("Failed parsing into backgrounds");
+            gameManager.getMainActivity().log("Failed parsing into "+whatToProcess);
             e.printStackTrace();
             objectsList = null;
         }
@@ -437,210 +197,51 @@ public class JsonLoader {
          */
         if(objectsList != null)
         {
-            /*
-            Loop through each ladder
-             */
+            /*********************************************************************************************/
+            /* Loop through each ladder */
+            /*********************************************************************************************/
             int i = 0;
             while(i >= 0)
             {
-                //Create new ladder object
-                Background newObject = null;
-                if(parallax)
-                {
-                    newObject = new ParallaxBackground(gameManager);
-                }
-                else
-                {
-                    newObject = new Background(gameManager);
-                }
-
-                try
-                {
-                    //GET THE CURRENT LADDER
-                    JSONObject currentObject = objectsList.getJSONObject(String.valueOf(i));
-
-                    //GET ASSOSIATED ARRAYS
-                    JSONArray currentObjectNames = currentObject.names();
-                    JSONArray currentObjectValues = currentObject.toJSONArray(currentObjectNames);
-
-                    //GET THE ARRAY KEYS
-                    String currentKey = "";
-                    String currentValue = "";
-                    for(int c = 0 ; c < currentObjectValues.length(); c++){
-                        //SET THIS LOOPS VARIABLES
-                        currentKey = currentObjectNames.getString(c);
-                        currentValue = currentObjectValues.getString(c);
-
-                        //CHECK WHAT WE ARE TRYING TO SET
-                        if(currentKey.equals("x")){
-                            newObject.setX(Integer.parseInt(currentValue)); // X
-                        }
-                        else if(currentKey.equals("y")){
-                            newObject.setY(Integer.parseInt(currentValue)); // Y
-                        }
-                        else  if(currentKey.equals("width")){
-                            newObject.setWidth(Integer.parseInt(currentValue)); // WIDTH
-                        }
-                        else if(currentKey.equals("height"))
-                        {
-                            newObject.setHeight((Integer.parseInt(currentValue))); // HEIGHT
-                        }
-                        else if(currentKey.equals("image"))
-                        {
-                            newObject.setImage(currentValue); // IMAGE
-                        }
-                        else if(currentKey.equals("zindex"))
-                        {
-                            newObject.setZIndex(Integer.parseInt(currentValue)); // Z INDEX
-                        }
-                        else if(currentKey.equals("parallax-offset") && newObject instanceof ParallaxBackground)
-                        {
-                            ((ParallaxBackground)newObject).setParallaxOffset(Integer.parseInt(currentValue)); // Z INDEX
-                        }
-                        else if(currentKey.equals("parallax-speed") && newObject instanceof ParallaxBackground)
-                        {
-                            ((ParallaxBackground)newObject).setParallaxSpeed(Float.parseFloat(currentValue)); // Z INDEX
-                        }
-                    }
-                    i++;
-                }
-                catch (Exception e)
-                {
-                    /*
-                        This happens when [i] is not found. There may be more entries if for some reason it is not consistent : [1],[3],[6].
-                        Break out of the loop
-                     */
-                    break;
-                }
-
-                if(parallax)
-                {
-                    tempLevel.addParallaxBackground(newObject);
-                }
-                else
-                {
-                    tempLevel.addGameObject(newObject);
-                }
-            }
-        }
-    }
-
-    private void processLadders(GameLevel tempLevel,JSONObject jObject)
-    {
-        JSONObject ladders = null;
-        try {
-           ladders = jObject.getJSONObject("ladders");
-        } catch (JSONException e) {
-            gameManager.getMainActivity().log("Failed parsing into ladders");
-            e.printStackTrace();
-            ladders = null;
-        }
-
-        /*
-            WHILE i = 0 (each record is stored as an array [0], [1], etc
-         */
-        if(ladders != null)
-        {
-            /*
-            Loop through each ladder
-             */
-            int i = 0;
-            while(i >= 0)
-            {
-                //Create new ladder object
-                Ladder newLadder = new Ladder(gameManager);
-                try
-                {
-                    //GET THE CURRENT LADDER
-                    JSONObject currentLadder = ladders.getJSONObject(String.valueOf(i));
-
-                    //GET ASSOSIATED ARRAYS
-                    JSONArray currentLadderNames = currentLadder.names();
-                    JSONArray currentLadderValues = currentLadder.toJSONArray(currentLadderNames);
-
-                    //GET THE ARRAY KEYS
-                    String currentKey = "";
-                    String currentValue = "";
-                    for(int c = 0 ; c < currentLadderValues.length(); c++){
-                        //SET THIS LOOPS VARIABLES
-                        currentKey = currentLadderNames.getString(c);
-                        currentValue = currentLadderValues.getString(c);
-
-                        //CHECK WHAT WE ARE TRYING TO SET
-                        if(currentKey.equals("questID")){
-                            newLadder.setQuestID(Integer.parseInt(currentValue)); // QUEST
-                        }
-                        else if(currentKey.equals("x")){
-                            newLadder.setX(Integer.parseInt(currentValue)); // X
-                        }
-                        else if(currentKey.equals("y")){
-                            newLadder.setY(Integer.parseInt(currentValue)); // Y
-                        }
-                        else  if(currentKey.equals("width")){
-                            newLadder.setWidth(Integer.parseInt(currentValue)); // WIDTH
-                        }
-                        else if(currentKey.equals("height"))
-                        {
-                            newLadder.setHeight((Integer.parseInt(currentValue))); // HEIGHT
-                        }
-                    }
-                    i++;
-                }
-                catch (Exception e)
-                {
-                    /*
-                        This happens when [i] is not found. There may be more entries if for some reason it is not consistent : [1],[3],[6].
-                        Break out of the loop
-                     */
-                    break;
-                }
-                tempLevel.addGameObject(newLadder);
-            }
-        }
-    }
-
-
-    /*********************************************************************************************/
-    /* PROCESS PlATFORMS */
-    /*********************************************************************************************/
-    private void processEnemies(GameLevel tempLevel,JSONObject jObject)
-    {
-        JSONObject objectsList = null;
-        try {
-            objectsList = jObject.getJSONObject("enemies");
-        } catch (JSONException e) {
-            gameManager.getMainActivity().log("Failed parsing into enemies");
-            e.printStackTrace();
-            objectsList = null;
-        }
-
-        /*
-            WHILE i = 0 (each record is stored as an array [0], [1], etc
-         */
-        if(objectsList != null)
-        {
-            /*
-            Loop through each ladder
-             */
-            int i = 0;
-            while(i >= 0)
-            {
-                //Create new ladder object
+                /*********************************************************************************************/
+                /* CHECK WAHT OBJECT TO USE */
+                /*********************************************************************************************/
                 GameObject newObject = null;
-                /*if(type.equals("frog")) {
-                    newObject = new Frog(gameManager);
-                } else if(type.equals("cloud")) {
-                    newObject = new ClippingPlatform(gameManager);
+                try {
+                    if(whatToProcess.equals("parallax"))
+                    {
+                        newObject = new ParallaxBackground(gameManager);
+                    }
+                    else if(whatToProcess.equals("backgrounds"))
+                    {
+                        newObject = new Background(gameManager);
+                    }
+                    else if(whatToProcess.equals("platforms-cloud"))
+                    {
+                        newObject = new ClippingPlatform(gameManager);
+                    }
+                    else if(whatToProcess.equals("platforms-solid"))
+                    {
+                        newObject = new SolidClippingPlatform(gameManager);
+                    }
+                    else if(whatToProcess.equals("doorways"))
+                    {
+                        newObject = new Doorway(gameManager);
+                    }
+                    else if(whatToProcess.equals("ladders"))
+                    {
+                        newObject = new Ladder(gameManager);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                else
-                {
-                    this.gameManager.getMainActivity().gameToast("Failed loading in platforms-"+type);
-                    return;
-                }*/
 
+                /*********************************************************************************************/
+                /* STEP THROUGH EACH VALUE */
+                /*********************************************************************************************/
                 try
                 {
-                    //GET THE CURRENT LADDER
+                    //GET THE COLLECTABLE LADDER
                     JSONObject currentObject = objectsList.getJSONObject(String.valueOf(i));
 
                     //GET ASSOSIATED ARRAYS
@@ -654,41 +255,200 @@ public class JsonLoader {
                         //SET THIS LOOPS VARIABLES
                         currentKey = currentObjectNames.getString(c);
                         currentValue = currentObjectValues.getString(c);
+                        boolean specificValue = true;
 
-                        //CHECK WHAT WE ARE TRYING TO SET
-                        if(currentKey.equals("type"))
+                        if(whatToProcess.equals("parallax"))
                         {
-                            if(currentValue.equals("frog"))
+                            specificValue = this.checkParallax(((Background)newObject), currentKey, currentValue);
+                        }
+                        else if(whatToProcess.equals("backgrounds"))
+                        {
+                            specificValue = this.checkBackgrounds(((Background)newObject), currentKey, currentValue);
+                        }
+                        else if(whatToProcess.equals("platforms-cloud"))
+                        {
+                            specificValue = this.checkPlatformClouds(((RectangularPlatform)newObject), currentKey, currentValue);
+                        }
+                        else if(whatToProcess.equals("platforms-solid"))
+                        {
+                            specificValue = this.checkPlatformSolids(((RectangularPlatform)newObject), currentKey, currentValue);
+                        }
+                        else if(whatToProcess.equals("doorways"))
+                        {
+                            specificValue = this.checkDoorways(((Doorway)newObject), currentKey, currentValue);
+                        }
+                        else if(whatToProcess.equals("ladders"))
+                        {
+                            specificValue = this.checkLadders(((Ladder)newObject), currentKey, currentValue);
+                        }
+                        else if(whatToProcess.equals("collectables"))
+                        {
+                            if(currentKey.equals("type"))
                             {
-                                newObject = new Frog(gameManager);
+                                if(currentValue.equals("lemon"))
+                                {
+                                    newObject = new Lemon(gameManager);
+                                }
+                            }
+                            else
+                            {
+                                specificValue = this.checkCollectables(((Collectable)newObject), currentKey, currentValue);
                             }
                         }
-                        else if(currentKey.equals("x")){
-                            newObject.setX(Integer.parseInt(currentValue)); // X
-                        }
-                        else if(currentKey.equals("y")){
-                            newObject.setY(Integer.parseInt(currentValue)); // Y
-                        }
-                        else  if(currentKey.equals("width")){
-                            newObject.setWidth(Integer.parseInt(currentValue)); // WIDTH
-                        }
-                        else if(currentKey.equals("height"))
+                        else if(whatToProcess.equals("enemies"))
                         {
-                            newObject.setHeight((Integer.parseInt(currentValue))); // HEIGHT
+                            if(currentKey.equals("type"))
+                            {
+                                if(currentValue.equals("frog"))
+                                {
+                                    newObject = new Frog(gameManager);
+                                }
+                            }
+                            else
+                            {
+                                specificValue = this.checkEnemies(((Enemy)newObject), currentKey, currentValue);
+                            }
+                        }
+
+                        if(specificValue == false)
+                        {
+                            this.checkDefaults(newObject,currentKey,currentValue);
                         }
                     }
                     i++;
                 }
                 catch (Exception e)
                 {
-                    /*
-                        This happens when [i] is not found. There may be more entries if for some reason it is not consistent : [1],[3],[6].
-                        Break out of the loop
-                     */
+
                     break;
                 }
                 tempLevel.addGameObject(newObject);
             }
+        }
+    }
+
+    private boolean checkEnemies(Enemy newObject, String currentKey, String currentValue) {
+        if(currentKey.equals("polygonShape"))
+        {
+            try {
+                ArrayList<Float> list = new ArrayList<Float>();
+                JSONArray jsonArray = new JSONArray(currentValue);
+                if (jsonArray != null) {
+                    int len = jsonArray.length();
+                    for (int i=0;i<len;i++){
+                        list.add(Float.parseFloat(jsonArray.get(i).toString()));
+                    }
+                }
+                newObject.setPolygon(list);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkLadders(Ladder newObject, String currentKey, String currentValue) {
+        return false;
+    }
+
+    private boolean checkDoorways(Doorway newObject, String currentKey, String currentValue) {
+        if(currentKey.equals("dest"))
+        {
+            newObject.setDestination(currentValue); //DESTINATION
+        }
+        else if(currentKey.equals("destX"))
+        {
+            newObject.setDestinationX(Integer.parseInt(currentValue)); //DESTINATION X
+        }
+        else if(currentKey.equals("destY"))
+        {
+            newObject.setDestinationY(Integer.parseInt(currentValue)); //DESTINATION Y
+        }
+        else
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkPlatformSolids( RectangularPlatform newObject, String currentKey, String currentValue) {
+        return false;
+    }
+
+    private boolean checkPlatformClouds(RectangularPlatform newObject, String currentKey, String currentValue) {
+        return false;
+    }
+
+    private boolean checkBackgrounds(Background newObject, String currentKey, String currentValue) {
+        if(currentKey.equals("image"))
+        {
+            newObject.setImage(currentValue); // IMAGE
+        }
+        else if(currentKey.equals("zindex"))
+        {
+            newObject.setZIndex(Integer.parseInt(currentValue)); // Z INDEX
+        }
+        else if(currentKey.equals("parallax-offset") && newObject instanceof ParallaxBackground)
+        {
+            ((ParallaxBackground)newObject).setParallaxOffset(Integer.parseInt(currentValue)); // Z INDEX
+        }
+        else if(currentKey.equals("parallax-speed") && newObject instanceof ParallaxBackground)
+        {
+            ((ParallaxBackground)newObject).setParallaxSpeed(Float.parseFloat(currentValue)); // Z INDEX
+        }
+        else
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkParallax(Background newObject, String currentKey, String currentValue) {
+        if(currentKey.equals("image"))
+        {
+            newObject.setImage(currentValue); // IMAGE
+        }
+        else if(currentKey.equals("zindex"))
+        {
+            newObject.setZIndex(Integer.parseInt(currentValue)); // Z INDEX
+        }
+        else if(currentKey.equals("parallax-offset") && newObject instanceof ParallaxBackground)
+        {
+            ((ParallaxBackground)newObject).setParallaxOffset(Integer.parseInt(currentValue)); // Z INDEX
+        }
+        else if(currentKey.equals("parallax-speed") && newObject instanceof ParallaxBackground)
+        {
+            ((ParallaxBackground)newObject).setParallaxSpeed(Float.parseFloat(currentValue)); // Z INDEX
+        }
+        else
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkCollectables(Collectable newObject, String currentKey, String currentValue) {
+        return false;
+    }
+
+    public void checkDefaults(GameObject b, String currentKey, String currentValue)
+    {
+        if(currentKey.equals("x")){
+            b.setX(Integer.parseInt(currentValue)); // X
+        }
+        else if(currentKey.equals("y")){
+            b.setY(Integer.parseInt(currentValue)); // Y
+        }
+        else  if(currentKey.equals("width")){
+            b.setWidth(Integer.parseInt(currentValue)); // WIDTH
+        }
+        else if(currentKey.equals("height"))
+        {
+            b.setHeight((Integer.parseInt(currentValue))); // HEIGHT
         }
     }
 }

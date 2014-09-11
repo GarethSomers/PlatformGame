@@ -12,7 +12,7 @@ import org.andengine.entity.sprite.Sprite;
  */
 public class Background extends GameObject {
     protected String image = "";
-    protected int zIndex = 1;
+    protected int zIndex = 2;
     public Background(GameManager gameManager1)
     {
         this.gameManager = gameManager1;

@@ -1,19 +1,22 @@
 package com.platform.main.GameResources.LevelObjects.AnimatedObjects;
 
-import org.andengine.entity.sprite.AnimatedSprite;
-import org.andengine.extension.physics.box2d.PhysicsFactory;
-import org.andengine.opengl.texture.region.TiledTextureRegion;
-
-import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.platform.main.*;
 import com.platform.main.GameResources.LevelObjects.BodyObject;
 import com.platform.main.GameResources.LevelObjects.ObjectStatus;
 
+import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
+
+import java.util.ArrayList;
+
 public abstract class AnimatedGameObject extends BodyObject implements Animatable
 {
+    protected ArrayList<Float> polygonShape;
     protected String image = "";
-    protected int columns = 0;
-    protected int rows = 0;
+    protected int columns = 1;
+    protected int rows = 1;
+    protected int zIndex = 5;
     protected TiledTextureRegion mTiledTextureRegion;
 
     /*********************************************************************************************/
@@ -23,6 +26,7 @@ public abstract class AnimatedGameObject extends BodyObject implements Animatabl
     {
         this.gameManager = paramMainActivity;
         this.updatePosition = true;
+        this.bodyType = BodyDef.BodyType.DynamicBody;
     }
 
 
@@ -84,5 +88,56 @@ public abstract class AnimatedGameObject extends BodyObject implements Animatabl
 
             this.afterCreateObject();
         }
+    }
+
+    /*********************************************************************************************/
+    /* CREATE OBJECT CALLS */
+    /*********************************************************************************************/
+    @Override
+    public void preCreateObject() {
+        this.mTiledTextureRegion = this.gameManager.getMaterialManager().getTiledTexture(this.image, ((int)this.width)*this.columns,  ((int)this.height)*this.rows, this.columns, this.rows);
+    }
+
+
+
+    /*********************************************************************************************/
+    /* GETTER / SETTER WIDTH */
+    /*********************************************************************************************/
+    public float getWidth()
+    {
+        return this.getShape().getWidth();
+    }
+
+    public void setWidth(float newWidth)
+    {
+        this.width = newWidth;
+        if(this.theShape != null)
+        {
+            this.theShape.setWidth(newWidth);
+        }
+    }
+
+
+
+    /*********************************************************************************************/
+    /* GETTER / SETTER HEIGHT */
+    /*********************************************************************************************/
+    public float getHeight()
+    {
+        return this.getShape().getHeight();
+    }
+
+    public void setHeight(float newHeight)
+    {
+        this.height = newHeight;
+        if(this.theShape != null)
+        {
+            this.theShape.setHeight(newHeight);
+        }
+    }
+
+    public void setPolygon(ArrayList<Float> newPolygon)
+    {
+        this.polygonShape = newPolygon;
     }
 }
