@@ -27,6 +27,14 @@ public class GameManager
     private Player thePlayer;
     private EventsManager eventsManager;
     private GameState gameManagerState = GameState.DECLARED;
+
+    public void resetPlayer() {
+        this.getLevelManager().getHUD().setGameOver(false);
+        this.getThePlayer().reload(this.getLevelManager().lastStartPosX,this.getLevelManager().lastStartPosY);
+        this.getEventsManager().startEventsManager();
+        this.getLevelManager().getScene().sortChildren();
+    }
+
     enum GameState
     {
         DECLARED, PLAYING, DEAD

@@ -129,7 +129,6 @@ public class HeadsUpDisplay extends HUD
                 {
                     gameManager.getThePlayer().moveStop();
                 }
-                gameManager.getMainActivity().log("is action outside : "+pTouchEvent.isActionOutside());
                 return super.onAreaTouched(pTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
             }
         };
@@ -148,10 +147,7 @@ public class HeadsUpDisplay extends HUD
             @Override
             public boolean onAreaTouched(TouchEvent pTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
                 if(pTouchEvent.isActionDown()) {
-                    gameManager.getLevelManager().getHUD().setGameOver(false);
-                    gameManager.getThePlayer().reload(gameManager.getLevelManager().lastStartPosX,gameManager.getLevelManager().lastStartPosY);
-                    gameManager.getThePlayer().setAlive(true);
-                    gameManager.getEventsManager().startEventsManager();
+                    gameManager.resetPlayer();
                 }
                 return super.onAreaTouched(pTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
             }
@@ -254,7 +250,7 @@ public class HeadsUpDisplay extends HUD
         }
         else
         {
-            this.gameOverSprite.registerEntityModifier(new AlphaModifier(1, 1f, 0f));
+            this.gameOverSprite.setAlpha(0);
         }
     }
 

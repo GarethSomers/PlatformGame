@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.platform.main.GameResources.Level.GameLevel;
+import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Frog;
 import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.MovableSprite;
 import com.platform.main.GameResources.LevelObjects.Interactions.Collectable;
 import com.platform.main.GameResources.LevelObjects.Platforms.ClippingPlatform;
@@ -200,11 +201,15 @@ public class MyContactListener implements ContactListener
                 //this.gameManager.gameOver();
             }
         }
-        else if(localEnemyFeet == true)
+        else if(localEnemyFeet == true )
         {
-            if(localClippingPlatform != null)
+            if(localClippingPlatform != null || localSolidClippingPlatform != null)
             {
                 this.localEnemy.setJumping(newState);
+            }
+            if(localEnemy instanceof Frog && newState == true)
+            {
+                ((Frog)localEnemy).landed();
             }
         }
         else if(localPlayer != null)
@@ -291,12 +296,13 @@ public class MyContactListener implements ContactListener
                 platformYPosition=aClippingPlatform.getBody().getPosition().y*PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT;
 
                 // checking distance between bodies
-                float distance = playerYPosition - platformYPosition;
+                float distance = platformYPosition - playerYPosition;
+
                 float halfPlatformHeight = aClippingPlatform.getShape().getHeight()/2;
                 float playerRadius = aPerson.getShape().getHeight()/2;
                 // if the distance is greater than player radius + half of the platform height...
-                gameManager.getMainActivity().log(String.valueOf(distance));
-                if (distance > -(playerRadius+halfPlatformHeight)){
+
+                if (distance < playerRadius+halfPlatformHeight){
                     return false;
                 }
             }

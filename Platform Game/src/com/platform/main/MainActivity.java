@@ -25,6 +25,9 @@ public class MainActivity
     private ZoomCamera camera;
     private GameManager gameManager;
     public float zoomFactor = 2.5f;
+    public float zoomFactorHigh = 5f;
+    public float menuScale = 2f;
+    public float menuScaleHigh = 4f;
 
 
 
@@ -33,7 +36,6 @@ public class MainActivity
     private void createEngineDefaults()
     {
         getEngine().registerUpdateHandler(new FPSLogger());
-        getCamera().setZoomFactor(zoomFactor);
         getVertexBufferObjectManager();
         Looper.prepare();
     }
@@ -92,6 +94,15 @@ public class MainActivity
         localEngineOptions.getTouchOptions().setNeedsMultiTouch(true);
         localEngineOptions.getAudioOptions().setNeedsMusic(true);
         localEngineOptions.getAudioOptions().setNeedsSound(true);
+
+        //density
+        if(this.getCameraWidth() / displayMetrics.density > 800)
+        {
+            this.zoomFactor = this.zoomFactorHigh;
+            this.menuScale = this.menuScaleHigh;
+        }
+        this.log("Screen : Density("+displayMetrics.density+") Width("+this.getCameraWidth()+") Height("+this.getCameraHeight()+")");
+        getCamera().setZoomFactor(zoomFactor);
         return localEngineOptions;
     }
 

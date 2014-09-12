@@ -32,15 +32,15 @@ public class Menu extends Level implements MenuScene.IOnMenuItemClickListener {
         /*********************************************************************************************/
         /* CREATE LOGO */
         /*********************************************************************************************/
-        Sprite menuLogo = new Sprite((gameManager.getMainActivity().getCameraWidth()/2)-(200/2),(gameManager.getMainActivity().getCameraHeight()/8)*3-(144/2),gameManager.getMaterialManager().getTexture("HUD/logoSmall.png",200,144),gameManager.getMainActivity().getEngine().getVertexBufferObjectManager());
+        Sprite menuLogo = new Sprite((gameManager.getMainActivity().getCameraWidth()/2)-(200/2),(gameManager.getMainActivity().getCameraHeight()/8)*2-(144/2),gameManager.getMaterialManager().getTexture("HUD/logoSmall.png",200,144),gameManager.getMainActivity().getEngine().getVertexBufferObjectManager());
         this.scene.attachChild(menuLogo);
         menuLogo.setWidth(200);
         menuLogo.setHeight(144);
-        menuLogo.setScale(gameManager.getMainActivity().zoomFactor);
+        menuLogo.setScale(this.gameManager.getMainActivity().menuScale);
 
         //create menu items
-        final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(1, 190, 49, this.gameManager.getMaterialManager().getTexture("btnplay.png", 190, 49), this.gameManager.getMainActivity().getVertexBufferObjectManager()), 1.1f, 1);
-        final IMenuItem quitMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(2, 190, 49, this.gameManager.getMaterialManager().getTexture("btnquit.png", 190, 49), this.gameManager.getMainActivity().getVertexBufferObjectManager()), 1.1f, 1);
+        final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(1, 190*this.gameManager.getMainActivity().menuScale, 49*this.gameManager.getMainActivity().menuScale, this.gameManager.getMaterialManager().getTexture("btnplay.png", 190, 49), this.gameManager.getMainActivity().getVertexBufferObjectManager()), 1.1f, 1);
+        final IMenuItem quitMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(2, 190*this.gameManager.getMainActivity().menuScale, 49*this.gameManager.getMainActivity().menuScale, this.gameManager.getMaterialManager().getTexture("btnquit.png", 190, 49), this.gameManager.getMainActivity().getVertexBufferObjectManager()), 1.1f, 1);
 
         //set menu settings
         this.getScene().setMenuAnimator(new AlphaMenuAnimator(50f));
@@ -69,8 +69,8 @@ public class Menu extends Level implements MenuScene.IOnMenuItemClickListener {
         this.getScene().setOnMenuItemClickListener(this);
 
         //fix pos of menu items
-        playMenuItem.setPosition((this.gameManager.getMainActivity().getCameraWidth()/2)-(190/2),(this.gameManager.getMainActivity().getCameraHeight()/4)*3-50);
-        quitMenuItem.setPosition((this.gameManager.getMainActivity().getCameraWidth()/2)-(190/2),(this.gameManager.getMainActivity().getCameraHeight()/4)*3+50);
+        playMenuItem.setPosition((this.gameManager.getMainActivity().getCameraWidth()/2)-(190*this.gameManager.getMainActivity().menuScale/2),(this.gameManager.getMainActivity().getCameraHeight()/2));
+        quitMenuItem.setPosition((this.gameManager.getMainActivity().getCameraWidth()/2)-(190*this.gameManager.getMainActivity().menuScale/2),(this.gameManager.getMainActivity().getCameraHeight())-50-(49*this.gameManager.getMainActivity().menuScale));
     }
 
     /*
