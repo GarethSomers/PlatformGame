@@ -28,7 +28,6 @@ public class MyContactListener implements ContactListener
     private Player localPlayer = null;
     private boolean playersFeet = false;
     private boolean playersHead = false;
-    private boolean localFeet = false;
     private Ladder localLadder = null;
     private ClippingPlatform localClippingPlatform = null;
     private Enemy localEnemy = null;
@@ -57,7 +56,7 @@ public class MyContactListener implements ContactListener
     {
         this.localPlayer = null;
         this.playersFeet = false;
-        this.localFeet = false;
+        this.playersHead = false;
         this.localLadder = null;
         this.localClippingPlatform = null;
         this.localSolidClippingPlatform = null;
@@ -67,6 +66,7 @@ public class MyContactListener implements ContactListener
         this.twoEnemies = false;
         this.localEnemyFeet = false;
         this.localEnemyHead = false;
+        this.twoEnemies = false;
     }
 
     /*
@@ -120,6 +120,10 @@ public class MyContactListener implements ContactListener
             {
                 this.localCollectable = (Lemon)parentUserData;
             }
+            else
+            {
+                gameManager.getMainActivity().log("no parent");
+            }
 
             /*********************************************************************************************/
             /* CHILD OBJECTS */
@@ -128,6 +132,7 @@ public class MyContactListener implements ContactListener
             {
                 //if its a string
                 String theString = (String)childUserData;
+                gameManager.getMainActivity().log(theString);
                 if(theString.equals("playersFeet"))
                 {
                    this.playersFeet = true;
@@ -143,10 +148,6 @@ public class MyContactListener implements ContactListener
                 else if(theString.equals("enemyHead"))
                 {
                     this.localEnemyHead = true;
-                }
-                else if(theString.equals("feet"))
-                {
-                    this.localFeet = true;
                 }
             }
         }
@@ -166,12 +167,12 @@ public class MyContactListener implements ContactListener
             /*********************************************************************************************/
 
             //players feet must have hit something
-            if(localEnemyHead == true && localEnemy != null && localEnemy.getAlive())
+            if(localEnemyHead == true && localEnemy.getAlive())
             {
                 //he must have hit/left an enemy
                 this.gameManager.getThePlayer().forceJump();
-                //localEnemy.kill();
-                //((GameLevel)this.gameManager.getLevelManager().getLevel()).getEnemiesNeedRemoving().add(localEnemy);
+                localEnemy.kill();
+                ((GameLevel)this.gameManager.getLevelManager().getLevel()).getEnemiesNeedRemoving().add(localEnemy);
             }
             else if(localLadder != null)
             {
@@ -194,19 +195,19 @@ public class MyContactListener implements ContactListener
                 localCollectable.collect();
             }
         }
-        else if(localEnemyHead == true)
+        else if(localEnemyFeet == true)
         {
-            if(playersHead == true && localPlayer != null)
+            //check to kill player
+            if(playersHead == true && localEnemy.getAlive())
             {
-                //this.gameManager.gameOver();
+                this.gameManager.gameOver();
             }
-        }
-        else if(localEnemyFeet == true )
-        {
+            //check if on ground
             if(localClippingPlatform != null || localSolidClippingPlatform != null)
             {
                 this.localEnemy.setJumping(newState);
             }
+            //check if the frog has landed (to jump again)
             if(localEnemy instanceof Frog && newState == true)
             {
                 ((Frog)localEnemy).landed();
@@ -218,7 +219,6 @@ public class MyContactListener implements ContactListener
             if(localDoorway != null)
             {
                 //he must have hit/left a platform
-                //gameManager.getThePlayer().setInfrontOfDoorway(newState);
                 gameManager.getLevelManager().getHUD().setDoorButtonVisibility(newState);
                 gameManager.getLevelManager().setupScheduleLoadLevel(localDoorway.getDestination(), localDoorway.getDestinationX(), localDoorway.getDestinationY());
             }
@@ -268,6 +268,15 @@ public class MyContactListener implements ContactListener
         else if(this.localEnemyFeet == true || this.localEnemy != null)
         {
             paramContact.setEnabled(checkCollison(this.localEnemy,this.localClippingPlatform));
+        }
+
+        /*********************************************************************************************/
+        /* CHECK BETWEEN PLAYER AND ENEMY */
+        /*********************************************************************************************/
+        //if the enemy body has hit the player (without the feet or head touching, ignore it.
+        if(this.localEnemyHead != true && this.localEnemyFeet != true && this.localEnemy != null && this.playersFeet != true && this.playersHead != true && this.localPlayer != null)
+        {
+            paramContact.setEnabled(false);
         }
     }
     public boolean checkCollison(MovableSprite aPerson, ClippingPlatform aClippingPlatform)

@@ -28,13 +28,6 @@ public class GameManager
     private EventsManager eventsManager;
     private GameState gameManagerState = GameState.DECLARED;
 
-    public void resetPlayer() {
-        this.getLevelManager().getHUD().setGameOver(false);
-        this.getThePlayer().reload(this.getLevelManager().lastStartPosX,this.getLevelManager().lastStartPosY);
-        this.getEventsManager().startEventsManager();
-        this.getLevelManager().getScene().sortChildren();
-    }
-
     enum GameState
     {
         DECLARED, PLAYING, DEAD
@@ -159,7 +152,7 @@ public class GameManager
         }
         this.debug = new DebugRenderer(this.getPhysicsWorld(),this.mainActivity.getVertexBufferObjectManager());
         this.debug.setZIndex(999);
-        //this.getScene().attachChild(this.debug);
+        this.getScene().attachChild(this.debug);
     }
 
     public void setPhysicsWorld(PhysicsWorld paramPhysicsWorld)
@@ -205,11 +198,14 @@ public class GameManager
         return eventsManager;
     }
 
-
     public void setEventsManager(EventsManager eventsManager) {
         this.eventsManager = eventsManager;
     }
 
+
+    /*********************************************************************************************/
+    /* GAME OVER */
+    /*********************************************************************************************/
     public void gameOver() {
         if(this.gameManagerState == GameState.PLAYING)
         {
@@ -219,9 +215,12 @@ public class GameManager
         }
     }
 
+    /*********************************************************************************************/
+    /* UPDATE */
+    /*********************************************************************************************/
     public void onUpdate(float paramFloat)
     {
-        if(this.gameManagerState == GameState.PLAYING)
+        if(this.gameManagerState == GameState.PLAYING || this.gameManagerState == GameState.DEAD)
         {
             if(this.getThePlayer() != null)
             {
@@ -239,10 +238,12 @@ public class GameManager
     @Override
     public void reset()
     {
-        this.getThePlayer().reload(this.getLevelManager().lastStartPosX, this.getLevelManager().lastStartPosY);
-        this.getThePlayer().setAlive(true);
-        this.getThePlayer().enableJumping();
+        this.getLevelManager().getHUD().setGameOver(false);
+        this.getThePlayer().reload(this.getLevelManager().lastStartPosX,this.getLevelManager().lastStartPosY);
+        this.getEventsManager().startEventsManager();
+        this.getLevelManager().getScene().sortChildren();
         this.getThePlayer().updatePosition();
+        this.gameManagerState = GameState.PLAYING;
     }
 
 }

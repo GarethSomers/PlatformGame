@@ -117,7 +117,8 @@ public class GameLevel extends Level implements DelayedCreationObject
         }
         for(Enemy e : this.getEnemiesNeedRemoving())
         {
-            e.setActive(false);
+            //disabled because need object to fall into death place (eg frog).
+            //e.setActive(false);
         }
         this.getEnemiesNeedRemoving().clear();
     }

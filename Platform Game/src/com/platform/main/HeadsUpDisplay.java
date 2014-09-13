@@ -147,7 +147,7 @@ public class HeadsUpDisplay extends HUD
             @Override
             public boolean onAreaTouched(TouchEvent pTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
                 if(pTouchEvent.isActionDown()) {
-                    gameManager.resetPlayer();
+                    gameManager.reset();
                 }
                 return super.onAreaTouched(pTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
             }
