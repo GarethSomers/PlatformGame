@@ -5,6 +5,7 @@ import com.platform.main.GameResources.LevelObjects.BodyObject;
 import com.platform.main.GameResources.DelayedCreationObject;
 import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Enemy;
 import com.platform.main.GameResources.LevelObjects.GameObject;
+import com.platform.main.GameResources.LevelObjects.Platforms.AbsoluteSolidClippingPlatform;
 import com.platform.main.GameResources.LevelObjects.Platforms.SolidClippingPlatform;
 import com.platform.main.GameResources.LevelObjects.ObjectStatus;
 import com.platform.main.GameResources.LevelObjects.StaticObject.Background;
@@ -214,22 +215,22 @@ public class GameLevel extends Level implements DelayedCreationObject
     @Override
     public void preCreateObject() {
         //Add Top Solid Block
-        SolidClippingPlatform topPlatform = new SolidClippingPlatform(gameManager);
+        AbsoluteSolidClippingPlatform topPlatform = new AbsoluteSolidClippingPlatform(gameManager);
         topPlatform.setPos(0.0F,-1.0F);
         topPlatform.setDimensions(this.width, 1.0F);
         this.addGameObject(topPlatform);
         //Add Left Solid Block
-        SolidClippingPlatform leftPlatform = new SolidClippingPlatform(gameManager);
+        AbsoluteSolidClippingPlatform leftPlatform = new AbsoluteSolidClippingPlatform(gameManager);
         leftPlatform.setPos(-1.0F,-0.0F);
         leftPlatform.setDimensions(1.0F, this.height);
         this.addGameObject(leftPlatform);
         //Add Left Solid Block
-        SolidClippingPlatform rightPlatform = new SolidClippingPlatform(gameManager);
+        AbsoluteSolidClippingPlatform rightPlatform = new AbsoluteSolidClippingPlatform(gameManager);
         rightPlatform.setPos(this.width+1,0.0F);
         rightPlatform.setDimensions(1.0F, this.height);
         this.addGameObject(rightPlatform);
         //Add Left Solid Block
-        SolidClippingPlatform bottomPlatform = new SolidClippingPlatform(gameManager);
+        AbsoluteSolidClippingPlatform bottomPlatform = new AbsoluteSolidClippingPlatform(gameManager);
         bottomPlatform.setPos(0.0F,this.height+1);
         bottomPlatform.setDimensions(this.width, 1.0F);
         this.addGameObject(bottomPlatform);

@@ -20,13 +20,20 @@ public class MaterialManager
 
     public ITextureRegion getTexture(String paramString, int pWidth, int pHeight)
     {
+        return this.getTexture(paramString,pWidth,pHeight,TextureOptions.DEFAULT, pWidth, pHeight);
+    }
+
+    public ITextureRegion getTexture(String paramString, int pWidth, int pHeight, TextureOptions to, int repeatWidth, int repeatHeight)
+    {
         TextureRegion localTextureRegion = null;
         try
         {
-            BuildableBitmapTextureAtlas localBuildableBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.gameManager.getMainActivity().getEngine().getTextureManager(), pWidth, pHeight, TextureOptions.DEFAULT);
+            BuildableBitmapTextureAtlas localBuildableBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.gameManager.getMainActivity().getEngine().getTextureManager(), pWidth, pHeight, to);
             localTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(localBuildableBitmapTextureAtlas, this.gameManager.getMainActivity().getAssets(), "gfx/" + paramString);
             localBuildableBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder(0, 0, 0));
             localBuildableBitmapTextureAtlas.load();
+            localTextureRegion.setTextureWidth(repeatWidth);
+            localTextureRegion.setTextureHeight(repeatHeight);
             return localTextureRegion;
         }
         catch (Exception e)

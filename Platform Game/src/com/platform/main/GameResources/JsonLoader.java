@@ -200,9 +200,18 @@ public class JsonLoader {
             /*********************************************************************************************/
             /* Loop through each ladder */
             /*********************************************************************************************/
-            int i = 0;
-            while(i >= 0)
+            JSONArray theNames = objectsList.names();
+
+            for (int i = 0; i < theNames.length(); i++)
             {
+                String currentParentKey;
+                try {
+                    currentParentKey = theNames.getString(i);
+                } catch (JSONException e) {
+                    this.gameManager.getMainActivity().log("Could not load one of the "+whatToProcess);
+                    e.printStackTrace();
+                    continue;
+                }
                 /*********************************************************************************************/
                 /* CHECK WAHT OBJECT TO USE */
                 /*********************************************************************************************/
@@ -241,8 +250,8 @@ public class JsonLoader {
                 /*********************************************************************************************/
                 try
                 {
-                    //GET THE COLLECTABLE LADDER
-                    JSONObject currentObject = objectsList.getJSONObject(String.valueOf(i));
+                    //GET THE CURRENT OBJECT
+                    JSONObject currentObject = objectsList.getJSONObject(currentParentKey);
 
                     //GET ASSOSIATED ARRAYS
                     JSONArray currentObjectNames = currentObject.names();
@@ -315,12 +324,10 @@ public class JsonLoader {
                             this.checkDefaults(newObject,currentKey,currentValue);
                         }
                     }
-                    i++;
                 }
                 catch (Exception e)
                 {
-
-                    break;
+                    continue;
                 }
                 tempLevel.addGameObject(newObject);
             }

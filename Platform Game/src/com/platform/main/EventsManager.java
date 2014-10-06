@@ -23,13 +23,17 @@ public class EventsManager implements ITimerCallback {
         if(this.timeLeftTimer != null)
         {
             this.timeLeftTimer.reset();
-            this.timeLeft = 100;
         }
         else
         {
             this.timeLeftTimer = new TimerHandler(0.3f,true,this);
             this.gameManager.getMainActivity().getEngine().registerUpdateHandler(this.timeLeftTimer);
         }
+    }
+
+    public void resetTimer()
+    {
+        this.timeLeft = 100;
     }
 
     @Override

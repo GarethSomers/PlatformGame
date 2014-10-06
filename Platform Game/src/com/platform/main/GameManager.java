@@ -239,7 +239,8 @@ public class GameManager
     public void reset()
     {
         this.getLevelManager().getHUD().setGameOver(false);
-        this.getThePlayer().reload(this.getLevelManager().lastStartPosX,this.getLevelManager().lastStartPosY);
+        this.getThePlayer().reload(((GameLevel) this.getLevelManager().getLevel()).getWidth()/2,((GameLevel)this.getLevelManager().getLevel()).getHeight());
+        this.getEventsManager().resetTimer();
         this.getEventsManager().startEventsManager();
         this.getLevelManager().getScene().sortChildren();
         this.getThePlayer().updatePosition();

@@ -10,6 +10,7 @@ import com.platform.main.GameResources.Level.GameLevel;
 import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Frog;
 import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.MovableSprite;
 import com.platform.main.GameResources.LevelObjects.Interactions.Collectable;
+import com.platform.main.GameResources.LevelObjects.Platforms.AbsoluteSolidClippingPlatform;
 import com.platform.main.GameResources.LevelObjects.Platforms.ClippingPlatform;
 import com.platform.main.GameResources.LevelObjects.Interactions.Doorway;
 import com.platform.main.GameResources.LevelObjects.AnimatedObjects.MoveableObjects.Enemy;
@@ -37,6 +38,7 @@ public class MyContactListener implements ContactListener
     private SolidClippingPlatform localSolidClippingPlatform;
     private boolean localEnemyFeet = false;
     private boolean localEnemyHead = false;
+    private AbsoluteSolidClippingPlatform localAbsoluteSolidClippingPlatform;
 
     /*
     * Constructor
@@ -67,6 +69,7 @@ public class MyContactListener implements ContactListener
         this.localEnemyFeet = false;
         this.localEnemyHead = false;
         this.twoEnemies = false;
+        this.localAbsoluteSolidClippingPlatform = null;
     }
 
     /*
@@ -115,6 +118,10 @@ public class MyContactListener implements ContactListener
             else if(parentUserData instanceof SolidClippingPlatform)
             {
                 localSolidClippingPlatform = (SolidClippingPlatform)parentUserData;
+            }
+            else if(parentUserData instanceof AbsoluteSolidClippingPlatform)
+            {
+                localAbsoluteSolidClippingPlatform = (AbsoluteSolidClippingPlatform)parentUserData;
             }
             else if(parentUserData instanceof Collectable)
             {

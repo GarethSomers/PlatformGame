@@ -1,0 +1,10 @@
+Fix player resting timer between levels.
+Add new levels.
+Create new boss.
+New boss death triggers end of game.
+Make reset start from the very start.
+Create new health graphic
+Add tutorial. How to play.
+
+Maybes
+Make being hurt take away health (opposed to dying immediately).

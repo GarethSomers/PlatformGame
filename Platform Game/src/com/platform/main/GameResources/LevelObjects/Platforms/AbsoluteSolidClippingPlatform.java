@@ -3,12 +3,12 @@ package com.platform.main.GameResources.LevelObjects.Platforms;
 import com.platform.main.GameManager;
 
 /*********************************************************************************************/
-/* SOLID CLIPPING PLATFORM - ALLOWS JUMPING */
+/* ABSOLUTE SOLID - NEVER ALLOWS JUMPING */
 /*********************************************************************************************/
-public class SolidClippingPlatform
+public class AbsoluteSolidClippingPlatform
         extends RectangularPlatform
 {
-    public SolidClippingPlatform(GameManager gameManager)
+    public AbsoluteSolidClippingPlatform(GameManager gameManager)
     {
         super(gameManager);
     }

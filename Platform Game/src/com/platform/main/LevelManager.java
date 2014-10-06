@@ -28,8 +28,8 @@ public class LevelManager
     private static final String TYPE_FROG = "frog";
     private static final String TYPE_MENU = "menu";
     private Level currentLevel;
-    public int lastStartPosX = 100;
-    public int lastStartPosY = 100;
+    public int lastStartPosX = 300;
+    public int lastStartPosY = 300;
     private GameManager gameManager;
 
     private HeadsUpDisplay hud;

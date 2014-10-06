@@ -7,10 +7,12 @@ import org.andengine.entity.modifier.AlphaModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.entity.text.Text;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
+import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.util.color.Color;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -35,7 +37,7 @@ public class HeadsUpDisplay extends HUD
     ButtonSprite resetButton;
     //indicators
     private final Rectangle healthbarContainer;
-    private final Rectangle healthbar;
+    private final Sprite healthbar;
     private final Sprite gameOverSprite;
 
     public HeadsUpDisplay(final GameManager gameManager)
@@ -221,14 +223,13 @@ public class HeadsUpDisplay extends HUD
         /* HEALTHBAR CONTAINER */
         /*********************************************************************************************/
         healthbarContainer = new Rectangle(hudPadding,hudPadding,100*gameManager.getMainActivity().zoomFactor,35*gameManager.getMainActivity().zoomFactor,gameManager.getMainActivity().getEngine().getVertexBufferObjectManager());
-        healthbarContainer.setColor(Color.RED);
+        healthbarContainer.setColor(0.42f,0.13f,0.12f);
         this.attachChild(healthbarContainer);
 
         /*********************************************************************************************/
         /* HEALTHBAR BUTTON */
         /*********************************************************************************************/
-        healthbar = new Rectangle(hudPadding+1,hudPadding+1,98*gameManager.getMainActivity().zoomFactor,33*gameManager.getMainActivity().zoomFactor,gameManager.getMainActivity().getEngine().getVertexBufferObjectManager());
-        healthbar.setColor(Color.GREEN);
+        this.healthbar = new Sprite(hudPadding+3,hudPadding+3,gameManager.getMaterialManager().getTexture("HUD/healthbar.jpg", 25,25, TextureOptions.REPEATING_NEAREST, Math.round(100 * gameManager.getMainActivity().zoomFactor)-6, Math.round(35 * gameManager.getMainActivity().zoomFactor)-6),gameManager.getMainActivity().getEngine().getVertexBufferObjectManager());
         this.attachChild(healthbar);
 
 
@@ -250,6 +251,7 @@ public class HeadsUpDisplay extends HUD
         }
         else
         {
+            this.gameOverSprite.clearEntityModifiers();
             this.gameOverSprite.setAlpha(0);
         }
     }
@@ -267,5 +269,6 @@ public class HeadsUpDisplay extends HUD
 
     public void updateTimeLeft(int timeLeft) {
         this.healthbar.setWidth(timeLeft*this.gameManager.getMainActivity().zoomFactor);
+        this.healthbar.getTextureRegion().setTextureWidth(100*this.gameManager.getMainActivity().zoomFactor);
     }
 }
