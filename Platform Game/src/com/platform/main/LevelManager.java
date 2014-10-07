@@ -60,16 +60,14 @@ public class LevelManager
     {
         this.scheduledDestinationX = 300;
         this.scheduledDestinationY = 300;
-        LoadLevel("one");
+        LoadLevel("five");
     }
 
     public void LoadLevel(String levelName)
     {
         this.currentState = LevelState.Loading;
-        //display loading screen
-        this.lastStartPosX = lastStartPosX;
-        this.lastStartPosY = lastStartPosY;
 
+        //if current level exists. get rid of it !
         if(this.currentLevel != null)
         {
             this.currentLevel.destroy();

@@ -11,6 +11,7 @@ import com.platform.main.GameResources.LevelObjects.Interactions.Collectable;
 import com.platform.main.GameResources.LevelObjects.Interactions.Doorway;
 import com.platform.main.GameResources.LevelObjects.Interactions.Ladder;
 import com.platform.main.GameResources.LevelObjects.Interactions.Lemon;
+import com.platform.main.GameResources.LevelObjects.Platforms.AbsoluteSolidClippingPlatform;
 import com.platform.main.GameResources.LevelObjects.Platforms.ClippingPlatform;
 import com.platform.main.GameResources.LevelObjects.Platforms.RectangularPlatform;
 import com.platform.main.GameResources.LevelObjects.Platforms.SolidClippingPlatform;
@@ -91,9 +92,10 @@ public class JsonLoader {
          */
         if (jObject != null) {
             this.processSetup(tempLevel,jObject);
-            this.processBatch("backgrounds",tempLevel,jObject);
+            this.processBatch("backgrounds", tempLevel, jObject);
             this.processBatch("parallax",tempLevel,jObject);
             this.processBatch("platforms-cloud",tempLevel,jObject);
+            this.processBatch("platforms-absolute",tempLevel,jObject);
             this.processBatch("platforms-solid",tempLevel,jObject);
             this.processBatch("doorways",tempLevel,jObject);
             this.processBatch("enemies",tempLevel,jObject);
@@ -202,6 +204,12 @@ public class JsonLoader {
             /*********************************************************************************************/
             JSONArray theNames = objectsList.names();
 
+            //if the names dont exist or are empty
+            if(theNames == null)
+            {
+               return;
+            }
+
             for (int i = 0; i < theNames.length(); i++)
             {
                 String currentParentKey;
@@ -232,6 +240,10 @@ public class JsonLoader {
                     else if(whatToProcess.equals("platforms-solid"))
                     {
                         newObject = new SolidClippingPlatform(gameManager);
+                    }
+                    else if(whatToProcess.equals("platforms-absolute"))
+                    {
+                        newObject = new AbsoluteSolidClippingPlatform(gameManager);
                     }
                     else if(whatToProcess.equals("doorways"))
                     {
@@ -281,6 +293,10 @@ public class JsonLoader {
                         else if(whatToProcess.equals("platforms-solid"))
                         {
                             specificValue = this.checkPlatformSolids(((RectangularPlatform)newObject), currentKey, currentValue);
+                        }
+                        else if(whatToProcess.equals("platforms-absolute"))
+                        {
+                            specificValue = this.checkAbsolutePlatformSolids(((RectangularPlatform)newObject), currentKey, currentValue);
                         }
                         else if(whatToProcess.equals("doorways"))
                         {
@@ -380,6 +396,10 @@ public class JsonLoader {
             return false;
         }
         return true;
+    }
+
+    private boolean checkAbsolutePlatformSolids( RectangularPlatform newObject, String currentKey, String currentValue) {
+        return false;
     }
 
     private boolean checkPlatformSolids( RectangularPlatform newObject, String currentKey, String currentValue) {
